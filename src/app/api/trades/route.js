@@ -21,7 +21,7 @@ export async function POST(req){
             response = await fetch(fetchURL, {
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                    'Authorization': authKey(apiKey, secretKey),
                 }
             });
         }

@@ -8,7 +8,7 @@ export const useFilter = () => useContext(FilterContext);
 export const FilterProvider = ({ children }) => {
     const [filter, setFilter] = useState({ 
         searchQuery: "",
-        accountType: "All", 
+        accountType: "Real", 
         accountNature: "All", 
         trackRecord: 3,
         profitability:  -100,

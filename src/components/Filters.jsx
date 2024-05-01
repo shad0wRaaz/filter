@@ -26,7 +26,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
               <SelectValue placeholder={unsavedFilter.accountType}/>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Live">Live</SelectItem>
+              <SelectItem value="Real">Real</SelectItem>
               <SelectItem value="Demo">Demo</SelectItem>
               <SelectItem value="All">All</SelectItem>
             </SelectContent>

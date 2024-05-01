@@ -24,7 +24,7 @@ export async function POST(req){
 
         const response = await fetch(fetchURL, {
             headers: {
-                'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                'Authorization': authKey(apiKey, secretKey),
             }
         });
     

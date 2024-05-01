@@ -34,7 +34,7 @@ export async function POST(req, res){
                 body: JSON.stringify(copyObject),
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                    'Authorization': authKey(apiKey, secretKey),
                 }
             });
         
@@ -44,13 +44,12 @@ export async function POST(req, res){
             const fetchURL = `${API_URL}/copiers/`;
             const response = await fetch(fetchURL, {
                 headers: {
-                    'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                    'Authorization': authKey(apiKey, secretKey),
                 }
             });
             
             const accounts = await response.json();
             return NextResponse.json(accounts);
-
         }
     }catch(err){
         return NextResponse.json({ status: 500, message: "Error in creating copier"})
@@ -64,7 +63,7 @@ export async function DELETE(req, res){
             method: 'DELETE',
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                'Authorization': authKey(apiKey, secretKey),
             }
         });
         

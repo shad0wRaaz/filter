@@ -22,7 +22,7 @@ const WatchlistPopover = () => {
         <PopoverContent className="dark:bg-slate-800 shadow-lg">
             <p className="pb-1 mb-2 border-b border-b-slate-200">Watchlist</p>
             <Separator />
-            {watchlist && watchlist.map((account, index) => 
+            {watchlist && watchlist?.map((account, index) => 
                 <WatchlistPopoverItem account={account} key={account.watchlist  } index={index}/>
                 )}
             <div className="p-2 flex justify-center"><Button variant="ghost" className="text-sm">View All</Button></div>

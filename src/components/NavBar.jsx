@@ -26,19 +26,19 @@ const Navbar = () => {
                 <DashboardIcon/>  Dashboard
               </div>
             </Link>
+            <Link href="/myaccounts" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
+              <div className="flex gap-1 items-center">
+                <AvatarIcon/> My Accounts
+              </div>
+            </Link>
             <Link href="/watchlist" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
               <div className="flex gap-1 items-center">
                 <StarIcon/> Watchlist
               </div>
             </Link>
-            <Link href="/account/add" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
-              <div className="flex gap-1 items-center">
-                <AvatarIcon/> Add Account
-              </div>
-            </Link>
           </div>
           <div className="flex gap-4">
-            <WatchlistPopover/>
+            {/* <WatchlistPopover/> */}
             <ModeToggle/>
             <DropdownMenuDemo/>
           </div>

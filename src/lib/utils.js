@@ -7,16 +7,17 @@ export function cn(...inputs) {
 
 export const API_URL = `https://${process.env.NEXT_PUBLIC_TS_API_URL}`;
 
-export const MY_API_URL = process.env.NODE_ENV == 'development' ? `http://localhost:3000/api` : 'http://localhost:3000/api';
+export const MY_API_URL = process.env.NODE_ENV == 'development' ? `http://localhost:3001` : 'http://localhost:3001';
 
 export const authKey = (apiKey, secretKey) => {
   return ('Basic ' + btoa(`${apiKey}:${secretKey}`))
 };
 
-export const currencyFormat = (value) => {
+export const currencyFormat = (value, cur) => {
+  const currencyName = cur ? cur : "USD";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD" }).format(value)
+    currency: currencyName }).format(value)
 }
 
 export const dateDifference = (olddate) => {

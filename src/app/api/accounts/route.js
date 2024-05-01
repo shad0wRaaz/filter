@@ -15,12 +15,12 @@ export async function POST(req){
         let response;
 
         if(type == "fetch"){
-            const fetchURL = accountid ? `${API_URL}/accounts/${accountid}` : `${API_URL}/accounts?limit=2`;
+            const fetchURL = accountid ? `${API_URL}/accounts/${accountid}` : `${API_URL}/accounts`;
             
             response = await fetch(fetchURL, {
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                    'Authorization': authKey(apiKey, secretKey),
                 }
             });
         }else if(type == "save"){
@@ -36,7 +36,7 @@ export async function POST(req){
                 body: JSON.stringify(fbody),
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': authKey(decryptData(apiKey), decryptData(secretKey)),
+                    'Authorization': authKey(apiKey, secretKey),
                 }
             });
         }

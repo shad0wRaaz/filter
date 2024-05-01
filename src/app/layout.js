@@ -7,10 +7,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { WatchlistProvider } from "@/contexts/WatchlistContext";
 import { cn } from "@/lib/utils";
-import { AnalysisProvider } from "@/contexts/AnalysisContext";
 import { CopyTradeProvider } from "@/contexts/CopyTradeContext";
 import { LeadFollowerProvider } from "@/contexts/LeadFollowerContext";
 import { AccountsProvider } from "@/contexts/AccountsContext";
+import { DashboardTableProvider } from "@/contexts/DashboardTableContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,15 +34,15 @@ export default function RootLayout({ children }) {
               <FilterProvider>
                 <UserProvider>
                   <WatchlistProvider>
-                    <AnalysisProvider>
-                      <AccountsProvider>
+                    <AccountsProvider>
+                      <DashboardTableProvider>
                         <LeadFollowerProvider>
                           <CopyTradeProvider>
                               {children}
                           </CopyTradeProvider>
                         </LeadFollowerProvider>
-                      </AccountsProvider>
-                    </AnalysisProvider>
+                      </DashboardTableProvider>
+                    </AccountsProvider>
                   </WatchlistProvider>
                   <Toaster/>
                 </UserProvider>
