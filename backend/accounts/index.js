@@ -12,7 +12,6 @@ export const getAccounts = async (limit, lastId) => {
         if(cachedData){ return JSON.parse(cachedData); }
 
         const fetchURL = lastId == 0 ? `${API_URL}/accounts?order=asc&limit=${limit}` : `${API_URL}/accounts?limit=${limit}&last_id=${lastId}`;
-        console.log(fetchURL)
         const response = await fetch(fetchURL,{
             headers: {
                 "Content-Type": "application/json",
@@ -54,10 +53,9 @@ export const getAccounts = async (limit, lastId) => {
                     return analysis;
                 });
                 const mergedArray = await Promise.all(clientAnalysis);
-                console.log("merged",mergedArray)
                 // get start date from deposit date
                 const depositTrade = mergedArray.map(async acc => {
-                    const fetchURL = `${API_URL}/trades?limit=5`;
+                    const fetchURL = `${API_URL}/trades/account_id=${acc.id}?limit=5`;
                     const depositDate = fetch(fetchURL, {
                         headers: {
                             "Content-Type": "application/json",
@@ -66,7 +64,6 @@ export const getAccounts = async (limit, lastId) => {
                     }).then(async res => {
                         if(res.ok){
                             const result = await res.json();
-                            console.log(result);
                             let tradeData = result?.data;
                             return ({...acc, start_date: tradeData});
                         }
@@ -75,7 +72,6 @@ export const getAccounts = async (limit, lastId) => {
                 });
                 
                 const mergedArraywithDeposit = await Promise.all(depositTrade);
-                console.log("deposit", mergedArraywithDeposit)
                 
                 returnObject = {...responseJSON, data: mergedArraywithDeposit}
 
