@@ -1,6 +1,7 @@
 
 import express  from 'express';
 import cors from 'cors';
+import cron from 'node-cron'
 import bodyParser from 'body-parser';
 import { getAccounts } from './accounts/index.js';
 import { getUserSettings, saveUserKeys } from './accounts/settings/index.js';
@@ -20,6 +21,16 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     res.send("hello")
+});
+
+cron.schedule('0 4 * * *', async() => {
+    //update account cache
+    //update analysis
+    await getAllAccounts(0);
+});
+
+cron.schedule('10 * * * *', async() => {
+    //check for change in lead account from watchlist
 });
 
 app.get('/accounts/all/:lastId', async(req,res) => {
