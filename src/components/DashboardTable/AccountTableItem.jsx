@@ -88,6 +88,19 @@ const AccountTableItem = ({ account, type }) => {
             </Link>
         </TableCell>
         <TableCell>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p>{getFirstWord(account.broker)}</p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{account.broker}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+        </TableCell>
+        <TableCell>
         <div className="flex gap-2 items-center justify-start">
           {account.trade_mode == "demo" &&
             <Badge variant="secondary" className="rounded-[5px] border border-slate-200 dark:bg-slate-600 dark:border-slate-700 shadow-sm">
@@ -198,3 +211,12 @@ const AccountTableItem = ({ account, type }) => {
 }
 
 export default AccountTableItem
+
+const getFirstWord = (str) => {
+  // Trim the string to remove leading/trailing whitespaces
+  str = str.trim();
+  // Split the string by whitespace
+  const words = str.split(/\s+/);
+  // Return the first word (index 0)
+  return words[0];
+}

@@ -1,7 +1,7 @@
+"use client";
 import React, { useEffect, useMemo, useState } from 'react'
 import { Table, TableCell, TableBody,  TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious} from "@/components/ui/pagination"
-import { Skeleton } from '../ui/skeleton'
 import { Toaster, toast } from 'sonner'
 import AccountTableItem from './AccountTableItem'
 import { useFilter } from '@/contexts/FilterContext'
@@ -10,13 +10,7 @@ import { cn, dateDifference } from '@/lib/utils'
 import { useLeadFollower } from '@/contexts/LeadFollowerContext'
 import Loader from '../Loader'
 import TablePagination from '../Pagination'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ChevronUp } from 'lucide-react'
 
 const style = {
@@ -33,7 +27,6 @@ const AccountTable = ({ data, isLoading, status, type }) => {
   const [totalPages, setTotalPages] = useState(0);
   const { leadFollower,followersOnlyArray, leadsOnlyArray} = useLeadFollower();
   const [sort, setSort] = useState({key: 'balance', order: true})
-  // console.log("unfiltered data", data)
   
   useMemo(() => {
   if(!data) return
@@ -60,14 +53,14 @@ const AccountTable = ({ data, isLoading, status, type }) => {
       );
 
       setFilteredData(filteredData)
+      const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
+      setTotalPages(totalPages);
 
     return() => {}
 }, [data, filter]);
 
 useEffect(() => {
   if(!filteredData) return;
-  const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
-  setTotalPages(totalPages);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -79,22 +72,26 @@ useEffect(() => {
 
 }, [filteredData, currentPage, itemsPerPage, sort]);
 
-const handleSort = (array, key, orderFlag) => {
-  let order = "desc";
-  if (orderFlag) { order = "asc"; }
-  const sortedArray = array.sort((a, b) => {
-    if (order === 'asc') {
-        return a[key] - b[key];
-    } else if (order === 'desc') {
-        return b[key] - a[key];
-    } else {
-        throw new Error('Invalid order. Please specify "asc" for ascending or "desc" for descending.');
-    }
-  });
-  return sortedArray
-}
+  const handleSort = (array, key, orderFlag) => {
+    let order = "desc";
+    if (orderFlag) { order = "asc"; }
+    const sortedArray = array.sort((a, b) => {
+      if (order === 'asc') {
+          return a[key] - b[key];
+      } else if (order === 'desc') {
+          return b[key] - a[key];
+      } else {
+          throw new Error('Invalid order. Please specify "asc" for ascending or "desc" for descending.');
+      }
+    });
+    return sortedArray
+  }
 
-console.log("fitlered data", tableData)
+  const changeItemsPerPage = (count) => {
+    setCurrentPage(1);
+    setItemsPerPage(count);
+  }
+
 
   return (
     <div className="p-0">
@@ -103,7 +100,8 @@ console.log("fitlered data", tableData)
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead></TableHead>
+            <TableHead>Broker</TableHead>
+            <TableHead>Types</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
                 Balance 
@@ -218,10 +216,10 @@ console.log("fitlered data", tableData)
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan="12"  className="bg-white rounded-md">
+            <TableCell colSpan="12"  className="bg-white dark:bg-transparent rounded-md">
                 {type == "dashboard" && (
                   <div className="flex justify-between items-center">
-                    <Select onValueChange={e => setItemsPerPage(e)}>
+                    {/* <Select onValueChange={e => changeItemsPerPage(e)}>
                       <SelectTrigger className="w-[210px]">
                         <SelectValue placeholder={`Showing ${itemsPerPage} records`} />
                       </SelectTrigger>
@@ -233,38 +231,61 @@ console.log("fitlered data", tableData)
                         <SelectItem value="50">Show 50 records</SelectItem>
                         <SelectItem value="100">Show 100 records</SelectItem>
                       </SelectContent>
-                    </Select>
+                    </Select> */}
                     <Pagination className="py-0">
                       <PaginationContent>
                         <PaginationItem>
-                          <PaginationPrevious className="cursor-pointer" onClick={() => setCurrentPage(cur => cur - 1)}/>
+                          <PaginationPrevious className={`cursor-pointer ${currentPage == 1 && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur - 1)}/>
                         </PaginationItem>
-                        <PaginationItem>
+                        {/* <PaginationItem>
                           <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
-                        </PaginationItem>
+                        </PaginationItem> */}
+                        {currentPage > 1 &&
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
+                          </PaginationItem>
+                        }
+                        {currentPage > 2 && 
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
+                          </PaginationItem>
+                        }
+                        {/* {currentPage > 3 && 
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
+                          </PaginationItem>
+                        } */}
+                        {currentPage > 3 && 
+                          <PaginationItem>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        }
                         <PaginationItem>
-                          <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
+                          <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
                         </PaginationItem>
+                        {currentPage < totalPages - 2 &&
+                          <PaginationItem>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        }
+                        {currentPage < totalPages - 2 &&
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
+                          </PaginationItem>
+                        }
+                        {currentPage < totalPages && 
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+                          </PaginationItem>
+                        }
                         <PaginationItem>
-                          <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                          <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                          <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                          <PaginationNext className="cursor-pointer" onClick={() => setCurrentPage(cur => cur + 1)} />
+                          <PaginationNext className={`cursor-pointer ${currentPage == totalPages && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur + 1)} />
                         </PaginationItem>
                       </PaginationContent>
                     </Pagination>
-                    <div className="w-[180px]">
+                    {/* <div className="w-[180px]">
                       Page {currentPage} of {totalPages}
-                    </div>
+                    </div> */}
                   </div>
                 )}
             </TableCell>

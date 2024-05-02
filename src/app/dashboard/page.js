@@ -16,7 +16,6 @@ import React, { useEffect, useState } from 'react'
 
 const Dashboard = ({modal}) => {
   const { user, setUser } = useUser();
-  const [limit, setLimit] = useState(20);
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
   const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
@@ -45,7 +44,7 @@ const Dashboard = ({modal}) => {
 
 
   const { data:accounts, isLoading, status: accountStatus } = useQuery({
-    queryKey: ['accounts', limit],
+    queryKey: ['accounts'],
     queryFn: async() => {
       if(user.secretKey == '' || user.apiKey ==  ''){ return null; }
       // return await fetch(`${MY_API_URL}/accounts/get/${limit}/${lastId}`)
@@ -83,6 +82,7 @@ const Dashboard = ({modal}) => {
 
   useEffect(() => {
     if(!accounts) return;
+
     setInitialData(accounts);
     setTableData(accounts);
       

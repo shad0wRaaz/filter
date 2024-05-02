@@ -1,4 +1,4 @@
-import { API_URL, authKey, clientAuthKey } from "../../utils/index.js";
+import { API_URL, authKey, clientAuthKey, processPromisesInBatchesWithDelay } from "../../utils/index.js";
 import { redisClient, connectRedis, disconnetRedis } from "../../libs/redis/redisClient.js";
 import { getUserSettings } from "../settings/index.js";
 import { decryptData } from "../../libs/security/crypt.js";
@@ -11,8 +11,8 @@ export const getAllAccounts = async (lastId) => {
         await connectRedis();
         const cacheAnalysis = await redisClient.get("accounts_all_with_analysis");
 
-        // const depositTrade = cacheAnalysis.filter(acc => acc.id == 960423).map(async acc => {
-        //     const fetchURL = `${API_URL}/trades?account_id=${acc.id}&limit=3`;
+        // const depositTrade = cacheAnalysis.map(async acc => {
+        //     const fetchURL = `${API_URL}/trades?account_id=${acc.id}&order=asc&limit=2`;
         //     const depositDate = fetch(fetchURL, {
         //         headers: {
         //             "Content-Type": "application/json",
@@ -23,13 +23,15 @@ export const getAllAccounts = async (lastId) => {
         //             const result = await res.json();
         //             console.log(result);
         //             let tradeData = result?.data;
+        //             //look out for deposit object
+        //             // tradeData = tradeData.map(trade => trade.type == "deposit")
         //             return ({...acc, start_date: tradeData});
         //         }
         //     });
         //     return depositDate;
         // });
         
-        // const mergedArraywithDeposit = await Promise.all(depositTrade);
+        // const mergedArraywithDeposit = await processPromisesInBatchesWithDelay(depositTrade, 1000, 1000);
         // console.log(mergedArraywithDeposit)
         // return mergedArraywithDeposit;
 
