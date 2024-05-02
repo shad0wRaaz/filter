@@ -4,8 +4,9 @@ import FilterSheet from '@/components/FilterSheet'
 import Navbar from '@/components/NavBar'
 import TablePagination from '@/components/Pagination'
 import { Card } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { useAccounts } from '@/contexts/AccountsContext'
-import { useAnalysis } from '@/contexts/AnalysisContext'
 import { useDashboardTable } from '@/contexts/DashboardTableContext'
 import { useLeadFollower } from '@/contexts/LeadFollowerContext'
 import { useUser } from '@/contexts/UserContext'
@@ -18,6 +19,7 @@ const Dashboard = ({modal}) => {
   const { user, setUser } = useUser();
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
+  const [watchlistOnly, setWatchlistOnly] = useState(true);
   const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
   
   //get settings data
@@ -36,7 +38,10 @@ const Dashboard = ({modal}) => {
           }
           throw res;
         })
-        .then(res => setUser({...user, secretKey: res.secretKey, apiKey: res.apiKey}))
+        .then(res => {
+          setUser({...user, secretKey: res.secretKey, apiKey: res.apiKey});
+          return res;
+        })
         .catch(err => { console.log(err)})
     },
     enabled: user.secretKey == "" || user.apiKey == ""
@@ -50,6 +55,11 @@ const Dashboard = ({modal}) => {
       // return await fetch(`${MY_API_URL}/accounts/get/${limit}/${lastId}`)
       return await fetch(`${MY_API_URL}/accounts/all/0`)
       .then(res => res.json())
+      .then(res => {
+        setInitialData(res);
+        setTableData(res);
+        return res;
+      })
     },
     enabled: user.secretKey != '' && user.apiKey != '' && user.username != ""
   });
@@ -60,6 +70,10 @@ const Dashboard = ({modal}) => {
       if(!user.username || user.username ==  ''){ return null; }
       return await fetch(`${MY_API_URL}/watchlist/${user.username}`)
                     .then(res => res.json())
+                    .then(res => {
+                      setWatchlist([...res]);
+                      return res;
+                    })
     },
   });
 
@@ -80,26 +94,6 @@ const Dashboard = ({modal}) => {
     enabled: user.secretKey != '' && user.apiKey != '' && false
   })
 
-  useEffect(() => {
-    if(!accounts) return;
-
-    setInitialData(accounts);
-    setTableData(accounts);
-      
-    return () => {
-      // clean up function
-    }
-  }, [accounts]);
-
-
-  // useEffect(() => {
-  //   if(!watchlistdata) return
-  //   setWatchlist([ ...watchlistdata ])
-      
-  //   return () => {
-  //     // clean up function
-  //   }
-  // }, [watchlistdata]);
   useEffect(() => {
     if(!copierData) return
     setLeadFollower(copierData);
@@ -127,8 +121,23 @@ const Dashboard = ({modal}) => {
       <main className="p-6">
         {modal}
         <FilterSheet/>
+        <div className="flex items-center space-x-2 justify-end mt-5 md:mt-0">
+          <Switch 
+            id="view-watchlist-only" 
+            defaultChecked={watchlistOnly} 
+            onCheckedChange={(e) => setWatchlistOnly(e)}
+          />
+          <Label htmlFor="view-watchlist-only">View Watchlist only</Label>
+        </div>
         <Card className="mt-6 dark:bg-gray-700">
-          <AccountTable data={accounts} isLoading={isLoading} status={accountStatus} type="dashboard"/>
+          <AccountTable 
+            data={accounts} 
+            isLoading={isLoading} 
+            status={accountStatus} 
+            type="dashboard" 
+            watchlist={watchlist} 
+            showWatchlist={watchlistOnly}
+          />
         </Card>
       </main>
     </>

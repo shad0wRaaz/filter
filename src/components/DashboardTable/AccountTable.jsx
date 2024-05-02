@@ -18,7 +18,7 @@ const style = {
   iconStyle: "w-4 h-4 transition-all cursor-pointer duration-500"
 }
 
-const AccountTable = ({ data, isLoading, status, type }) => {
+const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist }) => {
   const { filter } = useFilter();
   const [filteredData, setFilteredData] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -26,12 +26,17 @@ const AccountTable = ({ data, isLoading, status, type }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const { leadFollower,followersOnlyArray, leadsOnlyArray} = useLeadFollower();
-  const [sort, setSort] = useState({key: 'balance', order: true})
+  const [sort, setSort] = useState({key: 'balance', order: true});
   
   useMemo(() => {
-  if(!data) return
+    if(!data) return
 
     let filteredData = data;
+    //if watchlist is enabled filter it out
+    if(showWatchlist){
+      filteredData = filteredData.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id));
+    }
+
     if(filter.accountNature == "Lead"){
       filteredData = filteredData.filter(account => leadsOnlyArray.find(lead => lead == account.id));
     }else if(filter.accountNature == "Follower"){
@@ -57,7 +62,7 @@ const AccountTable = ({ data, isLoading, status, type }) => {
       setTotalPages(totalPages);
 
     return() => {}
-}, [data, filter]);
+}, [data, filter, showWatchlist]);
 
 useEffect(() => {
   if(!filteredData) return;
@@ -245,16 +250,11 @@ useEffect(() => {
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
                           </PaginationItem>
-                        {currentPage > 0 && currentPage < 4 && 
+                        {currentPage > 0 && currentPage < 4 && totalPages > 2 &&
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
                           </PaginationItem>
                         }
-                        {/* {currentPage > 3 && 
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
-                          </PaginationItem>
-                        } */}
                         {currentPage >= 4 && 
                           <PaginationItem>
                             <PaginationEllipsis />
@@ -265,25 +265,26 @@ useEffect(() => {
                             <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
                           </PaginationItem>
                         }
-                        {currentPage < totalPages - 2 &&
+                        {currentPage < totalPages - 2 && totalPages > 4 &&
                           <PaginationItem>
                             <PaginationEllipsis />
                           </PaginationItem>
                         }
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
-                          </PaginationItem>
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
-                          </PaginationItem>
+                        {totalPages > 4 && 
+                          <>
+                            <PaginationItem>
+                              <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
+                            </PaginationItem>
+                            <PaginationItem>
+                              <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+                            </PaginationItem>
+                          </>
+                        }
                         <PaginationItem>
                           <PaginationNext className={`cursor-pointer ${currentPage == totalPages && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur + 1)} />
                         </PaginationItem>
                       </PaginationContent>
                     </Pagination>
-                    {/* <div className="w-[180px]">
-                      Page {currentPage} of {totalPages}
-                    </div> */}
                   </div>
                 )}
             </TableCell>
