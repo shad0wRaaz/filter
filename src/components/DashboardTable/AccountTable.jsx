@@ -237,17 +237,17 @@ useEffect(() => {
                         <PaginationItem>
                           <PaginationPrevious className={`cursor-pointer ${currentPage == 1 && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur - 1)}/>
                         </PaginationItem>
-                        {/* <PaginationItem>
-                          <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
-                        </PaginationItem> */}
-                        {currentPage > 1 &&
+                        {currentPage > 0 &&
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
                           </PaginationItem>
                         }
-                        {currentPage > 2 && 
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
+                          </PaginationItem>
+                        {currentPage > 0 && currentPage < 4 && 
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
                           </PaginationItem>
                         }
                         {/* {currentPage > 3 && 
@@ -255,29 +255,27 @@ useEffect(() => {
                             <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
                           </PaginationItem>
                         } */}
-                        {currentPage > 3 && 
+                        {currentPage >= 4 && 
                           <PaginationItem>
                             <PaginationEllipsis />
                           </PaginationItem>
                         }
-                        <PaginationItem>
-                          <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
-                        </PaginationItem>
+                        {currentPage >= 4 && currentPage <= totalPages - 2 &&
+                          <PaginationItem>
+                            <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
+                          </PaginationItem>
+                        }
                         {currentPage < totalPages - 2 &&
                           <PaginationItem>
                             <PaginationEllipsis />
                           </PaginationItem>
                         }
-                        {currentPage < totalPages - 2 &&
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
                           </PaginationItem>
-                        }
-                        {currentPage < totalPages && 
                           <PaginationItem>
                             <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
                           </PaginationItem>
-                        }
                         <PaginationItem>
                           <PaginationNext className={`cursor-pointer ${currentPage == totalPages && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur + 1)} />
                         </PaginationItem>
