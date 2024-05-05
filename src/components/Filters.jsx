@@ -8,9 +8,9 @@ import { PlusCircle } from "lucide-react";
 
 const style = {
   filterBox: "p-2 flex gap-3 flex-col w-full ",
-  filterBadge: "justify-center relative rounded-[5px] bg-transparent border-dashed text-[#14B8A6] border-[#14B8A6] hover:bg-transparent flex grow md:grow-0 gap-1 py-2 justify-between hover:text-md transition-all justify-center",
+  filterBadge: "justify-center relative rounded-[5px] bg-transparent border-dashed text-[#14B8A6] border-[#14B8A6] bg-white dark:bg-teal-900 hover:bg-white flex grow md:grow-0 gap-1 py-2 justify-between hover:text-md transition-all justify-center",
   badgeIcon: "h-3 w-3",
-  input: "w-full md:w-auto h-9 text-sm !rounded-[7px]",
+  input: "w-full md:w-auto h-9 text-sm !rounded-[7px] dark:bg-slate-700",
 }
 
 const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {

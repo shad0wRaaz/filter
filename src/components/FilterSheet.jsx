@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import Filters from './Filters'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { MixerHorizontalIcon } from '@radix-ui/react-icons'
+import { MixerHorizontalIcon, SliderIcon } from '@radix-ui/react-icons'
 import { useFilter } from '@/contexts/FilterContext';
 import { toast } from 'sonner';
 
@@ -51,7 +51,7 @@ const FilterSheet = () => {
                     variant="outline" 
                     className="flex items-center justify-center gap-1 w-full md:w-auto mt-3 md:mt-0"
                     onClick={() => handleFilterReset()}>
-                    <MixerHorizontalIcon/> <span>Reset</span>
+                    <SliderIcon/> <span>Reset</span>
                 </Button>
             </div>
             <SheetContent>
