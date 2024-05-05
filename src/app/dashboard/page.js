@@ -19,7 +19,7 @@ const Dashboard = ({modal}) => {
   const { user, setUser } = useUser();
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
-  const [watchlistOnly, setWatchlistOnly] = useState(true);
+  const [watchlistOnly, setWatchlistOnly] = useState(false);
   const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
   
   //get settings data
@@ -77,42 +77,38 @@ const Dashboard = ({modal}) => {
     },
   });
 
-
   const { data:copierData, isLoading: copierLoading, status:copierStatus } = useQuery({
     queryKey: ['copiers'],
     queryFn: async() => {
-      if(user.apiKey == '' || user.secretKey == '') { return null; }
-      return await fetch(`${MY_API_URL}/copyer`, {
-        method: "POST",
-        body: JSON.stringify({
-          type: "fetch",
-          ak: user.apiKey,
-          sk: user.secretKey,
-        })
-      }).then(res => res.json())
-    },
-    enabled: user.secretKey != '' && user.apiKey != '' && false
+      return await fetch(`${MY_API_URL}/copiers`)
+                    .then(res => res.json())
+    }
   })
 
+console.log("copier", copierData)
   useEffect(() => {
+    return
     if(!copierData) return
     setLeadFollower(copierData);
     let leadsOnly = [], followersOnly = [];
 
-    if(copierData.data.length > 0){
-      leadsOnly =  copierData.data.map(acc => acc.lead_id);
+    if(copierData.length > 0){
+      leadsOnly =  copierData.map(acc => acc.lead_id);
       leadsOnly = new Set(leadsOnly);
       var leadArray = Array.from(leadsOnly);
       
-      followersOnly = copierData.data.map(acc => acc.follower_id);
+      followersOnly = copierData.map(acc => acc.follower_id);
       setLeadsOnlyArray(leadArray);
+      localStorage.set("leads", JSON.stringify(leadArray));
       setFollowersOnlyArray(followersOnly);
+      localStorage.set("followers", JSON.stringify(followersOnly));
     }
       
     return () => {
       // clean up function
     }
   }, [copierData]);
+
   return (
     <>
       <header>
