@@ -1,32 +1,44 @@
 import { API_URL, authKey } from "../../utils/index.js";
 import { redisClient, connectRedis, disconnetRedis } from "../../libs/redis/redisClient.js";
-import { decryptData } from "../../libs/security/crypt.js";
-import { getUserSettings } from "../../accounts/settings/index.js";
 
 const CACHE_DURATION = 600; 
 
-export const getLeadFollowerArray = async() => {
-    // let lastId = 0;
-    // let copiers = [];
-    // while(lastId != null){
-    //     const fetchURL = lastId == 0 ? `${API_URL}/copiers` : `${API_URL}/copiers?&last_id=${lastId}`;
-    //     const response = await fetch(`${API_URL}/copiers/`,{
-    //         method: 'GET',
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Authorization': authKey,
-    //         }
-    //     })
-    //     const responseJSON = await response.json();
-    //     if(responseJSON.result == "success" && responseJSON.data.length > 0){
-    //         copiers = [...copiers, ...responseJSON.data]
-    //         console.log("Fetching after Id ", responseJSON.meta.last_id);
-    //         lastId = responseJSON.meta.last_id;
-    //     }else{
-    //         lastId = null;
-    //     }
-    // }
-    // return copiers;
+export const getAllCopiers = async() => {
+
+    try{
+        await connectRedis();
+        //feed from cache if present
+        const cachedCopiers = await redisClient.get("accounts_all_copiers");
+        if(cachedCopiers) { return JSON.parse(cachedCopiers); }
+        
+        const cachedAccounts = JSON.parse(await redisClient.get("accounts_all_with_analysis"));
+        if(!cachedAccounts) return [];
+
+        let copiers = [];
+        let last_id = 0;
+        while(last_id != null){
+            const fetchURL = last_id == 0 ? `${API_URL}/copiers` : `${API_URL}/copiers?last_id=${last_id}`;
+            const partialCopiers = await fetch(fetchURL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authKey,
+                }
+            }).then(res => res.json());
+            
+            copiers = [...copiers, ...partialCopiers.data]
+            
+            last_id = partialCopiers.meta.last_id;
+            
+            console.log("fetching from: ", partialCopiers.meta.last_id);
+        }
+        await connectRedis();
+        await redisClient.set("accounts_all_copiers", JSON.stringify(copiers));
+        await disconnetRedis();
+        return copiers;
+    }catch(err){
+        await disconnetRedis();
+        return [];
+    }
 }
 
 export const saveCopier = async(username) => {

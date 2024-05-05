@@ -1,7 +1,6 @@
-import { API_URL, authKey, clientAuthKey, processPromisesInBatchesWithDelay } from "../../utils/index.js";
+import { API_URL, authKey } from "../../utils/index.js";
 import { redisClient, connectRedis, disconnetRedis } from "../../libs/redis/redisClient.js";
-import { getUserSettings } from "../settings/index.js";
-import { decryptData } from "../../libs/security/crypt.js";
+import { getAllCopiers } from "../copiers/index.js";
 
 
 export const getAllAccounts = async (lastId) => {
@@ -9,37 +8,29 @@ export const getAllAccounts = async (lastId) => {
 
     try{
         await connectRedis();
-        const cacheAnalysis = await redisClient.get("accounts_all_with_analysis");
-
-        // const depositTrade = cacheAnalysis.map(async acc => {
-        //     const fetchURL = `${API_URL}/trades?account_id=${acc.id}&order=asc&limit=2`;
-        //     const depositDate = fetch(fetchURL, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             'Authorization': authKey,
-        //         }
-        //     }).then(async res => {
-        //         if(res.ok){
-        //             const result = await res.json();
-        //             console.log(result);
-        //             let tradeData = result?.data;
-        //             //look out for deposit object
-        //             // tradeData = tradeData.map(trade => trade.type == "deposit")
-        //             return ({...acc, start_date: tradeData});
-        //         }
-        //     });
-        //     return depositDate;
-        // });
+        const cachedDataWithAnalysisCopier = await redisClient.get("accounts_with_analysis_copier");
+        if(cachedDataWithAnalysisCopier) { return JSON.parse(cachedDataWithAnalysisCopier); }
         
-        // const mergedArraywithDeposit = await processPromisesInBatchesWithDelay(depositTrade, 1000, 1000);
-        // console.log(mergedArraywithDeposit)
-        // return mergedArraywithDeposit;
+        const cacheAnalysis = await redisClient.get("accounts_all_with_analysis");
+        const parsedCache = JSON.parse(cacheAnalysis);
 
+        
+        const copiers = await getAllCopiers();
+        const accountsWithLF = parsedCache.map(acc => {
+            if(copiers.some(copyObj => copyObj.lead_id == acc.id)){
+                return ({...acc, copierStatus: "Lead"});
+            }else if(copiers.some(copyObj => copyObj.follower_id == acc.id)){
+                return ({...acc, copierStatus: "Follower"});
+            }else{
+                return ({...acc, copierStatus: "Standalone"});
+            }
+        });
 
+        await redisClient.set("accounts_with_analysis_copier", JSON.stringify(accountsWithLF), { EX: 6000, NX: true});
+        return accountsWithLF;
 
-        if(cacheAnalysis) { return JSON.parse(cacheAnalysis); }
-        // const cachedData = await redisClient.get(`accounts_all`);
-        // if(cachedData){ return JSON.parse(cachedData); }
+        if(cacheAnalysis) { return parsedCache; }
+
         let accounts = [];
         const cachedData = await redisClient.get("accounts_raw");
         if(!cachedData){

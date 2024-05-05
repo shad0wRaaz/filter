@@ -11,7 +11,7 @@ import { getBrokerServers, getBrokers } from './brokers/index.js';
 import { getWatchlist, saveWatchlist } from './watchlist/index.js';
 import { getAllAccounts } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
-import { getLeadFollowerArray } from './accounts/copiers/index.js';
+import { getAllCopiers } from './accounts/copiers/index.js';
 
 const PORT = 3001;
 
@@ -39,8 +39,10 @@ app.get('/accounts/all/:lastId', async(req,res) => {
     return res.send(result);
 });
 
-app.get('/accounts/all/copiers/leadfollower', async(req, res) => {
-    const result = await getLeadFollowerArray();
+app.get('/copiers', async(req, res) => {
+    console.log('im called');
+
+    const result = await getAllCopiers();
     return res.send(result);
 })
 
