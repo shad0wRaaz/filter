@@ -8,7 +8,7 @@ const Loader = () => {
                 <defs>
                 <filter id="shadow">
                     <feDropShadow dx="0" dy="0" stdDeviation="1.5" 
-                    flood-color="#fc6767"/>
+                    floodColor="#fc6767"/>
                 </filter>
                 </defs>
                 <circle id="spinner" style={{fill:"transparent", stroke:"#dd2476", strokeWidth: "7px", strokeLinecap: "round"}} cx="50" cy="50" r="45" height="20px" weight="20px"/>
