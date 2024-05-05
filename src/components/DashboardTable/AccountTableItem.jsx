@@ -1,10 +1,7 @@
 import React from 'react'
 import { TableCell, TableRow } from '../ui/table'
-import Watchlist from '../Watchlist'
 import { useUser } from '@/contexts/UserContext'
 import { Badge } from '../ui/badge'
-import { useAnalysis } from '@/contexts/AnalysisContext'
-import { Button } from '../ui/button'
 import { MY_API_URL, currencyFormat, timeAgo } from '@/lib/utils'
 import ContextMenu from './ContextMenu'
 import { useWatchlist } from '@/contexts/WatchlistContext'
@@ -113,16 +110,11 @@ const AccountTableItem = ({ account, type }) => {
           <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
             MT{account.mt_version}
           </Badge>
-          {leadsOnlyArray.length > 0 && leadsOnlyArray.find(acc => acc == account.id) && (
+          {account.copierStatus && 
             <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
-              Lead
+              {String(account.copierStatus).charAt(0)}
             </Badge>
-          )}
-          {followersOnlyArray.find(acc => acc == account.id) && (
-            <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
-              Follower
-            </Badge>
-          )}
+          }
         </div>
         </TableCell>
         <TableCell>{ currencyFormat(account.balance, account.currency)}</TableCell>

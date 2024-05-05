@@ -9,8 +9,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn, dateDifference } from '@/lib/utils'
 import { useLeadFollower } from '@/contexts/LeadFollowerContext'
 import Loader from '../Loader'
-import TablePagination from '../Pagination'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ChevronUp } from 'lucide-react'
 
 const style = {
@@ -37,16 +35,17 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
       filteredData = filteredData.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id));
     }
 
-    if(filter.accountNature == "Lead"){
-      filteredData = filteredData.filter(account => leadsOnlyArray.find(lead => lead == account.id));
-    }else if(filter.accountNature == "Follower"){
-      filteredData = filteredData.filter(account => followersOnlyArray.find(follower => follower == account.id));
-    }else if(filter.accountNature == "Standalone"){
-      filteredData = filteredData.filter(account => !followersOnlyArray.find(follower => follower == account.id) && !leadsOnlyArray.find(lead => lead == account.id));
-    }
+    // if(filter.accountNature == "Lead"){
+    //   filteredData = filteredData.filter(account => leadsOnlyArray.find(lead => lead == account.id));
+    // }else if(filter.accountNature == "Follower"){
+    //   filteredData = filteredData.filter(account => followersOnlyArray.find(follower => follower == account.id));
+    // }else if(filter.accountNature == "Standalone"){
+    //   filteredData = filteredData.filter(account => !followersOnlyArray.find(follower => follower == account.id) && !leadsOnlyArray.find(lead => lead == account.id));
+    // }
     
     filteredData = filteredData?.filter(account => 
-        (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 )&&
+        (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
+        (account.copierStatus == filter.accountNature || filter.accountNature == "All") && 
         Number(account.growth) >= Number(filter.profitability) &&
         (String(account.trade_mode).toLowerCase() == String(filter.accountType).toLowerCase() || String(filter.accountType).toLowerCase() == "all") &&
         Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio < filter.maxWinRatio) &&
@@ -75,7 +74,14 @@ useEffect(() => {
 
   return() => {}
 
-}, [filteredData, currentPage, itemsPerPage, sort]);
+}, [filteredData, currentPage, itemsPerPage, sort, showWatchlist, filter]);
+
+useEffect(() =>{
+  if(!watchlist) return;
+  setCurrentPage(1);
+
+  return() => {}
+}, [showWatchlist])
 
   const handleSort = (array, key, orderFlag) => {
     let order = "desc";
@@ -103,8 +109,8 @@ useEffect(() => {
       <Toaster/>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
+          <TableRow className="bg-slate-200 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-900">
+            <TableHead className="rounded-tl-md">Name</TableHead>
             <TableHead>Broker</TableHead>
             <TableHead>Types</TableHead>
             <TableHead>
@@ -190,7 +196,7 @@ useEffect(() => {
               </div>
             </TableHead>
             <TableHead></TableHead>
-            <TableHead></TableHead>
+            <TableHead className="rounded-tr-md"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
