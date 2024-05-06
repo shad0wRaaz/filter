@@ -10,7 +10,7 @@ export const FilterProvider = ({ children }) => {
         searchQuery: "",
         accountType: "Real", 
         accountNature: "All", 
-        trackRecord: 3,
+        trackRecord: 6,
         profitability:  -100,
         minWinRatio: 0,
         maxWinRatio: 100,
