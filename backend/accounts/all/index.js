@@ -5,16 +5,17 @@ import { getAllCopiers } from "../copiers/index.js";
 
 export const getAllAccounts = async (lastId) => {
     let returnObject = "";
-
+    
     try{
         await connectRedis();
         const cachedDataWithAnalysisCopier = await redisClient.get("accounts_with_analysis_copier");
+
         if(cachedDataWithAnalysisCopier) { return JSON.parse(cachedDataWithAnalysisCopier); }
         
         const cacheAnalysis = await redisClient.get("accounts_all_with_analysis");
         const parsedCache = JSON.parse(cacheAnalysis);
 
-        
+        console.log("no data with copier flag")
         const copiers = await getAllCopiers();
         const accountsWithLF = parsedCache.map(acc => {
             if(copiers.some(copyObj => copyObj.lead_id == acc.id)){
@@ -27,6 +28,7 @@ export const getAllAccounts = async (lastId) => {
         });
 
         await redisClient.set("accounts_with_analysis_copier", JSON.stringify(accountsWithLF), { EX: 6000, NX: true});
+        disconnetRedis();
         return accountsWithLF;
 
         if(cacheAnalysis) { return parsedCache; }
@@ -201,4 +203,62 @@ export const getAllAccounts = async (lastId) => {
         await disconnetRedis();
     }
     return returnObject;
+}
+
+export const getAccount = async(accountId) => {
+    try{
+        await connectRedis();
+        const cachedData = await redisClient.get("accounts_with_analysis_copier");
+        if(cachedData) {
+            //find the account from the cached data
+            const allAccounts = JSON.parse(cachedData);
+            // console.log(allAccounts)
+            let requiredAccount = [];
+            requiredAccount = allAccounts.filter(acc => acc.id == accountId);
+            await disconnetRedis();
+            return requiredAccount.length > 0 ? requiredAccount[0] : '';
+        }else{
+            await disconnetRedis();
+            return null;
+        }
+    }catch(err){
+        await disconnetRedis();
+    }
+}
+export const getLead = async(accountId) => {
+    try{
+        await connectRedis();
+        const cachedFollowers = await redisClient.get("followers");
+        if(cachedFollowers){ return JSON.parse(cachedFollowers); }
+
+        const cachedData = await redisClient.get("accounts_all_copiers");
+        if(!cachedData) return [];
+
+        const parsedCacheData = JSON.parse(cachedData);
+
+        const copier = parsedCacheData.filter(acc => acc.follower_id == accountId);
+        return copier;
+    }catch(err){
+        await disconnetRedis();
+    }
+
+}
+
+export const getFollowers = async(accountId) => {
+    try{
+        await connectRedis();
+        const cachedFollowers = await redisClient.get("followers");
+        if(cachedFollowers){ return JSON.parse(cachedFollowers); }
+
+        const cachedData = await redisClient.get("accounts_all_copiers");
+        if(!cachedData) return [];
+
+        const parsedCacheData = JSON.parse(cachedData);
+
+        const followers = parsedCacheData.filter(acc => acc.lead_id == accountId);
+        return followers;
+    }catch(err){
+        await disconnetRedis();
+    }
+
 }

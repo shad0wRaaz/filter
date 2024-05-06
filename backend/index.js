@@ -9,7 +9,7 @@ import { getAnalysis } from './accounts/analysis/index.js';
 import { getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
 import { getBrokerServers, getBrokers } from './brokers/index.js';
 import { getWatchlist, saveWatchlist } from './watchlist/index.js';
-import { getAllAccounts } from './accounts/all/index.js';
+import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
 
@@ -40,8 +40,6 @@ app.get('/accounts/all/:lastId', async(req,res) => {
 });
 
 app.get('/copiers', async(req, res) => {
-    console.log('im called');
-
     const result = await getAllCopiers();
     return res.send(result);
 })
@@ -57,6 +55,24 @@ app.get('/accounts/client/get/:username/:limit', async(req, res) => {
     const limit = req.params.limit;
     return res.send(await getClientAccounts(username, limit));
 });
+
+app.get('/portfolio/:id', async(req, res) => {
+    //this data is fetched from cache, contains all account data with analysis and copier status
+    const clientdata = await getAccount(req.params.id);
+    return res.send(clientdata);
+});
+
+app.get('/accounts/lead/:id', async(req, res) => {
+    //get the lead of the account id
+    const leadData = await getLead(req.params.id);
+    return res.send(leadData);
+});
+
+app.get('/accounts/followers/:id', async(req, res) => {
+    //get all followers of the account id
+    const followersData = await getFollowers(req.params.id);
+    return res.send(followersData);
+})
 
 app.post('/accounts/client/copy', async(req, res) => {
     const result = await saveCopier("admin");
