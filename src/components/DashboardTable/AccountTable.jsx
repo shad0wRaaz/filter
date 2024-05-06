@@ -12,11 +12,12 @@ import Loader from '../Loader'
 import { ChevronUp } from 'lucide-react'
 
 const style = {
-  headerStyle: "flex justify-between items-center",
+  headerStyle: "flex justify-between items-center cursor-pointer",
   iconStyle: "w-4 h-4 transition-all cursor-pointer duration-500"
 }
 
 const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist }) => {
+
   const { filter } = useFilter();
   const [filteredData, setFilteredData] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -115,27 +116,27 @@ useEffect(() =>{
             <TableHead>Types</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                Balance 
+                <span onClick={() => setSort({key: "balance", order: !sort.order})}>Balance</span>
                 <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "balance" && sort.order && " rotate-180")} 
+                  className={cn(style.iconStyle, sort.key == "balance" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "balance", order: !sort.order})} 
                 />
               </div>
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                Growth 
+                <span onClick={() => setSort({key: "growth", order: !sort.order})} >Growth</span> 
                 <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "growth" && sort.order && " rotate-180")} 
+                  className={cn(style.iconStyle, sort.key == "growth" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "growth", order: !sort.order})}
                 />
               </div>
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                Win Ratio 
+                <span onClick={() => setSort({key: "win_ratio", order: !sort.order})} >Win Ratio </span>
                 <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "win_ratio" && sort.order && " rotate-180")} 
+                  className={cn(style.iconStyle, sort.key == "win_ratio" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "win_ratio", order: !sort.order})} 
                 />
               </div>
@@ -145,9 +146,9 @@ useEffect(() =>{
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className={style.headerStyle}>
-                      RRR 
+                      <span onClick={() => setSort({key: "risk_reward_ratio_avg", order: !sort.order})}>RRR</span>
                       <ChevronUp 
-                        className={cn(style.iconStyle, sort.key == "risk_reward_ratio_avg" && sort.order && " rotate-180")} 
+                        className={cn(style.iconStyle, sort.key == "risk_reward_ratio_avg" && !sort.order && " rotate-180")} 
                         onClick={() => setSort({key: "risk_reward_ratio_avg", order: !sort.order})}
                       />
                     </div>
@@ -163,9 +164,9 @@ useEffect(() =>{
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className={style.headerStyle}>
-                        RRR 
+                        <span onClick={() => setSort({key: "risk_reward_ratio_worst", order: !sort.order})}>RRR</span>
                         <ChevronUp 
-                          className={cn(style.iconStyle, sort.key == "risk_reward_ratio_worst" && sort.order && " rotate-180")} 
+                          className={cn(style.iconStyle, sort.key == "risk_reward_ratio_worst" && !sort.order && " rotate-180")} 
                           onClick={() => setSort({key: "risk_reward_ratio_worst", order: !sort.order})}
                         />
                       </div>
@@ -178,9 +179,9 @@ useEffect(() =>{
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                Drawdown % 
+                <span onClick={() => setSort({key: "drawdown", order: !sort.order})} >Drawdown % </span>
                 <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "drawdown" && sort.order && " rotate-180")} 
+                  className={cn(style.iconStyle, sort.key == "drawdown" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "drawdown", order: !sort.order})} 
                 />
               </div>
@@ -188,9 +189,9 @@ useEffect(() =>{
             <TableHead>Start Date</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                Total Profit 
+                <span onClick={() => setSort({key: "total_profit", order: !sort.order})}>Total Profit</span>
                 <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "total_profit" && sort.order && " rotate-180")} 
+                  className={cn(style.iconStyle, sort.key == "total_profit" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "total_profit", order: !sort.order})} 
                 />
               </div>
