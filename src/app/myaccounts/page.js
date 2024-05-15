@@ -33,6 +33,7 @@ const page = ({modal}) => {
             .catch(err => { console.log(err)})
         },
     });
+    console.log(data)
     const{data:watchlistdata, status: watchliststatus} = useQuery({
       queryKey: ['watchlist'],
       queryFn: async() => {
@@ -56,12 +57,19 @@ const page = ({modal}) => {
           <Navbar/>
       </header>
       <main className="p-6">
+        <div className="text-xl font-bold p-4 pl-0">
+          My Accounts
+        </div>
         {modal}
         <FilterSheet/>
         <Button className="mt-6 -mb-2" onClick={() => router.push('/myaccounts/add')}>
             <AddIcon className="mr-1" /> Add Account</Button>
         <Card className="mt-6 dark:bg-gray-700">
-            <AccountTable data={data?.data} isLoading={isLoading} status={status} type="myaccounts"/>
+            <AccountTable 
+              data={data?.data} 
+              isLoading={isLoading} 
+              status={status} 
+              type="myaccounts"/>
         </Card>
       </main>
     </>

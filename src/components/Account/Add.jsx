@@ -8,8 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import { MY_API_URL } from '@/lib/utils';
 import { useUser } from '@/contexts/UserContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '../ui/skeleton';
-import { toast } from 'sonner'
+import { Toaster, toast } from 'sonner'
+import { BrokerCombo } from './BrokerCombo';
+
 
 const AddAccountComponent = () => {
     const {user} = useUser();
@@ -20,17 +21,17 @@ const AddAccountComponent = () => {
     const [selectedServer, setSelectedServer] = useState(null);
     const [serverList, setServerList] = useState(null);
     const [mtversion, setMtversion] = useState('4');
-    const [showPassword, setShowPassword] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
     const [cacheBrokersFour, setCacheBrokersFour] = useState();
     const [cacheBrokersFive, setCacheBrokersFive] = useState();
 
 
-    useEffect(() => {
-        setCacheBrokersFour(localStorage.getItem(`brokers_4`));
-        setCacheBrokersFive(localStorage.getItem(`brokers_5`));
+    // useEffect(() => {
+    //     setCacheBrokersFour(localStorage.getItem(`brokers_4`));
+    //     setCacheBrokersFive(localStorage.getItem(`brokers_5`));
 
-        return () => {}
-    }, []);
+    //     return () => {}
+    // }, []);
 
     const { data: brokers, isLoading: brokerLoading, status: brokerStatus } = useQuery({
         queryKey: ['brokers', mtversion],
@@ -41,7 +42,7 @@ const AddAccountComponent = () => {
         },
         enabled: !cacheBrokersFour || !cacheBrokersFive
       });
-console.log(brokers);
+
       useEffect(() => {
         if(!brokers) return;
             localStorage.setItem(`brokers_${mtversion}`, JSON.stringify(brokers));
@@ -54,6 +55,7 @@ console.log(brokers);
 
     const handleSubmit = async(e) => {
         e.preventDefault();
+
         if(!selectedServer) { console.log("Server not selected."); return}
 
         const copyObject = {
@@ -73,11 +75,23 @@ console.log(brokers);
             }
         });
         const result = await response.json();
-        console.log(result)
-        if(response.result == "success"){
-            toast("Account Added", { description: `${account.client_name} has been added.`})
+        console.log(result) 
+        if(result.result == "success"){
+            toast.success("Account Added", { description: `${e.target.accountname.value} has been added.`})
+            clearData(e);
         }
     }
+    const clearData = (e) => {
+        e.target.accountname.value = "";
+        e.target.accountId.value = "";
+        e.target.password.value = "";
+        setMtversion(4);
+        setSelectedBroker(null);
+        setSelectedServer(null);
+    }
+    // !2CvNmPa
+    // 5025467609
+    // Meta Quotes Demoo
 
     const updateBrokerServerList = async(brokerNamewithArray) => {
         const brokerString = String(brokerNamewithArray).split(",");
@@ -95,6 +109,7 @@ console.log(brokers);
 
     return (
         <div className="max-w-lg m-auto py-6">
+            <Toaster />
             <p className="p-6 pl-0 text-xl font-bold">Add Account</p>
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-5">
@@ -148,6 +163,9 @@ console.log(brokers);
                                 ))}
                             </SelectContent>
                         </Select>
+                    </div>
+                    <div>
+                        {/* <BrokerCombo brokers={brokers} mtversion={mtversion}/> */}
                     </div>
                     <div className="flex gap-1 flex-col">
                         <Label>Broker Server</Label>

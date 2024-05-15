@@ -20,7 +20,6 @@ const Dashboard = ({modal}) => {
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
   const [watchlistOnly, setWatchlistOnly] = useState(false);
-  const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
   
   //get settings data
   const { data:settings, status:settingsStatus } = useQuery({
@@ -85,30 +84,6 @@ const Dashboard = ({modal}) => {
     }
   })
 
-console.log("copier", copierData)
-  useEffect(() => {
-    return
-    if(!copierData) return
-    setLeadFollower(copierData);
-    let leadsOnly = [], followersOnly = [];
-
-    if(copierData.length > 0){
-      leadsOnly =  copierData.map(acc => acc.lead_id);
-      leadsOnly = new Set(leadsOnly);
-      var leadArray = Array.from(leadsOnly);
-      
-      followersOnly = copierData.map(acc => acc.follower_id);
-      setLeadsOnlyArray(leadArray);
-      localStorage.set("leads", JSON.stringify(leadArray));
-      setFollowersOnlyArray(followersOnly);
-      localStorage.set("followers", JSON.stringify(followersOnly));
-    }
-      
-    return () => {
-      // clean up function
-    }
-  }, [copierData]);
-
   return (
     <>
       <header>
@@ -116,15 +91,7 @@ console.log("copier", copierData)
       </header>
       <main className="p-6">
         {modal}
-        <FilterSheet/>
-        <div className="flex items-center space-x-2 justify-end mt-5 md:mt-0">
-          <Switch 
-            id="view-watchlist-only" 
-            defaultChecked={watchlistOnly} 
-            onCheckedChange={(e) => setWatchlistOnly(e)}
-          />
-          <Label htmlFor="view-watchlist-only">View Watchlist only</Label>
-        </div>
+        <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} />
         <Card className="mt-6 dark:bg-gray-700">
           <AccountTable 
             data={accounts} 

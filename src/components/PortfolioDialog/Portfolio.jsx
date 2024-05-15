@@ -1,29 +1,31 @@
 "use client";
-import { Button } from "@/components/ui/button"
-import { EyeOpenIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import { MY_API_URL, cn, currencyFormat } from "@/lib/utils";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "@/contexts/UserContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FollowerIcon, LeadIcon } from "@/components/icons/CustomIcons";
 import Loader from "../Loader";
 import { useWatchlist } from "@/contexts/WatchlistContext";
-import { UserIcon } from "lucide-react";
+import Trades from "../Portfolio/Trades";
+import DailyChart from "../Portfolio/DailyChart";
+import RunningChart from "../Portfolio/RunningChart";
+import MonthlyChart from "../Portfolio/MonthlyChart";
+import { EyeIcon, UserIcon } from "lucide-react";
+import AssetDistribution from "../Portfolio/AssetDistribution";
+import Link from "next/link";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const PortfolioDialog = ({accountId}) => {
-  const {user} = useUser();
+
   const { watchlist, setWatchlist } = useWatchlist();
 
 
   const { data:account, isLoading:accountLoading, status: accountStatus } = useQuery({
-    queryKey: ['account', accountId],
+    queryKey: ['accountData', accountId],
     queryFn: async() => {
       return await fetch(`${MY_API_URL}/portfolio/${accountId}`).then(res => res.json());
     },
-    enabled: Boolean(accountId)
   });
+
   const {data:followers} = useQuery({
     queryKey: ['followersData'],
     queryFn: async() => {
@@ -38,315 +40,187 @@ const PortfolioDialog = ({accountId}) => {
     },
     enabled: Boolean(accountId) 
   });
-  console.log(lead)
-  
   const isWatchlist = watchlist?.filter(acc => acc.watchlist == accountId)?.length > 0 ? true : false;
-
-
-
-  const { data:trades, isLoading:tradesLoading, status: tradeStatus } = useQuery({
-    queryKey: ['trades', accountId],
-    queryFn: async() => {
-      return await fetch(`${MY_API_URL}/trades`, {
-        method: "POST",
-        body: JSON.stringify({ 
-          ak: user.apiKey,
-          sk: user.secretKey,
-          ai: accountId,
-          type: "fetch"
-        })
-      }).then(res => res.json());
-    },
-    enabled: user.secretKey != '' && user.apiKey != '' && Boolean(accountId) && false
-  });
 
   return (
     <>
-        {!followers || !account ? <div className="flex h-[100%] w-[100%] items-center justify-center"><Loader/></div> : (
-            <div className="min-w-[90%] min-h-[90%]">
-                <p className="text-2xl font-bold mb-2">
-                    {account?.client_name ? account?.client_name : account?.account_number}
-                </p>
-        
-                <div className={`flex items-center justify-between`}>
-                    <div className="flex items-center justify-start gap-2">
-                        <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">MetaTrader {account?.mt_version}</Badge>
-                        <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">{account?.copierStatus}</Badge>
+        {(!followers || !account)  
+            ? <div className="flex h-[90%] w-[100%] items-center justify-center"><Loader/></div> 
+            : (
+                <div className="min-w-[90%] max-h-[90%]">
+                    <p className="text-2xl font-bold mb-2">
+                        {account?.client_name ? account?.client_name : account?.account_number}
+                    </p>
+            
+                    <div className={`flex items-center justify-between`}>
+                        <div className="flex items-center justify-start gap-2">
+                            <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">MetaTrader {account?.mt_version}</Badge>
+                            <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">{account?.copierStatus}</Badge>
+                        </div>
+                        {isWatchlist && <div className="w-auto"><Badge className="rounded-[5px] bg-yellow-500 w-auto">In Watchlist</Badge></div>}
+                        {/* <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <Button variant="outline" className="focus:outline-0 focus:border-0 focus:ring-0">Copier</Button></DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem className="flex gap-1"><LeadIcon className="mr-3"/> Make Lead</DropdownMenuItem>
+                                <DropdownMenuItem className="flex gap-1"><FollowerIcon className="mr-3"/> Make Follower</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu> */}
                     </div>
-                    {isWatchlist && <div className="w-auto"><Badge className="rounded-[5px] bg-yellow-500 w-auto">In Watchlist</Badge></div>}
-                    {/* <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <Button variant="outline" className="focus:outline-0 focus:border-0 focus:ring-0">Copier</Button></DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem className="flex gap-1"><LeadIcon className="mr-3"/> Make Lead</DropdownMenuItem>
-                            <DropdownMenuItem className="flex gap-1"><FollowerIcon className="mr-3"/> Make Follower</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu> */}
-                </div>
-        
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    Balance
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{currencyFormat(account?.balance, account?.currency)}</span>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    Growth
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{currencyFormat(account?.growth)}</span>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    Win Ratio
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{account?.total_trades != 0 && account?.total_trades_won != 0 ? Number(account?.total_trades_won / account?.total_trades * 100).toFixed(2) : 0}</span>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    RRR <span className="text-xs">(Average Loss)</span>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{account?.average_loss != 0 ? Number(account?.average_win / Math.abs(account?.average_loss)).toFixed(2) : 0}</span>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    RRR <span className="text-xs">(Worst loss)</span>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{account?.worst_trade != 0 ? Number(account?.average_win / Math.abs(account?.worst_trade)).toFixed(2) : 0}</span>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-md font-normal">
-                                    Drawdown
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <span className="font-bold text-lg">{account?.drawdown ? Number(account?.drawdown).toFixed(2) : 0 }%</span>
-                            </CardContent>
-                        </Card>
-                        {account.copierStatus == "Lead" && (
+            
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-6">
                             <Card>
                                 <CardHeader className="pb-1">
                                     <CardTitle className="text-md font-normal">
-                                        Followers
+                                        Balance
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <span className="font-bold text-lg">{followers ? followers.length : 0}</span>
+                                    <span className="font-bold text-lg">{currencyFormat(account?.balance, account?.currency)}</span>
                                 </CardContent>
                             </Card>
-                        )}
-                    </div>
-                </div>
-                <div className="text-lg font-bold">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-                        <Card className="col-span-1 lg:col-span-2">
-                            <CardHeader>
-                            Performance Chart
-                            </CardHeader>
-                        </Card>
-                        <Card className={`col-span-1 ${account.copierStatus == "Standalone" ? " lg:col-span-2" : ""}`}>
-                            <CardHeader>
-                                Asset Distribution
-                        </CardHeader>
-                        </Card>
-                        {account.copierStatus == "Lead" && (
                             <Card>
                                 <CardHeader className="pb-1">
-                                    Followers
-                                </CardHeader>
-                                <CardContent className="space-y-1">
-                                    {followers && followers?.map(copier => 
-                                        <div key={copier.follower_id} className="text-base font-normal flex gap-1 items-center"><UserIcon className="h-4 w-4"/> {copier.follower_id}</div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        )}
-                        {account.copierStatus == "Follower" && lead?.length > 0 && (
-                            <Card>
-                                <CardHeader className="pb-1">
-                                    Following
+                                    <CardTitle className="text-md font-normal">
+                                        Growth
+                                    </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-base font-normal flex gap-1"><UserIcon className="h-5 w-5"/> {lead[0].lead_id}</div>
+                                    <span className="font-bold text-lg">{Number(account?.growth).toFixed(2)}%</span>
                                 </CardContent>
                             </Card>
-                        )}
+                            <Card>
+                                <CardHeader className="pb-1">
+                                    <CardTitle className="text-md font-normal">
+                                        Win Ratio
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <span className="font-bold text-lg">{account?.total_trades != 0 && account?.total_trades_won != 0 ? Number(account?.total_trades_won / account?.total_trades * 100).toFixed(2) : 0}</span>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="pb-1">
+                                    <CardTitle className="text-md font-normal">
+                                        RRR <span className="text-xs">(Average Loss)</span>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <span className="font-bold text-lg">{account?.average_loss != 0 ? Number(account?.average_win / Math.abs(account?.average_loss)).toFixed(2) : 0}</span>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="pb-1">
+                                    <CardTitle className="text-md font-normal">
+                                        RRR <span className="text-xs">(Worst loss)</span>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <span className="font-bold text-lg">{account?.worst_trade != 0 ? Number(account?.average_win / Math.abs(account?.worst_trade)).toFixed(2) : 0}</span>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="pb-1">
+                                    <CardTitle className="text-md font-normal">
+                                        Drawdown
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <span className="font-bold text-lg">{account?.drawdown ? Number(account?.drawdown).toFixed(2) : 0 }%</span>
+                                </CardContent>
+                            </Card>
+                            {account.copierStatus == "Lead" && (
+                                <Card>
+                                    <CardHeader className="pb-1">
+                                        <CardTitle className="text-md font-normal">
+                                            Followers
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className="w-full">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="font-bold text-lg">{followers ? followers.length : 0}</div>
+                                                    <div className="bg-slate-100 p-1 rounded-md border text-slate-500">
+                                                        <EyeIcon className="h-5 w-5"/>
+                                                    </div>
+                                                </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuLabel>List of Followers</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                {followers?.map(f => 
+                                                    <DropdownMenuItem key={f.id}>
+                                                        <div className="flex gap-2">
+                                                            <UserIcon className="h-5 w-5"/>
+                                                            <span>{f.id}</span>
+                                                        </div>
+                                                    </DropdownMenuItem>
+                                                )}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </CardContent>
+                                </Card>
+                            )}
+                            {account.copierStatus == "Follower" && lead?.length > 0 && (
+                                <Card>
+                                    <CardHeader className="pb-1">
+                                        <CardTitle className="text-md font-normal">
+                                            Following
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Link href={`/portfolio/${lead[0].lead_id}`}>
+                                            <div className="font-bold text-lg flex gap-1 items-center">
+                                                <UserIcon className="h-5 w-5"/> {lead[0].lead_id}
+                                            </div>
+                                        </Link>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </div>
                     </div>
-                    <Card>
-                    <CardHeader>
-                        Latest Trades
-                    </CardHeader>
-                    </Card>
+                    <div className="text-lg font-bold mb-6 mt-2">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
+                            <Card className="col-span-1 lg:col-span-2">
+                                <CardHeader>Performance</CardHeader>
+                                <RunningChart accountId={accountId}/>
+                            </Card>
+                            <Card className="col-span-1 lg:col-span-2">
+                                <CardHeader>Monthly Growth</CardHeader>
+                                <MonthlyChart accountId={accountId}/>
+                            </Card>
+                        </div>
+                    </div>
+                    <div className="text-lg font-bold mb-6 mt-2">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
+                            <Card className="col-span-1 lg:col-span-2">
+                                <CardHeader>
+                                    Monthly Asset Distribution
+                                </CardHeader>
+                                <CardContent>
+                                    <AssetDistribution accountId={accountId} />
+                                </CardContent>
+                            </Card>
+                            <Card className="col-span-1 lg:col-span-2">
+                                <CardHeader>
+                                    Daily Chart
+                                </CardHeader>
+                                <CardContent>
+                                    <DailyChart accountId={accountId} />
+                                </CardContent>
+                            </Card>
+                        </div>
+                        <Card className="mt-6">
+                            <CardContent className="p-6">
+                                <Trades key={account.id} id={account.id}/>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
-        
-        
-            </div>
         )}
     </>
-
-    // <Sheet 
-    //   open
-    //   onOpenChange={isOpen => {if(!isOpen) { handleDismiss(); }}}>
-    //   {/* <SheetTrigger asChild>
-    //     <div className="flex gap-1 items-center cursor-pointer">
-    //         {type == "link" && (
-    //           <>
-    //             {account.client_name} {isWatchlist && <StarFilledIcon color="#f9a825" className="transition-all hover:rotate-90 duration-500" />}
-    //           </>
-    //         )}
-    //         {type == "button" && (
-    //           <>
-    //             <EyeOpenIcon className="w-4 h-4 mr-2"/> View Portfolio
-    //           </>
-    //         )}
-    //     </div>
-    //   </SheetTrigger> */}
-    //   {account && (
-
-    //   <SheetContent side="bottom" className="h-full p-10 bg-gray-100 dark:bg-gray-800">
-    //     <SheetHeader>
-    //       <SheetTitle> {account.client_name}</SheetTitle>
-    //       <div className={`flex items-center ${isWatchlist ? "justify-between": "justify-end"}`}>
-    //         {isWatchlist && <div className="w-auto"><Badge className="rounded-[5px] bg-yellow-500 w-auto">In Watchlist</Badge></div>}
-    //         <DropdownMenu>
-    //           <DropdownMenuTrigger>
-    //             <Button variant="outline" className="focus:outline-0 focus:border-0 focus:ring-0">Copier</Button></DropdownMenuTrigger>
-    //           <DropdownMenuContent>
-    //             <DropdownMenuItem className="flex gap-1"><LeadIcon className="mr-3"/> Make Lead</DropdownMenuItem>
-    //             <DropdownMenuItem className="flex gap-1"><FollowerIcon className="mr-3"/> Make Follower</DropdownMenuItem>
-    //           </DropdownMenuContent>
-    //         </DropdownMenu>
-    //       </div>
-    //     </SheetHeader>
-        // <div className="grid gap-4 py-4">
-        //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     Balance
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.balance)}</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     Growth
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.growth)}</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     Win Ratio
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.win_ratio)}</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     RRR <span className="text-xs">(Average Loss)</span>
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.risk_reward_ratio_avg)}</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     RRR <span className="text-xs">(Worst loss)</span>
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.risk_reward_ratio_worst)}</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     Drawdown
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">{currencyFormat(account.drawdown)}%</span>
-        //             </CardContent>
-        //         </Card>
-        //         <Card>
-        //             <CardHeader className="pb-1">
-        //                 <CardTitle className="text-md font-normal">
-        //                     Followers
-        //                 </CardTitle>
-        //             </CardHeader>
-        //             <CardContent>
-        //                 <span className="font-bold text-lg">15</span>
-        //             </CardContent>
-        //         </Card>
-        //     </div>
-        // </div>
-        // <div className="text-lg font-bold">
-        //   <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-        //     <Card className="col-span-1 lg:col-span-2">
-        //       <CardHeader>
-        //         Performance Chart
-        //       </CardHeader>
-        //     </Card>
-        //       <Card>
-        //         <CardHeader>
-        //           Asset Distribution
-        //         </CardHeader>
-        //       </Card>
-        //       <Card>
-        //         <CardHeader>
-        //           Followers
-        //         </CardHeader>
-        //       </Card>
-        //   </div>
-        //   <Card>
-        //     <CardHeader>
-        //       Latest Trades
-        //     </CardHeader>
-        //   </Card>
-        // </div>
-    //     <SheetFooter>
-    //       <SheetClose asChild>
-
-    //       </SheetClose>
-    //     </SheetFooter>
-    //   </SheetContent>
-    //   )}
-    // </Sheet>
   )
 }
 

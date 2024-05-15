@@ -7,7 +7,6 @@ import AccountTableItem from './AccountTableItem'
 import { useFilter } from '@/contexts/FilterContext'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn, dateDifference } from '@/lib/utils'
-import { useLeadFollower } from '@/contexts/LeadFollowerContext'
 import Loader from '../Loader'
 import { ChevronUp } from 'lucide-react'
 
@@ -24,38 +23,33 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const { leadFollower,followersOnlyArray, leadsOnlyArray} = useLeadFollower();
-  const [sort, setSort] = useState({key: 'balance', order: true});
+  const [sort, setSort] = useState({key: 'balance', order: false});
   
   useMemo(() => {
     if(!data) return
 
     let filteredData = data;
-    //if watchlist is enabled filter it out
-    if(showWatchlist){
-      filteredData = filteredData.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id));
+    if(type == "dashboard"){
+      //if watchlist is enabled filter it out
+      if(showWatchlist && filteredData?.length > 0){
+        filteredData = filteredData?.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id));
+      }else{
+        filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
+            (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
+            (account.copierStatus == filter.accountNature || filter.accountNature == "All") && 
+            Number(account.growth) >= Number(filter.profitability) &&
+            (String(account.trade_mode).toLowerCase() == String(filter.accountType).toLowerCase() || String(filter.accountType).toLowerCase() == "all") &&
+            Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio < filter.maxWinRatio) &&
+            Number(account.risk_reward_ratio_avg) >= Number(filter.riskRewardAverage) && 
+            Number(account.risk_reward_ratio_worst) >= Number(filter.riskRewardWorst) &&
+            Number(account.balance) >= Number(filter.minBalance) &&
+            Number(account.drawdown <= Number(filter.maxDrawdown)) &&
+            dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 &&
+            account.started_at != null
+          );
+      }
     }
-
-    // if(filter.accountNature == "Lead"){
-    //   filteredData = filteredData.filter(account => leadsOnlyArray.find(lead => lead == account.id));
-    // }else if(filter.accountNature == "Follower"){
-    //   filteredData = filteredData.filter(account => followersOnlyArray.find(follower => follower == account.id));
-    // }else if(filter.accountNature == "Standalone"){
-    //   filteredData = filteredData.filter(account => !followersOnlyArray.find(follower => follower == account.id) && !leadsOnlyArray.find(lead => lead == account.id));
-    // }
     
-    filteredData = filteredData?.filter(account => 
-        (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
-        (account.copierStatus == filter.accountNature || filter.accountNature == "All") && 
-        Number(account.growth) >= Number(filter.profitability) &&
-        (String(account.trade_mode).toLowerCase() == String(filter.accountType).toLowerCase() || String(filter.accountType).toLowerCase() == "all") &&
-        Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio < filter.maxWinRatio) &&
-        Number(account.risk_reward_ratio_avg) >= Number(filter.riskRewardAverage) && 
-        Number(account.risk_reward_ratio_worst) >= Number(filter.riskRewardWorst) &&
-        Number(account.balance) >= Number(filter.minBalance) &&
-        Number(account.drawdown <= Number(filter.maxDrawdown))
-        // dateDifference(account.start_date) <= Number(filter.trackRecord) * 30
-      );
 
       setFilteredData(filteredData)
       const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
@@ -186,7 +180,15 @@ useEffect(() =>{
                 />
               </div>
             </TableHead>
-            <TableHead>Start Date</TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "started_at", order: !sort.order})} >Start Date </span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "started_at" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "started_at", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "total_profit", order: !sort.order})}>Total Profit</span>

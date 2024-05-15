@@ -31,6 +31,7 @@
     "chart.js": "^4.4.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
     "dotenv": "^16.4.5",
     "lucide-react": "^0.363.0",
     "mongodb": "^6.5.0",

@@ -22,7 +22,6 @@ const AccountTableItem = ({ account, type }) => {
     const { watchlist } = useWatchlist();
     const isWatchlist = watchlist.length > 0 ?  watchlist?.find(user => user.watchlist == account.id) : null;
     const { master, slaves, setSlaves } = useCopyTrade();
-    const { leadsOnlyArray, followersOnlyArray } = useLeadFollower();
     const qc = useQueryClient();
 
 
@@ -123,7 +122,7 @@ const AccountTableItem = ({ account, type }) => {
         <TableCell>{account.risk_reward_ratio_avg}</TableCell>
         <TableCell>{account.risk_reward_ratio_worst}</TableCell>
         <TableCell>{Number(account.drawdown).toFixed(2)}%</TableCell>
-        <TableCell>{ new Date(account.start_date).toLocaleString()}</TableCell>
+        <TableCell>{ new Date(account.started_at).toLocaleString()}</TableCell>
         <TableCell>{ currencyFormat(account.total_profit, account.currency)}</TableCell>
         {/* <TableCell>0</TableCell> */}
         {type == "watchlist" ? (
