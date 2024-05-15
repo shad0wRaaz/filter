@@ -8,10 +8,10 @@ export const getAnalysis = async(id, type) => {
 
     let returnObject = "";
     try{
-        await connectRedis();
-        const cacheData = await redisClient.get(`analysis_${type}_${id}`);
-        if(cacheData) { return JSON.parse(cacheData); }
-        console.log(id,type)
+        // await connectRedis();
+        // const cacheData = await redisClient.get(`analysis_${type}_${id}`);
+        // if(cacheData) { return JSON.parse(cacheData); }
+        // console.log(id,type)
 
         let fetchURL = "";
         if(type == "normal") { fetchURL = `${API_URL}/analyses/${id}` }
@@ -22,7 +22,6 @@ export const getAnalysis = async(id, type) => {
         else if(type == "monthly") { fetchURL = `${API_URL}/analyses/${id}/monthlies` }
         else if(type == "monthlysymbol") { fetchURL = `${API_URL}/analyses/${id}/monthly-symbols` }
 
-        console.log("fetchurl:",fetchURL);
         const response = await fetch(fetchURL, {
             headers: {
                 "Content-Type": "application/json",
@@ -31,13 +30,13 @@ export const getAnalysis = async(id, type) => {
         });
         returnObject = await response.json();
         //only save non-empty objects
-        if(returnObject.result == "success"){
-            await redisClient.set(`analysis_${type}_${id}`, JSON.stringify(response), { EX: CACHE_DURATION, NX: true });
-        }
-        console.log(returnObject);
+        // if(returnObject.result == "success"){
+        //     await redisClient.set(`analysis_${type}_${id}`, JSON.stringify(response), { EX: CACHE_DURATION, NX: true });
+        // }
+
     }catch(err){
         returnObject = err;
     }
-    await disconnetRedis();
+    // await disconnetRedis();
     return returnObject;
 }

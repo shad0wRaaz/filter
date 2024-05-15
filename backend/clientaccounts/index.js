@@ -9,7 +9,7 @@ const CACHE_DURATION = 600; //in seconds
 export const getClientAccounts = async (username, limit) => {
     let returnObject = "";
     try{
-        await connectRedis();
+        // await connectRedis();
         const cachedData = await redisClient.get(`clientaccount_${username}_${limit}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
@@ -84,10 +84,10 @@ export const getClientAccounts = async (username, limit) => {
                 await redisClient.set(`clientaccount_${username}_${limit}`, JSON.stringify(returnObject) , { EX: CACHE_DURATION, NX : true });
             }
         }
-        await disconnetRedis();
+        // await disconnetRedis();
     }catch(err){
         returnObject = err;
-        await disconnetRedis();
+        // await disconnetRedis();
     }
     return returnObject;
 }
@@ -95,7 +95,7 @@ export const getClientAccounts = async (username, limit) => {
 export const saveClientAccount = async(bodyRequest) => {
     try{
         const username = bodyRequest.username;
-        await connectRedis();
+
         let user = "";
         const cachedData = await redisClient.get(`settings${username}`);
         if(cachedData){ user = JSON.parse(cachedData); }
@@ -113,7 +113,6 @@ export const saveClientAccount = async(bodyRequest) => {
             "password": bodyRequest.password,
             "broker_server_id": Number(bodyRequest.broker_server_id),
         }
-        console.log(bodyObject)
         
 
         const response = await fetch(`${API_URL}/accounts`, {

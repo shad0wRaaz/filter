@@ -7,7 +7,7 @@ const CACHE_DURATION = 600; //in seconds
 export const getAccounts = async (limit, lastId) => {
     let returnObject = "";
     try{
-        await connectRedis();
+        // await connectRedis();
         const cachedData = await redisClient.get(`accounts_${limit}_${lastId}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
@@ -79,10 +79,10 @@ export const getAccounts = async (limit, lastId) => {
             }
         }
 
-        await disconnetRedis();
+        // await disconnetRedis();
     }catch(err){
         returnObject = err;
-        await disconnetRedis();
+        // await disconnetRedis();
     }
     return returnObject;
 }

@@ -6,7 +6,7 @@ const CACHE_DURATION = 600;
 export const getAllCopiers = async() => {
 
     try{
-        await connectRedis();
+        // await connectRedis();
         //feed from cache if present
         const cachedCopiers = await redisClient.get("accounts_all_copiers");
         if(cachedCopiers) { return JSON.parse(cachedCopiers); }
@@ -31,12 +31,12 @@ export const getAllCopiers = async() => {
             
             console.log("fetching from: ", partialCopiers.meta.last_id);
         }
-        await connectRedis();
+        // await connectRedis();
         await redisClient.set("accounts_all_copiers", JSON.stringify(copiers));
-        await disconnetRedis();
+        // await disconnetRedis();
         return copiers;
     }catch(err){
-        await disconnetRedis();
+        // await disconnetRedis();
         return [];
     }
 }

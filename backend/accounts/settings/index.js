@@ -6,7 +6,7 @@ const SETTINGS_DB_NAME = process.env.NEXT_PUBLIC_SETTINGS_DB_NAME;
 export const getUserSettings = async(username) => {
   let returnObject = "";
   try{
-    await connectRedis();
+    // await connectRedis();
     const cachedData = await redisClient.get(`settings_${username}`);
     if(cachedData) { return JSON.parse(cachedData); }
 
@@ -18,7 +18,7 @@ export const getUserSettings = async(username) => {
   }catch(err){
     returnObject  = err;
   }
-  await disconnetRedis();
+  // await disconnetRedis();
   return returnObject;
 }
 

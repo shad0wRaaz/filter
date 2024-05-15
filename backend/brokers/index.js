@@ -8,7 +8,7 @@ const CACHE_DURATION = 600;
 export const getBrokers = async(username, version) => {
     let returnObject = "";
     try{
-        await connectRedis();
+        // await connectRedis();
         const cachedData = await redisClient.get(`brokers_${version}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
@@ -21,7 +21,7 @@ export const getBrokers = async(username, version) => {
             user = await getUserSettings(username);
         }
 
-        await disconnetRedis();
+        // await disconnetRedis();
         const fetchURL = `${API_URL}/brokers/?mt_version=${version}`;
         const response = await fetch(fetchURL, {
             headers: {
@@ -38,9 +38,9 @@ export const getBrokers = async(username, version) => {
         });
         if(response.result == "success"){
 
-            await connectRedis();
+            // await connectRedis();
             await redisClient.set(`brokers_${version}`, JSON.stringify(response.data), { EX: CACHE_DURATION, NX: true });
-            await disconnetRedis();
+            // await disconnetRedis();
         }
         return response;
 
@@ -53,7 +53,7 @@ export const getBrokers = async(username, version) => {
 export const getBrokerServers = async(username, brokerId) => {
     let returnObject = "";
     try{
-        await connectRedis();
+        // await connectRedis();
         const cachedData = await redisClient.get(`brokerserver_${brokerId}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
@@ -66,7 +66,7 @@ export const getBrokerServers = async(username, brokerId) => {
             user = await getUserSettings(username);
         }
 
-        await disconnetRedis();
+        // await disconnetRedis();
         const fetchURL = `${API_URL}/broker-servers?broker_id=${brokerId}`;
         const response = await fetch(fetchURL, {
             headers: {
@@ -83,9 +83,9 @@ export const getBrokerServers = async(username, brokerId) => {
         });
         if(response.result == "success"){
 
-            await connectRedis();
+            // await connectRedis();
             await redisClient.set(`brokerserver_${brokerId}`, JSON.stringify(response.data), { EX: CACHE_DURATION, NX: true });
-            await disconnetRedis();
+            // await disconnetRedis();
             return response?.data;
         }
 

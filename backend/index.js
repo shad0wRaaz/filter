@@ -12,6 +12,8 @@ import { getWatchlist, saveWatchlist } from './watchlist/index.js';
 import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
+import { getTrades } from './accounts/trades/index.js';
+import { connectRedis } from './libs/redis/redisClient.js';
 
 const PORT = 3001;
 
@@ -23,6 +25,8 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.send("hello")
 });
+
+await connectRedis();
 
 cron.schedule('0 4 * * *', async() => {
     //update account cache
@@ -59,6 +63,7 @@ app.get('/accounts/client/get/:username/:limit', async(req, res) => {
 app.get('/portfolio/:id', async(req, res) => {
     //this data is fetched from cache, contains all account data with analysis and copier status
     const clientdata = await getAccount(req.params.id);
+    // console.log(clientdata);
     return res.send(clientdata);
 });
 
@@ -101,6 +106,12 @@ app.get('/accounts/analysis/:id/:type', async(req, res) => {
 
 });
 
+app.get('/accounts/trades/:id', async(req, res) => {
+    const trades = await getTrades(req.params.id);
+    console.log(trades)
+    return res.send(trades);
+})
+
 app.post('/accounts/settings/save', async(req, res) => {
     const body = req.body;
     const result = await saveUserKeys(body.username, body.apiKey, body.secretKey);
@@ -112,6 +123,7 @@ app.get('/brokers/:username/:version', async(req, res) => {
     const brokers = await getBrokers(req.params.username, req.params.version);
     return res.send(brokers);
 });
+
 app.get('/brokers/servers/:username/:brokerId', async(req, res) => {
     const brokerServers = await getBrokerServers(req.params.username, req.params.brokerId);
     return res.send(brokerServers);
