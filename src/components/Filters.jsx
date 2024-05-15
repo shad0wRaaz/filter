@@ -10,7 +10,7 @@ const style = {
   filterBox: "p-2 flex gap-3 flex-col w-full ",
   filterBadge: "justify-center relative rounded-[5px] bg-transparent border-dashed text-[#14B8A6] border-[#14B8A6] bg-white dark:bg-teal-900 hover:bg-white flex grow md:grow-0 gap-1 py-2 justify-between hover:text-md transition-all justify-center",
   badgeIcon: "h-3 w-3",
-  input: "w-full md:w-auto h-9 text-sm !rounded-[7px] dark:bg-slate-700",
+  input: "w-full h-9 text-sm !rounded-[7px] dark:bg-slate-700",
 }
 
 const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
@@ -19,7 +19,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
   if(filterType == "items" && unsavedFilter){
     return (
       <div className="flex items-center justify-between flex-wrap mt-5">
-        <div className={ style.filterBox }>
+        {/* <div className={ style.filterBox }>
           <Label htmlFor="terms">Account Type</Label>
           <Select onValueChange={(e) => setUnsavedFilter({ ...unsavedFilter, accountType: e})}>
             <SelectTrigger className="w-100">
@@ -31,7 +31,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
               <SelectItem value="All">All</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
         <div className={ style.filterBox }>
           <Label htmlFor="terms">Copier Status</Label>
           <Select onValueChange={(e) => setUnsavedFilter({ ...unsavedFilter, accountNature: e })} >
@@ -81,36 +81,34 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
               <SelectValue placeholder={`upto ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${unsavedFilter.trackRecord == 12 || unsavedFilter.trackRecord == 24 ? unsavedFilter.trackRecord == 12 ? "year" : "years" : "months"}`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="3">upto 3 months</SelectItem>
-              <SelectItem value="6">upto 6 months</SelectItem>
-              <SelectItem value="9">upto 9 months</SelectItem>
-              <SelectItem value="12">upto 1 year</SelectItem>
-              <SelectItem value="24">upto 2 years</SelectItem>
+              <SelectItem value="3">Above 3 months</SelectItem>
+              <SelectItem value="6">Above 6 months</SelectItem>
+              <SelectItem value="9">Above 9 months</SelectItem>
+              <SelectItem value="12">Above 1 year</SelectItem>
+              <SelectItem value="24">Above 2 years</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        
-        {/* <div className={ style.filterBox }>
-          <Label htmlFor="terms">Minimum No. of Copiers</Label>
-          <Input type="number" value={unsavedFilter.minCopier} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, minCopier: Number(e.target.value) })}></Input>
-        </div> */}
       </div>
     )
   }else{
     return(
-      <div className="flex items-center flex-wrap justify-start gap-1.5">
-          <Input 
-            className={ style.input } 
-            placeholder="Search Account..." 
-            value={filter.searchQuery}
-            onChange={(e) => setFilter({...filter, searchQuery: e.target.value})} />
-          <Badge className={ style.filterBadge }>
+      <div className="flex items-center flex-wrap justify-start gap-3">
+        <div className="flex-grow">
+            <Input 
+              className={ style.input } 
+              placeholder="Search Account..." 
+              value={filter.searchQuery}
+              onChange={(e) => setFilter({...filter, searchQuery: e.target.value})} />
+        </div>
+        <div className="flex items-center flex-wrap justify-start gap-3">
+          {/* <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
             <span>Account Type: {filter.accountType}</span>
-          </Badge>
+          </Badge> */}
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>Copier Status: {filter.accountNature}</span>
+            <span>Account Type: {filter.accountNature}</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
@@ -126,7 +124,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>Max. Drawdown: {filter.maxDrawdown}%</span>
+            <span>Drawdown: {filter.maxDrawdown}%</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
@@ -136,15 +134,11 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
             <PlusCircle className={ style.badgeIcon } />
             <span>RRR (Worst Loss): {filter.riskRewardWorst}</span>
           </Badge>
-          {/* <Badge className={ style.filterBadge }>
-            <PlusCircle className={ style.badgeIcon } />
-            <span>Min. No. of Copier: {filter.minCopier}</span> */}
-            {/* <Cross2Icon className="cursor-pointer" /> */}
-          {/* </Badge> */}
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>Track Record: upto {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</span>
+            <span>Track Record: Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</span>
           </Badge>
+        </div>
       </div>
     )
   }

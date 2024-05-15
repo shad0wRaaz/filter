@@ -6,8 +6,10 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { MixerHorizontalIcon, SliderIcon } from '@radix-ui/react-icons'
 import { useFilter } from '@/contexts/FilterContext';
 import { toast } from 'sonner';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
-const FilterSheet = () => {
+const FilterSheet = ({ watchlistOnly, setWatchlistOnly}) => {
     const { filter, setFilter } = useFilter();
     const [unsavedFilter, setUnsavedFilter] = useState({...filter});
 
@@ -38,21 +40,31 @@ const FilterSheet = () => {
     }
 
   return (
-    <div className="flex gap-2 justify-between flex-wrap md:flex-nowrap flex-row">
+    <div className="flex gap-2 flex-wrap md:flex-nowrap flex-col justify-end">
         <Filters/>
         <Sheet>
-            <div className="flex gap-2">
-                <SheetTrigger asChild>
-                    <Button className="flex items-center justify-center gap-1 bg-blue-500 w-full md:w-auto mt-3 md:mt-0">
-                        <MixerHorizontalIcon/> <span>Filter</span>
+            <div className="flex gap-2 justify-between items-center mt-2">
+                <div className="flex items-center space-x-2 justify-end mt-5 md:mt-0">
+                    <Label htmlFor="view-watchlist-only">View Watchlist only</Label>
+                    <Switch 
+                        id="view-watchlist-only" 
+                        defaultChecked={watchlistOnly} 
+                        onCheckedChange={(e) => setWatchlistOnly(e)}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <SheetTrigger asChild>
+                        <Button className="flex items-center justify-center gap-1 bg-blue-500 w-full md:w-auto mt-3 md:mt-0">
+                            <MixerHorizontalIcon/> <span>Filter</span>
+                        </Button>
+                    </SheetTrigger>
+                    <Button 
+                        variant="outline" 
+                        className="flex items-center justify-center gap-1 w-full md:w-auto mt-3 md:mt-0"
+                        onClick={() => handleFilterReset()}>
+                        <SliderIcon/> <span>Reset</span>
                     </Button>
-                </SheetTrigger>
-                <Button 
-                    variant="outline" 
-                    className="flex items-center justify-center gap-1 w-full md:w-auto mt-3 md:mt-0"
-                    onClick={() => handleFilterReset()}>
-                    <SliderIcon/> <span>Reset</span>
-                </Button>
+                </div>
             </div>
             <SheetContent>
                 <SheetHeader>
