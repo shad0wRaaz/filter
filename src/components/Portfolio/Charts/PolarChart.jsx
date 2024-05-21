@@ -5,12 +5,13 @@ import { useMemo, useState } from 'react';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DoughnutChart({ chartData, year, month }) {
-  
 
   const [data, setData] = useState();
 
   useMemo(() => {
+    if(!chartData) return
     const filteredData = filterDataByDate(chartData, year, month);
+
     const labels = filteredData.map(item => item.symbol);
     const counts = filteredData.map(item => item.count);
     const data = {
@@ -39,6 +40,9 @@ export default function DoughnutChart({ chartData, year, month }) {
         },
       ],
     };
+    return() => {
+      //just cleanups
+    }
 
     setData(data);
 
@@ -57,7 +61,7 @@ export default function DoughnutChart({ chartData, year, month }) {
       },
     },
   };
-  return <Doughnut data={data} options={options} />;
+  return data ? <Doughnut data={data} options={options} /> : "";
 }
 
 const filterDataByDate = (data, year, month) => {

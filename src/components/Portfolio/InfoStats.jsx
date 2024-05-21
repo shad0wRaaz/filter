@@ -8,7 +8,7 @@ const style = {
 }
 
 const InfoStats = ({ account }) => {
-    console.log(account)
+
   return (
     <Tabs defaultValue="stats" className="w-full p-4">
         <TabsList>

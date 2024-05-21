@@ -233,7 +233,7 @@ useEffect(() =>{
             <TableCell colSpan="12"  className="bg-white dark:bg-transparent rounded-md">
                 {type == "dashboard" && (
                   <div className="flex justify-between items-center">
-                    <Select onValueChange={e => changeItemsPerPage(e)}>
+                    {/* <Select onValueChange={e => changeItemsPerPage(e)}>
                       <SelectTrigger className="w-[210px]">
                         <SelectValue placeholder={`Showing ${itemsPerPage} records`} />
                       </SelectTrigger>
@@ -245,7 +245,7 @@ useEffect(() =>{
                         <SelectItem value="50">Show 50 records</SelectItem>
                         <SelectItem value="100">Show 100 records</SelectItem>
                       </SelectContent>
-                    </Select>
+                    </Select> */}
                     <Pagination className="py-0">
                       <PaginationContent>
                         <PaginationItem>

@@ -76,6 +76,8 @@ export const getAllAccounts = async (lastId) => {
         }else{
             //find analysis of all accounts
             accountsWithAnalysis = await processAllAccounts(accounts);
+            console.log("before growth filter: ", accountsWithAnalysis.length);
+            accountsWithAnalysis = accountsWithAnalysis.filter(data => data.growth <= 5000);
             console.log("Total analysed accounts", accountsWithAnalysis.length);
             
             await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis));
