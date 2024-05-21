@@ -16,7 +16,7 @@ import { Router } from 'next/router';
 import React, { useState } from 'react'
 import { Toaster } from 'sonner';
 
-const page = ({modal}) => {
+const MyAccount = ({modal}) => {
     const {user} = useUser();
     const router = useRouter();
     const {watchlist, setWatchlist} = useWatchlist();
@@ -76,4 +76,4 @@ const page = ({modal}) => {
   )
 }
 
-export default page
+export default MyAccount

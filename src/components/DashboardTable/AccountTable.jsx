@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn, dateDifference } from '@/lib/utils'
 import Loader from '../Loader'
 import { ChevronUp } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const style = {
   headerStyle: "flex justify-between items-center cursor-pointer",
@@ -24,7 +25,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [sort, setSort] = useState({key: 'balance', order: false});
-  
+console.log(data)
   useMemo(() => {
     if(!data) return
 
@@ -37,13 +38,12 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
             (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
             (account.copierStatus == filter.accountNature || filter.accountNature == "All") && 
-            Number(account.growth) >= Number(filter.profitability) &&
-            (String(account.trade_mode).toLowerCase() == String(filter.accountType).toLowerCase() || String(filter.accountType).toLowerCase() == "all") &&
-            Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio < filter.maxWinRatio) &&
-            Number(account.risk_reward_ratio_avg) >= Number(filter.riskRewardAverage) && 
-            Number(account.risk_reward_ratio_worst) >= Number(filter.riskRewardWorst) &&
+            Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) &&
+            Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
+            Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage) &&
+            Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
             Number(account.balance) >= Number(filter.minBalance) &&
-            Number(account.drawdown <= Number(filter.maxDrawdown)) &&
+            Number(account.drawdown >= Number(filter.minDrawdown)) && Number(account.drawdown <= Number(filter.maxDrawdown)) &&
             dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 &&
             account.started_at != null
           );
@@ -56,7 +56,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
       setTotalPages(totalPages);
 
     return() => {}
-}, [data, filter, showWatchlist]);
+}, [data, filter, showWatchlist, itemsPerPage, type, watchlist]);
 
 useEffect(() => {
   if(!filteredData) return;
@@ -76,7 +76,7 @@ useEffect(() =>{
   setCurrentPage(1);
 
   return() => {}
-}, [showWatchlist])
+}, [showWatchlist, watchlist])
 
   const handleSort = (array, key, orderFlag) => {
     let order = "desc";
@@ -233,7 +233,7 @@ useEffect(() =>{
             <TableCell colSpan="12"  className="bg-white dark:bg-transparent rounded-md">
                 {type == "dashboard" && (
                   <div className="flex justify-between items-center">
-                    {/* <Select onValueChange={e => changeItemsPerPage(e)}>
+                    <Select onValueChange={e => changeItemsPerPage(e)}>
                       <SelectTrigger className="w-[210px]">
                         <SelectValue placeholder={`Showing ${itemsPerPage} records`} />
                       </SelectTrigger>
@@ -245,7 +245,7 @@ useEffect(() =>{
                         <SelectItem value="50">Show 50 records</SelectItem>
                         <SelectItem value="100">Show 100 records</SelectItem>
                       </SelectContent>
-                    </Select> */}
+                    </Select>
                     <Pagination className="py-0">
                       <PaginationContent>
                         <PaginationItem>

@@ -21,17 +21,19 @@ const FilterSheet = ({ watchlistOnly, setWatchlistOnly}) => {
     const handleFilterReset = () => {
         const defaultFilters = {
             searchQuery: "",
-            accountType: "Real", 
             accountNature: "All", 
             trackRecord: 6,
-            profitability:  -100,
+            minGrowth:  -100,
+            maxGrowth: 100,
             minWinRatio: 0,
             maxWinRatio: 100,
             minBalance: 0,
+            minDrawdown: 0,
             maxDrawdown: 100,
-            riskRewardAverage: 0,
-            riskRewardWorst: 0,
-            minCopier: 0,
+            minRiskRewardAverage: 0,
+            maxRiskRewardAverage: 100,
+            minRiskRewardWorst: 0,
+            maxRiskRewardWorst: 100,
         };
         setFilter(defaultFilters);
         setUnsavedFilter(defaultFilters);
@@ -69,9 +71,6 @@ const FilterSheet = ({ watchlistOnly, setWatchlistOnly}) => {
             <SheetContent>
                 <SheetHeader>
                 <SheetTitle>Filters</SheetTitle>
-                <SheetDescription>
-                    Make changes to filters here. Click save when you're done.
-                </SheetDescription>
                 </SheetHeader>
                     <Filters filterType="items" unsavedFilter={unsavedFilter} setUnsavedFilter={setUnsavedFilter} />
                 <SheetFooter>

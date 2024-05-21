@@ -5,9 +5,8 @@ import { useMemo, useState } from 'react';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DoughnutChart({ chartData, year, month }) {
-  if(!chartData) return;
-  const [labels, setLabels] = useState("");
-  const [counts, setCounts] = useState("");
+  
+
   const [data, setData] = useState();
 
   useMemo(() => {

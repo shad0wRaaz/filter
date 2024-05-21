@@ -38,7 +38,9 @@ export const getAllAccounts = async (lastId) => {
 
         let accounts = [];
         const cachedData = await redisClient.get("accounts_raw");
+
         if(!cachedData){
+            console.log("Fetching all Accounts");
             while(lastId != null){
                 const fetchURL = lastId == 0 ? `${API_URL}/accounts?` : `${API_URL}/accounts?&last_id=${lastId}`;
                 const response = await fetch(fetchURL,{
@@ -50,7 +52,7 @@ export const getAllAccounts = async (lastId) => {
                 const responseJSON = await response.json();
                 if(responseJSON.result == "success" && responseJSON.data.length > 0){
                     accounts = [...accounts, ...responseJSON.data]
-                    console.log("Fetching after Id ", responseJSON.meta.last_id);
+                    console.log("Fetching Accounts after Id ", responseJSON.meta.last_id);
                     lastId = responseJSON.meta.last_id;
                 }else{
                     lastId = null;
@@ -64,16 +66,23 @@ export const getAllAccounts = async (lastId) => {
         accounts = accounts.filter(acc => acc.status == "connection_ok");
         accounts = accounts.filter(acc => acc.trade_mode == "real");
         accounts = accounts.filter(acc => acc.total_profit > 0);
-        accounts = accounts.filter(acc => acc.balance > 5000);
+        accounts = accounts.filter(acc => acc.balance > 1000);
 
-        console.log("total accounts", accounts.length);
+        console.log("Total accounts", accounts.length);
+        let accountsWithAnalysis = "";
+        const cacheAnalaysisOnlyData = await redisClient.get("accounts_all_with_analysis");
+        if(cacheAnalaysisOnlyData){
+            accountsWithAnalysis = JSON.parse(cacheAnalaysisOnlyData);
+        }else{
+            //find analysis of all accounts
+            accountsWithAnalysis = await processAllAccounts(accounts);
+            console.log("Total analysed accounts", accountsWithAnalysis.length);
+            
+            await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis));
+        }
+
         
-        //find analysis of all accounts
-        let accountsWithAnalysis = await processAllAccounts(accounts);
-        console.log("total analysed accounts", accountsWithAnalysis.length);
-        
-        await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis));
-        if(accountsWithAnalysis){
+        if(accountsWithAnalysis != ""){
             const copiers = await getAllCopiers();
             const accountsWithLF = accountsWithAnalysis.map(acc => {
                 if(copiers.some(copyObj => copyObj.lead_id == acc.id)){

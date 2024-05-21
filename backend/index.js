@@ -34,8 +34,11 @@ cron.schedule('0 4 * * *', async() => {
     await getAllAccounts(0);
 });
 
-cron.schedule('10 * * * *', async() => {
+cron.schedule('* 1 * * *', async() => {
     //check for change in lead account from watchlist
+
+    //refresh copier list for lead and followers data
+    await getAllCopiers()
 });
 
 app.get('/accounts/all/:lastId', async(req,res) => {

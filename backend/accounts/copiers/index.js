@@ -1,7 +1,7 @@
 import { API_URL, authKey } from "../../utils/index.js";
 import { redisClient, connectRedis, disconnetRedis } from "../../libs/redis/redisClient.js";
 
-const CACHE_DURATION = 600; 
+const CACHE_DURATION = 6000; 
 
 export const getAllCopiers = async() => {
 
@@ -29,10 +29,10 @@ export const getAllCopiers = async() => {
             
             last_id = partialCopiers.meta.last_id;
             
-            console.log("fetching from: ", partialCopiers.meta.last_id);
+            console.log("Fetching Copiers from: ", partialCopiers.meta.last_id);
         }
         // await connectRedis();
-        await redisClient.set("accounts_all_copiers", JSON.stringify(copiers));
+        await redisClient.set("accounts_all_copiers", JSON.stringify(copiers), { EX: CACHE_DURATION, NX: true });
         // await disconnetRedis();
         return copiers;
     }catch(err){

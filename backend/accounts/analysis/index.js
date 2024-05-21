@@ -2,7 +2,7 @@
 import { API_URL, authKey } from "../../utils/index.js";
 import { redisClient, connectRedis, disconnetRedis } from "../../libs/redis/redisClient.js";
 
-const CACHE_DURATION = 600; 
+const CACHE_DURATION = 6000; 
 
 export const getAnalysis = async(id, type) => {
 

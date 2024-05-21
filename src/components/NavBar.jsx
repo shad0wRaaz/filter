@@ -2,8 +2,7 @@
 import Link from "next/link"
 import { ModeToggle } from "./ThemeToggler";
 import { DropdownMenuDemo } from "./ProfileMenu";
-import WatchlistPopover from "./WatchlistPopover";
-import { AvatarIcon, DashboardIcon, StarIcon } from "@radix-ui/react-icons";
+import { AvatarIcon, DashboardIcon } from "@radix-ui/react-icons";
 
 const Navbar = () => {
     return (
@@ -31,14 +30,8 @@ const Navbar = () => {
                 <AvatarIcon/> My Accounts
               </div>
             </Link>
-            {/* <Link href="/watchlist" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
-              <div className="flex gap-1 items-center">
-                <StarIcon/> Watchlist
-              </div>
-            </Link> */}
           </div>
           <div className="flex gap-4">
-            {/* <WatchlistPopover/> */}
             <ModeToggle/>
             <DropdownMenuDemo/>
           </div>

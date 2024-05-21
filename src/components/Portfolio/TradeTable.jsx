@@ -40,7 +40,7 @@ const TradeTable = ({data: trades}) => {
                             <TableCell>{trade.open_price}</TableCell>
                             <TableCell>{trade.stop_loss}</TableCell>
                             <TableCell>{trade.take_profit}</TableCell>
-                            <TableCell>{new Date(trade.close_time).toLocaleString()}</TableCell>
+                            <TableCell>{!trade.close_time ? "" : new Date(trade.close_time).toLocaleString()}</TableCell>
                             <TableCell>{trade.commission}</TableCell>
                             <TableCell>{trade.swap}</TableCell>
                             <TableCell>{trade.profit}</TableCell>

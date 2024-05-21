@@ -14,7 +14,7 @@ const Trades = ({id}) => {
             },
         },
     );
-    console.log(data);
+
   return (
     <>
         {isLoading  ? 

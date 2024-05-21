@@ -12,7 +12,9 @@ import MonthlyChart from "../Portfolio/MonthlyChart";
 import { EyeIcon, UserIcon } from "lucide-react";
 import AssetDistribution from "../Portfolio/AssetDistribution";
 import Link from "next/link";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import InfoStats from "../Portfolio/InfoStats";
 
 const PortfolioDialog = ({accountId}) => {
 
@@ -188,20 +190,37 @@ const PortfolioDialog = ({accountId}) => {
                                 <RunningChart accountId={accountId}/>
                             </Card>
                             <Card className="col-span-1 lg:col-span-2">
-                                <CardHeader>Monthly Growth</CardHeader>
-                                <MonthlyChart accountId={accountId}/>
+                                <InfoStats account={account}/>
                             </Card>
                         </div>
                     </div>
                     <div className="text-lg font-bold mb-6 mt-2">
                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
                             <Card className="col-span-1 lg:col-span-2">
-                                <CardHeader>
-                                    Monthly Asset Distribution
-                                </CardHeader>
-                                <CardContent>
-                                    <AssetDistribution accountId={accountId} />
-                                </CardContent>
+                                <Carousel>
+                                    <CarouselContent className="py-4">
+                                        <CarouselItem>
+                                            <Card className="shadow-none border-0">
+                                                <CardHeader>Monthly Growth</CardHeader>
+                                                <MonthlyChart accountId={accountId}/>
+                                            </Card>
+                                        </CarouselItem>
+                                        <CarouselItem>
+                                            <Card className="shadow-none border-0">
+                                                <CardHeader>
+                                                    Monthly Chart
+                                                </CardHeader>
+                                                <CardContent>
+                                                    <AssetDistribution accountId={accountId} />
+                                                </CardContent>
+                                            </Card>
+                                        </CarouselItem>
+                                    </CarouselContent>
+                                    <div className="flex justify-center absolute w-full">
+                                        <CarouselPrevious className="left-[10px] relative"/>
+                                        <CarouselNext className="-right-[15px] relative"/>
+                                    </div>
+                                </Carousel>
                             </Card>
                             <Card className="col-span-1 lg:col-span-2">
                                 <CardHeader>

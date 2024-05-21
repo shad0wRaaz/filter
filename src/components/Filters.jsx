@@ -5,9 +5,14 @@ import { Input } from './ui/input'
 import { Badge } from './ui/badge'
 import { useFilter } from '@/contexts/FilterContext'
 import { PlusCircle } from "lucide-react";
+import { Slider } from "@/components/ui/slider"
+
+
 
 const style = {
-  filterBox: "p-2 flex gap-3 flex-col w-full ",
+  filterBox: "p-2 flex gap-3 flex-col w-full border rounded-md p-3 shadow-sm",
+  label: "flex justify-between items-center",
+  value: "bg-slate-100 rounded-sm text-sm p-2",
   filterBadge: "justify-center relative rounded-[5px] bg-transparent border-dashed text-[#14B8A6] border-[#14B8A6] bg-white dark:bg-teal-900 hover:bg-white flex grow md:grow-0 gap-1 py-2 justify-between hover:text-md transition-all justify-center",
   badgeIcon: "h-3 w-3",
   input: "w-full h-9 text-sm !rounded-[7px] dark:bg-slate-700",
@@ -18,20 +23,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
   const { filter, setFilter } = useFilter();
   if(filterType == "items" && unsavedFilter){
     return (
-      <div className="flex items-center justify-between flex-wrap mt-5">
-        {/* <div className={ style.filterBox }>
-          <Label htmlFor="terms">Account Type</Label>
-          <Select onValueChange={(e) => setUnsavedFilter({ ...unsavedFilter, accountType: e})}>
-            <SelectTrigger className="w-100">
-              <SelectValue placeholder={unsavedFilter.accountType}/>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Real">Real</SelectItem>
-              <SelectItem value="Demo">Demo</SelectItem>
-              <SelectItem value="All">All</SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
+      <div className="flex items-center justify-between flex-wrap gap-3 mt-5">
         <div className={ style.filterBox }>
           <Label htmlFor="terms">Copier Status</Label>
           <Select onValueChange={(e) => setUnsavedFilter({ ...unsavedFilter, accountNature: e })} >
@@ -50,35 +42,124 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           <Label htmlFor="terms">Minimum Account Balance</Label>
           <Input type="number" value={unsavedFilter.minBalance} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, minBalance: Number(e.target.value) })}></Input>
         </div>
+
         <div className={ style.filterBox }>
-          <Label htmlFor="terms">Growth %</Label>
-          <Input type="number" value={unsavedFilter.profitability} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, profitability: Number(e.target.value) })}></Input>
+          <div className={style.label}>
+            <Label htmlFor="terms">Growth</Label>
+            <div className={style.value}>{unsavedFilter.minGrowth}% to {unsavedFilter.maxGrowth}%</div>
+          </div>
+          <Slider 
+            defaultValue={[filter.minGrowth, filter.maxGrowth]}
+            min={-100}
+            max={100} 
+            step={1}
+            onValueChange={
+              (e) => setUnsavedFilter(
+                { 
+                  ...unsavedFilter, 
+                  minGrowth: Number(e[0]),
+                  maxGrowth: Number(e[1]),
+
+                }
+              )}
+            />
+          {/* <Input type="number" value={unsavedFilter.profitability} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, profitability: Number(e.target.value) })}></Input> */}
         </div>
+
         <div className={ style.filterBox }>
-          <Label htmlFor="terms">Win Ratio</Label>
-          <div className="flex gap-2 flex-wrap justify-between flex-row items-center">
+          <div className={style.label}>
+            <Label htmlFor="terms">Win Ratio</Label>
+            <div className={style.value}>{unsavedFilter.minWinRatio} to {unsavedFilter.maxWinRatio}</div>
+          </div>
+          <Slider 
+            defaultValue={[filter.minWinRatio, filter.maxWinRatio]} 
+            max={100} 
+            step={1}
+            onValueChange={
+              (e) => setUnsavedFilter(
+                { 
+                  ...unsavedFilter, 
+                  minWinRatio: Number(e[0]),
+                  maxWinRatio: Number(e[1]),
+
+                }
+              )}
+            />
+
+          {/* <div className="flex gap-2 flex-wrap justify-between flex-row items-center">
             <Input type="number" placeholder="Min." className="w-[40%]" value={unsavedFilter.minWinRatio} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, minWinRatio: Number(e.target.value) })}></Input>
             <span>to</span>
             <Input type="number" placeholder="Max." className="w-[40%]" value={unsavedFilter.maxWinRatio} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, maxWinRatio: Number(e.target.value) })}></Input>
+          </div> */}
+        </div>
+        <div className={ style.filterBox }>
+          <div className={style.label}>
+            <Label htmlFor="terms">Risk Reward (Average Loss)</Label>
+            <div className={style.value}>{unsavedFilter.minRiskRewardAverage} to {unsavedFilter.maxRiskRewardAverage}</div>
           </div>
+          <Slider 
+            defaultValue={[filter.minRiskRewardAverage, filter.maxRiskRewardAverage]} 
+            max={100} 
+            step={1}
+            onValueChange={
+              (e) => setUnsavedFilter(
+                { 
+                  ...unsavedFilter, 
+                  minRiskRewardAverage: Number(e[0]),
+                  maxRiskRewardAverage: Number(e[1]),
+
+                }
+              )}
+            />
+          {/* <Input type="number" value={unsavedFilter.riskRewardAverage} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardAverage: Number(e.target.value) })}></Input> */}
         </div>
         <div className={ style.filterBox }>
-          <Label htmlFor="terms">Risk Reward (Average Loss)</Label>
-          <Input type="number" value={unsavedFilter.riskRewardAverage} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardAverage: Number(e.target.value) })}></Input>
+          <div className={style.label}>
+            <Label htmlFor="terms">Risk Reward (Worst Loss)</Label>
+            <div className={style.value}>{unsavedFilter.minRiskRewardWorst} to {unsavedFilter.maxRiskRewardWorst}</div>
+          </div>
+          <Slider 
+            defaultValue={[filter.minRiskRewardWorst, filter.maxRiskRewardWorst]} 
+            max={100} 
+            step={1}
+            onValueChange={
+              (e) => setUnsavedFilter(
+                { 
+                  ...unsavedFilter, 
+                  minRiskRewardWorst: Number(e[0]),
+                  maxRiskRewardWorst: Number(e[1]),
+
+                }
+              )}
+            />
+          {/* <Input type="number" value={unsavedFilter.riskRewardWorst} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardWorst: Number(e.target.value) })}></Input> */}
         </div>
         <div className={ style.filterBox }>
-          <Label htmlFor="terms">Risk Reward (Worst Loss)</Label>
-          <Input type="number" value={unsavedFilter.riskRewardWorst} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardWorst: Number(e.target.value) })}></Input>
-        </div>
-        <div className={ style.filterBox }>
-          <Label htmlFor="terms">Maximum Drawdown %</Label>
-          <Input type="number" value={unsavedFilter.maxDrawdown} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, maxDrawdown: Number(e.target.value) })}></Input>
+          <div className={style.label}>
+            <Label htmlFor="terms">Drawdown %</Label>
+            <div className={style.value}>{unsavedFilter.minDrawdown} to {unsavedFilter.maxDrawdown}</div>
+          </div>
+          <Slider 
+            defaultValue={[filter.minDrawdown, filter.maxDrawdown]} 
+            max={100} 
+            step={1}
+            onValueChange={
+              (e) => setUnsavedFilter(
+                { 
+                  ...unsavedFilter, 
+                  minDrawdown: Number(e[0]),
+                  maxDrawdown: Number(e[1]),
+
+                }
+              )}
+            />
+          {/* <Input type="number" value={unsavedFilter.maxDrawdown} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, maxDrawdown: Number(e.target.value) })}></Input> */}
         </div>
         <div className={ style.filterBox }>
           <Label htmlFor="terms">Track Record History</Label>
           <Select onValueChange={(e) => setUnsavedFilter({ ...unsavedFilter, trackRecord: e})}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={`upto ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${unsavedFilter.trackRecord == 12 || unsavedFilter.trackRecord == 24 ? unsavedFilter.trackRecord == 12 ? "year" : "years" : "months"}`} />
+              <SelectValue placeholder={`Above ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${unsavedFilter.trackRecord == 12 || unsavedFilter.trackRecord == 24 ? unsavedFilter.trackRecord == 12 ? "year" : "years" : "months"}`} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="3">Above 3 months</SelectItem>
@@ -116,7 +197,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>Growth: {filter.profitability}%</span>
+            <span>Growth: {filter.minGrowth} - {filter.maxGrowth}%</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
@@ -124,15 +205,15 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>Drawdown: {filter.maxDrawdown}%</span>
+            <span>Drawdown: {filter.minDrawdown} - {filter.maxDrawdown}%</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>RRR (Avg. Loss): {filter.riskRewardAverage}</span>
+            <span>RRR (Avg. Loss): {filter.minRiskRewardAverage} - {filter.minRiskRewardAverage}</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>RRR (Worst Loss): {filter.riskRewardWorst}</span>
+            <span>RRR (Worst Loss): {filter.minRiskRewardWorst} - {filter.maxRiskRewardWorst}</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />

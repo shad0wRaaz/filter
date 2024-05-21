@@ -50,7 +50,7 @@ const AddAccountComponent = () => {
             return() => {
                 //do nothing
             }
-      }, [brokers])
+      }, [brokers, mtversion])
       
 
     const handleSubmit = async(e) => {
@@ -89,9 +89,6 @@ const AddAccountComponent = () => {
         setSelectedBroker(null);
         setSelectedServer(null);
     }
-    // !2CvNmPa
-    // 5025467609
-    // Meta Quotes Demoo
 
     const updateBrokerServerList = async(brokerNamewithArray) => {
         const brokerString = String(brokerNamewithArray).split(",");

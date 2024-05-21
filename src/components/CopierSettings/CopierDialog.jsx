@@ -40,7 +40,7 @@ const CopierDialog = ({ type }) => {
 useEffect(() => {
     if(!master) return;
     setCopierObject({ ...copierObject, lead_id: master.id});
-}, [master]);
+}, [master, copierObject]);
 
 const createCopier = (e) => {
     e.preventDefault();
@@ -81,7 +81,7 @@ const createCopier = (e) => {
             <DialogHeader>
             <DialogTitle>Copier Settings</DialogTitle>
             <DialogDescription>
-                Make changes to your Copier Settings. Click {type} when you're done.
+                Make changes to your Copier Settings. Click {type} when you are done.
             </DialogDescription>
             </DialogHeader>
             <div className="relative w-full">
