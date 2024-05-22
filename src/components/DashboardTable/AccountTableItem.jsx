@@ -173,6 +173,7 @@ const AccountTableItem = ({ account, type }) => {
           </>
         ) : (
           <>
+          {type == "dashboard" && (
             <TableCell>
               <TooltipProvider>
                 <Tooltip>
@@ -194,6 +195,8 @@ const AccountTableItem = ({ account, type }) => {
                 </Tooltip>
               </TooltipProvider>
             </TableCell>
+
+          )}
             <TableCell></TableCell>
           </>
         )}

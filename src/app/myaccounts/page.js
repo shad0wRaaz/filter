@@ -56,14 +56,15 @@ const MyAccount = ({modal}) => {
       <header>
           <Navbar/>
       </header>
+        {/* {modal} */}
       <main className="p-6">
-        <div className="text-xl font-bold p-4 pl-0">
+        <div className="text-xl font-bold p-4 pl-0 flex justify-between flex-wrap items-center">
           My Accounts
+          <Button onClick={() => router.push('/myaccounts/add')}>
+              <AddIcon className="mr-1" /> Add Account
+          </Button>
         </div>
-        {modal}
-        <FilterSheet/>
-        <Button className="mt-6 -mb-2" onClick={() => router.push('/myaccounts/add')}>
-            <AddIcon className="mr-1" /> Add Account</Button>
+        {/* <FilterSheet/> */}
         <Card className="mt-6 dark:bg-gray-700">
             <AccountTable 
               data={data?.data} 
