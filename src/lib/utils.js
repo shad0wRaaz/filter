@@ -7,7 +7,7 @@ export function cn(...inputs) {
 
 export const API_URL = `https://${process.env.NEXT_PUBLIC_TS_API_URL}`;
 
-export const MY_API_URL = process.env.NODE_ENV == 'development' ? `http://localhost:3001` : 'http://localhost:3001';
+export const MY_API_URL = process.env.NODE_ENV == 'development' ? `http://localhost:3001` : 'http://159.65.90.234:3001';
 
 export const authKey = (apiKey, secretKey) => {
   return ('Basic ' + btoa(`${apiKey}:${secretKey}`))
