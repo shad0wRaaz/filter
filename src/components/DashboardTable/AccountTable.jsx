@@ -22,7 +22,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
   const [filteredData, setFilteredData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [totalPages, setTotalPages] = useState(0);
   const [sort, setSort] = useState({key: 'balance', order: false});
 console.log(data)
@@ -78,20 +78,19 @@ useEffect(() =>{
   return() => {}
 }, [showWatchlist, watchlist])
 
-  const handleSort = (array, key, orderFlag) => {
-    let order = "desc";
-    if (orderFlag) { order = "asc"; }
-    const sortedArray = array.sort((a, b) => {
-      if (order === 'asc') {
-          return a[key] - b[key];
-      } else if (order === 'desc') {
-          return b[key] - a[key];
-      } else {
-          throw new Error('Invalid order. Please specify "asc" for ascending or "desc" for descending.');
-      }
-    });
-    return sortedArray
-  }
+const handleSort = (array, key, orderFlag) => {
+  const order = orderFlag ? "asc" : "desc";
+
+  return array.sort((a, b) => {
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+      return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
+    } else {
+      return order === 'asc' 
+        ? String(a[key]).localeCompare(String(b[key]))
+        : String(b[key]).localeCompare(String(a[key]));
+    }
+  });
+}
 
   const changeItemsPerPage = (count) => {
     setCurrentPage(1);
@@ -108,6 +107,15 @@ useEffect(() =>{
             <TableHead className="rounded-tl-md">Name</TableHead>
             <TableHead>Broker</TableHead>
             <TableHead>Types</TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "currency", order: !sort.order})} >Currency </span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "currency" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "currency", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "balance", order: !sort.order})}>Balance</span>
