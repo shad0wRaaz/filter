@@ -12,9 +12,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { MY_API_URL } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { decryptData, encryptData } from '@/lib/encryption';
+import { useMySession } from '@/contexts/SessionContext';
 
 const Settings = () => {
     const { user, setUser } = useUser();
+    const { session } = useMySession();
     const [seeAPIKey, setSeeAPIKey] = useState(false);
     const [seeSecretKey, setSeeSecretKey] = useState(false);
     const { toast } = useToast();
@@ -29,7 +31,8 @@ const Settings = () => {
                     setUser({ ...user, secretKey: decryptData(res.secretKey), apiKey: decryptData(res.apiKey)})
                 }
                 );
-        }
+        },
+        enabled: session.email != ""
     });
 
     const mutation = useMutation({

@@ -1,21 +1,20 @@
 "use client"
 import AccountTable from '@/components/DashboardTable/AccountTable'
+import UnauthorizedAccess from '@/components/UnauthorizedAccess'
 import FilterSheet from '@/components/FilterSheet'
 import Navbar from '@/components/NavBar'
-import TablePagination from '@/components/Pagination'
 import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { useAccounts } from '@/contexts/AccountsContext'
 import { useDashboardTable } from '@/contexts/DashboardTableContext'
-import { useLeadFollower } from '@/contexts/LeadFollowerContext'
+import { useMySession } from '@/contexts/SessionContext'
 import { useUser } from '@/contexts/UserContext'
 import { useWatchlist } from '@/contexts/WatchlistContext'
 import { MY_API_URL } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
+
+import React, { useState } from 'react'
 
 const Dashboard = ({modal}) => {
+  const {session} = useMySession();
   const { user, setUser } = useUser();
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
@@ -43,14 +42,14 @@ const Dashboard = ({modal}) => {
         })
         .catch(err => { console.log(err)})
     },
-    enabled: user.secretKey == "" || user.apiKey == ""
+    enabled: session.email != ""
 });
 
 
   const { data:accounts, isLoading, status: accountStatus } = useQuery({
     queryKey: ['accounts'],
     queryFn: async() => {
-      if(user.secretKey == '' || user.apiKey ==  ''){ return null; }
+      // if(user.secretKey == '' || user.apiKey ==  ''){ return null; }
       // return await fetch(`${MY_API_URL}/accounts/get/${limit}/${lastId}`)
       return await fetch(`${MY_API_URL}/accounts/all/0`)
       .then(res => res.json())
@@ -60,7 +59,7 @@ const Dashboard = ({modal}) => {
         return res;
       })
     },
-    enabled: user.secretKey != '' && user.apiKey != '' && user.username != ""
+    enabled: session.email != ""
   });
 
   const{data:watchlistdata, status: watchliststatus} = useQuery({
@@ -74,6 +73,7 @@ const Dashboard = ({modal}) => {
                       return res;
                     })
     },
+    enabled: session.email != ""
   });
 
   const { data:copierData, isLoading: copierLoading, status:copierStatus } = useQuery({
@@ -81,28 +81,33 @@ const Dashboard = ({modal}) => {
     queryFn: async() => {
       return await fetch(`${MY_API_URL}/copiers`)
                     .then(res => res.json())
-    }
+    },
+    enabled: session.email != ""
   })
 
   return (
     <>
-      <header>
-          <Navbar/>
-      </header>
-      <main className="p-6">
-        {modal}
-        <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} />
-        <Card className="mt-6 dark:bg-gray-700">
-          <AccountTable 
-            data={accounts} 
-            isLoading={isLoading} 
-            status={accountStatus} 
-            type="dashboard" 
-            watchlist={watchlist} 
-            showWatchlist={watchlistOnly}
-          />
-        </Card>
-      </main>
+    {session.email == "" ? <UnauthorizedAccess/> : (
+      <>
+        <header>
+            <Navbar/>
+        </header>
+        <main className="p-6">
+          {modal}
+          <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} />
+          <Card className="mt-6 dark:bg-gray-700">
+            <AccountTable 
+              data={accounts} 
+              isLoading={isLoading} 
+              status={accountStatus} 
+              type="dashboard" 
+              watchlist={watchlist} 
+              showWatchlist={watchlistOnly}
+            />
+          </Card>
+        </main>
+      </>
+    )}
     </>
   )
 }

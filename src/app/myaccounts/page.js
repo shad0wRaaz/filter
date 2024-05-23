@@ -1,5 +1,6 @@
 "use client";
 import AccountTable from '@/components/DashboardTable/AccountTable';
+import UnauthorizedAccess from '@/components/UnauthorizedAccess';
 import FilterSheet from '@/components/FilterSheet';
 import Navbar from '@/components/NavBar'
 import { AddIcon } from '@/components/icons/CustomIcons';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card'
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useLeadFollower } from '@/contexts/LeadFollowerContext';
+import { useMySession } from '@/contexts/SessionContext';
 import { useUser } from '@/contexts/UserContext';
 import { useWatchlist } from '@/contexts/WatchlistContext';
 import { MY_API_URL } from '@/lib/utils';
@@ -17,6 +19,7 @@ import React, { useState } from 'react'
 import { Toaster } from 'sonner';
 
 const MyAccount = ({modal}) => {
+  const {session} = useMySession();
     const {user} = useUser();
     const router = useRouter();
     const {watchlist, setWatchlist} = useWatchlist();
@@ -32,8 +35,9 @@ const MyAccount = ({modal}) => {
             })
             .catch(err => { console.log(err)})
         },
+        enabled: session.email != ""
     });
-    console.log(data)
+
     const{data:watchlistdata, status: watchliststatus} = useQuery({
       queryKey: ['watchlist'],
       queryFn: async() => {
@@ -47,32 +51,37 @@ const MyAccount = ({modal}) => {
                         }
                       })
       },
+      enabled: session.email != ""
     });
 
     const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
 
   return (
     <>
-      <header>
-          <Navbar/>
-      </header>
-        {/* {modal} */}
-      <main className="p-6">
-        <div className="text-xl font-bold p-4 pl-0 flex justify-between flex-wrap items-center">
-          My Accounts
-          <Button onClick={() => router.push('/myaccounts/add')}>
-              <AddIcon className="mr-1" /> Add Account
-          </Button>
-        </div>
-        {/* <FilterSheet/> */}
-        <Card className="mt-6 dark:bg-gray-700">
-            <AccountTable 
-              data={data?.data} 
-              isLoading={isLoading} 
-              status={status} 
-              type="myaccounts"/>
-        </Card>
-      </main>
+    {session.email == "" ? <UnauthorizedAccess/> : (
+      <>
+        <header>
+            <Navbar/>
+        </header>
+          {/* {modal} */}
+        <main className="p-6">
+          <div className="text-xl font-bold p-4 pl-0 flex justify-between flex-wrap items-center">
+            My Accounts
+            <Button onClick={() => router.push('/myaccounts/add')}>
+                <AddIcon className="mr-1" /> Add Account
+            </Button>
+          </div>
+          {/* <FilterSheet/> */}
+          <Card className="mt-6 dark:bg-gray-700">
+              <AccountTable 
+                data={data?.data} 
+                isLoading={isLoading} 
+                status={status} 
+                type="myaccounts"/>
+          </Card>
+        </main>
+      </>
+    )}
     </>
   )
 }
