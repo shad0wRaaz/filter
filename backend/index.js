@@ -18,7 +18,7 @@ import { connectRedis } from './libs/redis/redisClient.js';
 const PORT = 3001;
 
 const app = express();
-app.use(cors({origin : "http://localhost:3000"}));
+app.use(cors({origin : "*"}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); 
 
