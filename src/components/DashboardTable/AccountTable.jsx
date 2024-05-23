@@ -25,7 +25,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [totalPages, setTotalPages] = useState(0);
   const [sort, setSort] = useState({key: 'balance', order: false});
-console.log(data)
+
   useMemo(() => {
     if(!data) return
 

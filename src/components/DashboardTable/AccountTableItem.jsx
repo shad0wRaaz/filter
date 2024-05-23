@@ -2,19 +2,20 @@ import React from 'react'
 import { TableCell, TableRow } from '../ui/table'
 import { useUser } from '@/contexts/UserContext'
 import { Badge } from '../ui/badge'
-import { MY_API_URL, currencyFormat, timeAgo } from '@/lib/utils'
+import { MY_API_URL } from '@/lib/utils'
 import ContextMenu from './ContextMenu'
 import { useWatchlist } from '@/contexts/WatchlistContext'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { useCopyTrade } from '@/contexts/CopyTradeContext'
-import { CheckIcon, CrossIcon } from '../icons/CustomIcons'
+import { BitCoinIcon, CheckIcon, CrossIcon } from '../icons/CustomIcons'
 import { toast } from 'sonner'
 import CopierDialog from '../CopierSettings/CopierDialog'
-import { useLeadFollower } from '@/contexts/LeadFollowerContext'
 import { Star } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useQueryClient } from '@tanstack/react-query'
+
+const cryptoArray = ["USC", "BTC", "ETH", "XRP", "USDC", "USDT"];
 
 const AccountTableItem = ({ account, type }) => {
 
@@ -79,7 +80,8 @@ const AccountTableItem = ({ account, type }) => {
             {/* <Portfolio account={account} isWatchlist={isWatchlist} type="link"/> */}
             <Link href={`/portfolio/${account.id}`}>
               <div className="font-medium flex items-center gap-1">
-                {account.client_name ? account.client_name : account.account_number} [{account.id}]
+                {account.account_number}
+                {/* {account.client_name ? account.client_name : account.account_number} [{account.id}] */}
               </div>
             </Link>
         </TableCell>
@@ -116,7 +118,11 @@ const AccountTableItem = ({ account, type }) => {
           }
         </div>
         </TableCell>
-        <TableCell>{account.currency}</TableCell>
+        <TableCell>
+          <div className="flex items-center justify-start gap-3">
+            <span className="inline">{account.currency}</span> {cryptoArray.find(el => el == account.currency) && <span className="inline"><BitCoinIcon color="#aaa"/></span>}
+          </div>
+        </TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.balance)}</TableCell>
         <TableCell>{Number(account.growth).toFixed(2)}%</TableCell>
         <TableCell>{account.win_ratio}</TableCell>
