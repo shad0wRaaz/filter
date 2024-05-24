@@ -209,7 +209,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
-            <span>RRR (Avg. Loss): {filter.minRiskRewardAverage} - {filter.minRiskRewardAverage}</span>
+            <span>RRR (Avg. Loss): {filter.minRiskRewardAverage} - {filter.maxRiskRewardAverage}</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />

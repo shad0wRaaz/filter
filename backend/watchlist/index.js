@@ -1,11 +1,11 @@
 
 import { connectToDatabase } from '../libs/mongodb/mongoClient.js';
 
+const db = await connectToDatabase();
 
 export const getWatchlist = async(username) => {
     let returnObject = "";
     try{
-        const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
 
         const returnObject = await collection.find({ username }).toArray();
@@ -20,7 +20,7 @@ export const getWatchlist = async(username) => {
 
 export const saveWatchlist = async(username, watchlist) => {
     try{
-        const db = await connectToDatabase();
+        // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
         
         const existingWatchlist = await collection.find({ username, watchlist }).toArray();
@@ -51,7 +51,7 @@ export async function PATCH(req, res){
         const { username, watchlist } = await req.json();
         // console.log(username, secretKey, apiKey)
 
-        const db = await connectToDatabase();
+        // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
         
         const item = await collection.updateOne(
@@ -82,7 +82,7 @@ export async function DELETE(req, res){
     try{
         const { username, watchlist } = await req.json();
 
-        const db = await connectToDatabase();
+        // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
     
     

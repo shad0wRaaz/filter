@@ -14,6 +14,7 @@ import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
 import { getTrades } from './accounts/trades/index.js';
 import { connectRedis } from './libs/redis/redisClient.js';
+import { getUser } from './users/index.js';
 
 const PORT = 3001;
 
@@ -144,8 +145,17 @@ app.post('/watchlist', async(req,res) => {
         const result = await saveWatchlist(req.body.username, req.body.watchlist);
         return res.send(result);
     }
-    return req.send({ message: "Watchlist not added" })
-})
+    return req.send({ message: "Watchlist not added" });
+});
+
+app.post('/user/login', async(req, res) => {
+    const { email, password } = req.body;
+    const user = await getUser(email, password);
+    if(user){
+        return res.send({ success: true, status: 200, data: user })
+    }
+    return res.send({ success: false, status: 400, message: 'Invalid login credentails' })
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running in PORT ${PORT}`);

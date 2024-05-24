@@ -15,11 +15,11 @@ import Link from "next/link";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import InfoStats from "../Portfolio/InfoStats";
-import { useMySession } from "@/contexts/SessionContext";
 import UnauthorizedAccess from "../UnauthorizedAccess";
+import { useSession } from "next-auth/react";
 
 const PortfolioDialog = ({accountId}) => {
-    const { session } = useMySession();
+    const session = useSession();
 
   const { watchlist, setWatchlist } = useWatchlist();
 
@@ -49,7 +49,7 @@ const PortfolioDialog = ({accountId}) => {
 
   return (
     <>
-    {session.email == "" ? <UnauthorizedAccess /> : (
+    {session.status != "authenticated" ? <UnauthorizedAccess /> : (
         <>
             {(!followers || !account)  
                 ? <div className="flex h-[90%] w-[100%] items-center justify-center"><Loader/></div> 

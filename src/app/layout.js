@@ -11,8 +11,7 @@ import { CopyTradeProvider } from "@/contexts/CopyTradeContext";
 import { LeadFollowerProvider } from "@/contexts/LeadFollowerContext";
 import { AccountsProvider } from "@/contexts/AccountsContext";
 import { DashboardTableProvider } from "@/contexts/DashboardTableContext";
-import SessionWrapper from "./Providers/SessionWrapper";
-import { MySessionProvider } from "@/contexts/SessionContext";
+import AuthProvider from "./Providers/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={cn(inter.className, "bg-gray-100 dark:bg-gray-800")}>
-        <MySessionProvider>
+        <AuthProvider>
           <ThemeProvider 
             attribute="class" 
             defaultTheme="system" 
@@ -52,7 +51,7 @@ export default function RootLayout({ children }) {
                 </FilterProvider>
               </ReactQueryClientProvider>
           </ThemeProvider>
-        </MySessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

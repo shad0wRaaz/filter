@@ -1,25 +1,23 @@
 "use client";
 import AccountTable from '@/components/DashboardTable/AccountTable';
 import UnauthorizedAccess from '@/components/UnauthorizedAccess';
-import FilterSheet from '@/components/FilterSheet';
+// import FilterSheet from '@/components/FilterSheet';
 import Navbar from '@/components/NavBar'
 import { AddIcon } from '@/components/icons/CustomIcons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card'
-import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useLeadFollower } from '@/contexts/LeadFollowerContext';
-import { useMySession } from '@/contexts/SessionContext';
 import { useUser } from '@/contexts/UserContext';
 import { useWatchlist } from '@/contexts/WatchlistContext';
 import { MY_API_URL } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { Router } from 'next/router';
+// import { Router } from 'next/router';
 import React, { useState } from 'react'
-import { Toaster } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 const MyAccount = ({modal}) => {
-  const {session} = useMySession();
+  const session = useSession();
     const {user} = useUser();
     const router = useRouter();
     const {watchlist, setWatchlist} = useWatchlist();
@@ -35,7 +33,7 @@ const MyAccount = ({modal}) => {
             })
             .catch(err => { console.log(err)})
         },
-        enabled: session.email != ""
+        enabled: session.status == "authenticated"
     });
 
     const{data:watchlistdata, status: watchliststatus} = useQuery({
@@ -51,14 +49,13 @@ const MyAccount = ({modal}) => {
                         }
                       })
       },
-      enabled: session.email != ""
+      enabled: session.status == "authenticated"
     });
 
-    const { setLeadFollower, setLeadsOnlyArray, setFollowersOnlyArray } = useLeadFollower();
 
   return (
     <>
-    {session.email == "" ? <UnauthorizedAccess/> : (
+    {session.status != "authenticated" ? <UnauthorizedAccess/> : (
       <>
         <header>
             <Navbar/>

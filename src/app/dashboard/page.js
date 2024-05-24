@@ -5,16 +5,16 @@ import FilterSheet from '@/components/FilterSheet'
 import Navbar from '@/components/NavBar'
 import { Card } from '@/components/ui/card'
 import { useDashboardTable } from '@/contexts/DashboardTableContext'
-import { useMySession } from '@/contexts/SessionContext'
 import { useUser } from '@/contexts/UserContext'
 import { useWatchlist } from '@/contexts/WatchlistContext'
 import { MY_API_URL } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 
 import React, { useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 const Dashboard = ({modal}) => {
-  const {session} = useMySession();
+  const session = useSession();
   const { user, setUser } = useUser();
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist } = useWatchlist();
@@ -42,7 +42,7 @@ const Dashboard = ({modal}) => {
         })
         .catch(err => { console.log(err)})
     },
-    enabled: session.email != ""
+    enabled: session.status == "authenticated"
 });
 
 
@@ -59,7 +59,7 @@ const Dashboard = ({modal}) => {
         return res;
       })
     },
-    enabled: session.email != ""
+    enabled: session.status == "authenticated"
   });
 
   const{data:watchlistdata, status: watchliststatus} = useQuery({
@@ -73,7 +73,7 @@ const Dashboard = ({modal}) => {
                       return res;
                     })
     },
-    enabled: session.email != ""
+    enabled: session.status == "authenticated"
   });
 
   const { data:copierData, isLoading: copierLoading, status:copierStatus } = useQuery({
@@ -82,12 +82,12 @@ const Dashboard = ({modal}) => {
       return await fetch(`${MY_API_URL}/copiers`)
                     .then(res => res.json())
     },
-    enabled: session.email != ""
+    enabled: session.status == "authenticated"
   })
 
   return (
     <>
-    {session.email == "" ? <UnauthorizedAccess/> : (
+    {session.status != "authenticated" ? <UnauthorizedAccess/> : (
       <>
         <header>
             <Navbar/>
