@@ -127,6 +127,15 @@ const handleSort = (array, key, orderFlag) => {
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "equity", order: !sort.order})}>Equity</span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "equity" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "equity", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "growth", order: !sort.order})} >Growth</span> 
                 <ChevronUp 
                   className={cn(style.iconStyle, sort.key == "growth" && !sort.order && " rotate-180")} 

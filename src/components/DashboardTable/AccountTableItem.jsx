@@ -124,12 +124,13 @@ const AccountTableItem = ({ account, type }) => {
           </div>
         </TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.balance)}</TableCell>
-        <TableCell>{Number(account.growth).toFixed(2)}%</TableCell>
+        <TableCell>{Intl.NumberFormat('en-US').format(account.equity)}</TableCell>
+        <TableCell>{Number(account.growth).toFixed(2)}</TableCell>
         <TableCell>{account.win_ratio}</TableCell>
         <TableCell>{account.risk_reward_ratio_avg}</TableCell>
         <TableCell>{account.risk_reward_ratio_worst}</TableCell>
-        <TableCell>{Number(account.drawdown).toFixed(2)}%</TableCell>
-        <TableCell>{ new Date(account.started_at).toLocaleString()}</TableCell>
+        <TableCell>{Number(account.drawdown).toFixed(2)}</TableCell>
+        <TableCell>{ new Date(account.started_at).toLocaleDateString()}</TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.total_profit)}</TableCell>
         {/* <TableCell>0</TableCell> */}
         {type == "watchlist" ? (
