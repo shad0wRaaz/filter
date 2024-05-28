@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
+import FilterControls from '@/components/Filters/FilterControls'
 
 const Dashboard = ({modal}) => {
   const session = useSession();
@@ -94,7 +95,8 @@ const Dashboard = ({modal}) => {
         </header>
         <main className="p-6">
           {modal}
-          <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} />
+          <FilterControls watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} data={accounts}/>
+          {/* <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} /> */}
           <Card className="mt-6 dark:bg-gray-700">
             <AccountTable 
               data={accounts} 

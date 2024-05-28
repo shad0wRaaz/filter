@@ -6,6 +6,7 @@ const baseURL = MY_API_URL + "/user/login";
 export const options = {
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60,
   },
   providers: [
     CredentialsProvider({
