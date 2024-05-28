@@ -86,11 +86,6 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
               )}
             />
 
-          {/* <div className="flex gap-2 flex-wrap justify-between flex-row items-center">
-            <Input type="number" placeholder="Min." className="w-[40%]" value={unsavedFilter.minWinRatio} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, minWinRatio: Number(e.target.value) })}></Input>
-            <span>to</span>
-            <Input type="number" placeholder="Max." className="w-[40%]" value={unsavedFilter.maxWinRatio} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, maxWinRatio: Number(e.target.value) })}></Input>
-          </div> */}
         </div>
         <div className={ style.filterBox }>
           <div className={style.label}>
@@ -111,7 +106,7 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
                 }
               )}
             />
-          {/* <Input type="number" value={unsavedFilter.riskRewardAverage} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardAverage: Number(e.target.value) })}></Input> */}
+
         </div>
         <div className={ style.filterBox }>
           <div className={style.label}>
@@ -132,7 +127,6 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
                 }
               )}
             />
-          {/* <Input type="number" value={unsavedFilter.riskRewardWorst} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, riskRewardWorst: Number(e.target.value) })}></Input> */}
         </div>
         <div className={ style.filterBox }>
           <div className={style.label}>
@@ -153,7 +147,6 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
                 }
               )}
             />
-          {/* <Input type="number" value={unsavedFilter.maxDrawdown} onChange={(e) => setUnsavedFilter({ ...unsavedFilter, maxDrawdown: Number(e.target.value) })}></Input> */}
         </div>
         <div className={ style.filterBox }>
           <Label htmlFor="terms">Track Record History</Label>
@@ -190,6 +183,10 @@ const Filters = ({ filterType, unsavedFilter, setUnsavedFilter}) => {
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
             <span>Account Type: {filter.accountNature}</span>
+          </Badge>
+          <Badge className={ style.filterBadge }>
+            <PlusCircle className={ style.badgeIcon } />
+            <span>Broker: {filter.broker}</span>
           </Badge>
           <Badge className={ style.filterBadge }>
             <PlusCircle className={ style.badgeIcon } />
