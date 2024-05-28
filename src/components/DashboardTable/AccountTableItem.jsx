@@ -89,7 +89,7 @@ const AccountTableItem = ({ account, type }) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <p>{getFirstWord(account.broker)}</p>
+                <p>{(account.broker)}</p>
               </TooltipTrigger>
               <TooltipContent>
                 <p>{account.broker}</p>
@@ -100,14 +100,14 @@ const AccountTableItem = ({ account, type }) => {
         </TableCell>
         <TableCell>
         <div className="flex gap-2 items-center justify-start">
-          {account.trade_mode == "demo" &&
+          {/* {account.trade_mode == "demo" &&
             <Badge variant="secondary" className="rounded-[5px] border border-slate-200 dark:bg-slate-600 dark:border-slate-700 shadow-sm">
               Demo
             </Badge>}
           {account.trade_mode == "real" &&
             <Badge variant="secondary" className="rounded-[5px] border border-green-300 bg-green-200 dark:bg-green-600 dark:border-green-700 shadow-sm">
               Real
-            </Badge>}
+            </Badge>} */}
           <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
             MT{account.mt_version}
           </Badge>

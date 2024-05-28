@@ -37,7 +37,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
       }else{
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
             (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
-            (account.copierStatus == filter.accountNature || filter.accountNature == "All") && 
+            ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) && 
             Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
             Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage) &&
@@ -45,6 +45,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
             Number(account.balance) >= Number(filter.minBalance) &&
             Number(account.drawdown >= Number(filter.minDrawdown)) && Number(account.drawdown <= Number(filter.maxDrawdown)) &&
             dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 &&
+            (account.broker == filter.broker || filter.broker == "All") &&
             account.started_at != null
           );
       }
@@ -106,7 +107,7 @@ const handleSort = (array, key, orderFlag) => {
           <TableRow className="bg-slate-200 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-900">
             <TableHead className="rounded-tl-md">Name</TableHead>
             <TableHead>Broker</TableHead>
-            <TableHead>Types</TableHead>
+            <TableHead>Account Types</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "currency", order: !sort.order})} >Currency </span>
@@ -223,7 +224,7 @@ const handleSort = (array, key, orderFlag) => {
           {isLoading || status != "success"  ? (
             <>
               <TableRow>
-                <TableCell colSpan="12">
+                <TableCell colSpan="14">
                   <Loader/>
                 </TableCell>
               </TableRow>
