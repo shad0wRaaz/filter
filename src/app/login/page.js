@@ -11,7 +11,7 @@ const Login = async() => {
     }
 
   return (
-    <LoginForm />
+      <LoginForm />
   )
 }
 
