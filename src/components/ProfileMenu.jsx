@@ -3,7 +3,7 @@ import { DropdownMenu,DropdownMenuContent,DropdownMenuGroup,DropdownMenuItem,Dro
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { signOut } from "next-auth/react"
-  
+  console.log(process.env.NEXT_PUBLIC_NEXT_AUTH_URL)
   export function DropdownMenuDemo() {
     return (
       <DropdownMenu>
@@ -48,7 +48,7 @@ import { signOut } from "next-auth/react"
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => signOut({ callbackUrl: `${process.env.NODE_ENV == "production" ? process.env.NEXT_PUBLIC_NEXT_AUTH_URL : process.env.NEXT_PUBLIC_NEXT_AUTH_URL_TEST}/login`})}>
+            onClick={() => signOut({ callbackUrl: '/login'})}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

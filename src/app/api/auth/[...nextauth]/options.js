@@ -29,7 +29,7 @@ export const options = {
           headers: { "Content-Type": "application/json" },
         });
         const resdata = await res.json();
-        console.log("Login...", resdata);
+
         if (
           resdata.status === 400 ||
           resdata.status === 401 ||
