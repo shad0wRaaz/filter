@@ -12,32 +12,30 @@ import CircleCheck from "../ui/CircleCheck"
 
 
 const BrokerControl = ({style, data})  => {
-    const {filter, setFilter} = useFilter();
+  const {filter, setFilter} = useFilter();
   const [open, setOpen] = useState(false);
-  const [searchBrokerQuery, setSearchBrokerQuery] = useState();
-  const [brokers, setBrokers] = useState();
+  const [searchBrokerQuery, setSearchBrokerQuery] = useState("");
 
-  useEffect(() => {
-    if(!data) return;
-    const brokerArray = data.map(account => account.broker);
-    const brokerSet = new Set(brokerArray);
-    setBrokers(Array.from(brokerSet).sort());
+  if(!data) return;
+  const brokerArray = data?.map(account => account.broker);
+  const brokerSet = new Set(brokerArray);
+  const brokers = (Array.from(brokerSet).sort());
 
-    return() => {}
-  }, [data])
-
-
-const handleClick = (broker) => {
-    setFilter({ ...filter, broker});
-    setOpen(false)
-}
+  const handleClick = (broker) => {
+      setFilter({ ...filter, broker});
+      localStorage.setItem("filters", JSON.stringify({ ...filter, broker }))
+      setOpen(false)
+  }
   return (
     <Popover>
       <PopoverTrigger>
         <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Broker: {filter.broker}</span>
-            </Badge>
+          {/* <PlusCircle className={ style.badgeIcon } /> */}
+          <div className={style.filterText}>
+            <p className={style.filterLabel}>Broker </p>
+            <p className={style.filterValue}> {filter.broker}</p>
+          </div>
+        </Badge>
       </PopoverTrigger>
       <PopoverContent className={cn(style.popoverContent, "space-y-4 max-h-[300px] overflow-scroll p-4")}>
         <Input 

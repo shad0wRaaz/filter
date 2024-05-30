@@ -11,12 +11,21 @@ const RiskRewardRatioWorstLoss = ({style}) => {
     const {filter, setFilter} = useFilter();
     const [minRiskRewardWorst, setMinRiskRewardWorst] = useState(filter ? filter.minRiskRewardWorst : 0);
     const [maxRiskRewardWorst, setMaxRiskRewardWorst] = useState(filter ? filter.maxRiskRewardWorst : 0);
+
+    const handleChange = () => {
+        setFilter({ ...filter, minRiskRewardWorst, maxRiskRewardWorst});
+        localStorage.setItem("filters", JSON.stringify({ ...filter, minRiskRewardWorst, maxRiskRewardWorst }));
+    }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>RRR (Worst Loss): {filter.minRiskRewardWorst} - {filter.maxRiskRewardWorst}</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                  <p className={style.filterLabel}>RRR (Worst Loss)</p>
+                  <p className={style.filterValue}>{filter.minRiskRewardWorst} - {filter.maxRiskRewardWorst}</p>
+                </div>
+                {/* <span>RRR (Worst Loss): {filter.minRiskRewardWorst} - {filter.maxRiskRewardWorst}</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
@@ -28,7 +37,7 @@ const RiskRewardRatioWorstLoss = ({style}) => {
                 <div className="flex gap-3 min-w-[300px]">
                     <Slider
                         defaultValue={[filter.minRiskRewardWorst, filter.maxRiskRewardWorst]}
-                        min={1}
+                        min={0}
                         max={10} 
                         step={1}
                         onValueChange={
@@ -37,7 +46,7 @@ const RiskRewardRatioWorstLoss = ({style}) => {
                             setMaxRiskRewardWorst(Number(e[1]));
                             }}
                         />
-                    <Button onClick={() => setFilter({ ...filter, minRiskRewardWorst, maxRiskRewardWorst})}>
+                    <Button onClick={() => handleChange()}>
                         <Check width={15}/>
                     </Button>
                 </div>

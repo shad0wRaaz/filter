@@ -11,12 +11,21 @@ const WinRatioControl = ({style}) => {
     const {filter, setFilter} = useFilter();
     const [minWinRatio, setMinWinRatio] = useState(filter ? filter.minWinRatio : 0);
     const [maxWinRatio, setMaxWinRatio] = useState(filter ? filter.maxWinRatio : 0);
+    
+    const handleChange = () => {
+        setFilter({ ...filter, minWinRatio, maxWinRatio});
+        localStorage.setItem("filters", JSON.stringify({ ...filter, minWinRatio, maxWinRatio }));
+    }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Win Ratio: {filter.minWinRatio} - {filter.maxWinRatio}%</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                    <p className={style.filterLabel}>Win Ratio</p>
+                    <p className={style.filterValue}> {filter.minWinRatio} - {filter.maxWinRatio}</p>
+                </div>
+                {/* <span>Win Ratio: {filter.minWinRatio} - {filter.maxWinRatio}%</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
@@ -37,7 +46,7 @@ const WinRatioControl = ({style}) => {
                             setMaxWinRatio(Number(e[1]));
                             }}
                         />
-                    <Button onClick={() => setFilter({ ...filter, minWinRatio, maxWinRatio})}>
+                    <Button onClick={() => handleChange()}>
                         <Check width={15}/>
                     </Button>
                 </div>

@@ -11,12 +11,21 @@ const DrawdownControl = ({style}) => {
     const {filter, setFilter} = useFilter();
     const [minDrawdown, setMinDrawdown] = useState(filter ? filter.minDrawdown : 0);
     const [maxDrawdown, setMaxDrawdown] = useState(filter ? filter.maxDrawdown : 0);
+
+    const handleChange = () => {
+        setFilter({ ...filter, minDrawdown, maxDrawdown});
+        localStorage.setItem("filters", JSON.stringify({ ...filter, minDrawdown, maxDrawdown }));
+    }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Drawdown: {filter.minDrawdown} - {filter.maxDrawdown}%</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                  <p className={style.filterLabel}>Drawdown</p>
+                  <p className={style.filterValue}>{filter.minDrawdown} - {filter.maxDrawdown}</p>
+                </div>
+                {/* <span>Drawdown: {filter.minDrawdown} - {filter.maxDrawdown}%</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
@@ -28,7 +37,7 @@ const DrawdownControl = ({style}) => {
                 <div className="flex gap-3 min-w-[300px]">
                     <Slider
                         defaultValue={[filter.minDrawdown, filter.maxDrawdown]}
-                        min={1}
+                        min={0}
                         max={100} 
                         step={1}
                         onValueChange={
@@ -37,7 +46,7 @@ const DrawdownControl = ({style}) => {
                             setMaxDrawdown(Number(e[1]));
                             }}
                         />
-                    <Button onClick={() => setFilter({ ...filter, minDrawdown, maxDrawdown})}>
+                    <Button onClick={() => handleChange()}>
                         <Check width={15}/>
                     </Button>
                 </div>

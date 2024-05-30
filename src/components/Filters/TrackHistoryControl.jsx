@@ -8,17 +8,26 @@ import { cn } from '@/lib/utils'
 
 const TrackHistoryControl = ({style}) => {
     const {filter, setFilter} = useFilter();
+
+    const handleChange = (period) => {
+      setFilter({ ...filter, trackRecord: period})
+      localStorage.setItem("filters", JSON.stringify({ ...filter, trackRecord: period }));
+  }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Track Record: Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                  <p className={style.filterLabel}>Track Record</p>
+                  <p className={style.filterValue}>Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</p>
+                </div>
+                {/* <span>Track Record: Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={cn(style.popoverContent," w-[250px]")}>
             <b>Track History</b>
-            <Select onValueChange={(e) => setFilter({ ...filter, trackRecord: e})}>
+            <Select onValueChange={(e) => handleChange(e)}>
                 <SelectTrigger className="w-full">
                 <SelectValue placeholder={`Above ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${filter.trackRecord == 12 || filter.trackRecord == 24 ? filter.trackRecord == 12 ? "year" : "years" : "months"}`} />
                 </SelectTrigger>

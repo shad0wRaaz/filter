@@ -10,12 +10,21 @@ import { Badge } from '../ui/badge';
 const MinimumBalanceControl = ({style}) => {
     const {filter, setFilter} = useFilter();
     const [minBalance, setMinBalance]= useState(filter ? filter.minBalance : 0)
+
+    const handleChange = () => {
+        setFilter({ ...filter, minBalance});
+        localStorage.setItem("filters", JSON.stringify({ ...filter, minBalance }));
+    }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Min. Balance: {filter.minBalance}</span>
+                <div className={style.filterText}>
+                    <p className={style.filterLabel}>Min. Balance </p>
+                    <p className={style.filterValue}> {Intl.NumberFormat('en-US').format(filter.minBalance)}</p>
+                </div>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                {/* <span>Min. Balance: {filter.minBalance}</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
@@ -26,7 +35,7 @@ const MinimumBalanceControl = ({style}) => {
                     value={minBalance} 
                     onChange={(e) => setMinBalance(e.target.value)}
                 />
-                <Button onClick={() => setFilter({ ...filter, minBalance})}>
+                <Button onClick={() => handleChange()}>
                     <Check width={15}/>
                 </Button>
             </div>

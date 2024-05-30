@@ -11,12 +11,21 @@ const RiskRewardRatioAverageLoss = ({style}) => {
     const {filter, setFilter} = useFilter();
     const [minRiskRewardAverage, setMinRiskRewardAverage] = useState(filter ? filter.minRiskRewardAverage : 0);
     const [maxRiskRewardAverage, setMaxRiskRewardAverage] = useState(filter ? filter.maxRiskRewardAverage : 0);
+
+    const handleChange = () => {
+        setFilter({ ...filter, minRiskRewardAverage, maxRiskRewardAverage});
+        localStorage.setItem("filters", JSON.stringify({ ...filter, minRiskRewardAverage, maxRiskRewardAverage }));
+    }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>RRR (Avg. Loss): {filter.minRiskRewardAverage} - {filter.maxRiskRewardAverage}</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                  <p className={style.filterLabel}>RRR (Avg. Loss)</p>
+                  <p className={style.filterValue}>{filter.minRiskRewardAverage} - {filter.maxRiskRewardAverage}</p>
+                </div>
+                {/* <span>RRR (Avg. Loss): {filter.minRiskRewardAverage} - {filter.maxRiskRewardAverage}</span> */}
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
@@ -37,7 +46,7 @@ const RiskRewardRatioAverageLoss = ({style}) => {
                             setMaxRiskRewardAverage(Number(e[1]));
                             }}
                         />
-                    <Button onClick={() => setFilter({ ...filter, minRiskRewardAverage, maxRiskRewardAverage})}>
+                    <Button onClick={() => handleChange()}>
                         <Check width={15}/>
                     </Button>
                 </div>

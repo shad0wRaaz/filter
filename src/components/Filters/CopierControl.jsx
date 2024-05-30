@@ -10,15 +10,18 @@ import { PlusCircle } from 'lucide-react';
 const CopierControl = ({style}) => {
     const {filter, setFilter} = useFilter();
     const handleSelect = (type) => {
-      // setSelected(type);
       setFilter({...filter, accountNature: type})
+      localStorage.setItem("filters", JSON.stringify({ ...filter, accountNature: type }))
     }
   return (
     <Popover>
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
-                <PlusCircle className={ style.badgeIcon } />
-                <span>Copier Status: {filter.accountNature}</span>
+                {/* <PlusCircle className={ style.badgeIcon } /> */}
+                <div className={style.filterText}>
+                  <p className={style.filterLabel}>Copier Status </p>
+                  <p className={style.filterValue}> {filter.accountNature}</p>
+                </div>
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
