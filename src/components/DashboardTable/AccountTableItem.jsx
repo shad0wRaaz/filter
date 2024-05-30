@@ -11,15 +11,19 @@ import { useCopyTrade } from '@/contexts/CopyTradeContext'
 import { BitCoinIcon, CheckIcon, CrossIcon } from '../icons/CustomIcons'
 import { toast } from 'sonner'
 import CopierDialog from '../CopierSettings/CopierDialog'
-import { Star } from 'lucide-react'
+import { Star, Trash } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useQueryClient } from '@tanstack/react-query'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from '../ui/button'
+import { useSession } from 'next-auth/react'
 
 const cryptoArray = ["USC", "BTC", "ETH", "XRP", "USDC", "USDT"];
 
 const AccountTableItem = ({ account, type }) => {
 
     const { user } = useUser();
+    const session = useSession();
     const { watchlist } = useWatchlist();
     const isWatchlist = watchlist.length > 0 ?  watchlist?.find(user => user.watchlist == account.id) : null;
     const { master, slaves, setSlaves } = useCopyTrade();
@@ -46,15 +50,36 @@ const AccountTableItem = ({ account, type }) => {
       }
     }
 
+    const handleDelete = async(accountId) => {
+
+      await fetch(`${MY_API_URL}/accounts/client/delete`, {
+        method: "POST",
+        body: JSON.stringify({ email: session.data.data.email, accountId: account.id}),
+        headers: {
+          'Content-Type' : 'application/json',
+        }
+      }).then(async res => {
+        const result = await res.json();
+        console.log(result);
+        if(result.success == "success"){
+          toast.success("Account delete successful.");
+          qc.invalidateQueries(['clientAccounts']);
+        }
+      }).catch(err => {
+        console.log(err);
+        toast.error("Error in deleting account.");
+      })
+    }
+
     const updateWatchlist = async() => {
-      if(!user.username || !account){
+      if(!account){
           toast("Watchlist not updated.");
           return
       }
       const result = await fetch(`${MY_API_URL}/watchlist`,
       {
         method: "POST",
-        body: JSON.stringify({ username: user.username, watchlist: account.id }),
+        body: JSON.stringify({ email: user.email, watchlist: account.id }),
         headers: {
           'Content-Type' : 'application/json',
         }
@@ -130,7 +155,7 @@ const AccountTableItem = ({ account, type }) => {
         <TableCell>{account.risk_reward_ratio_avg}</TableCell>
         <TableCell>{account.risk_reward_ratio_worst}</TableCell>
         <TableCell>{Number(account.drawdown).toFixed(2)}</TableCell>
-        <TableCell>{ new Date(account.started_at).toLocaleDateString()}</TableCell>
+        <TableCell>{account.started_at && new Date(account.started_at).toLocaleDateString()}</TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.total_profit)}</TableCell>
         {/* <TableCell>0</TableCell> */}
         {type == "watchlist" ? (
@@ -179,10 +204,9 @@ const AccountTableItem = ({ account, type }) => {
               <ContextMenu account={account} username={user.username}/>
             </TableCell>
           </>
-        ) : (
-          <>
-          {type == "dashboard" && (
+          ) : (
             <TableCell>
+            {type == "dashboard" && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -202,12 +226,47 @@ const AccountTableItem = ({ account, type }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </TableCell>
 
-          )}
-            <TableCell></TableCell>
-          </>
-        )}
+              )}
+            </TableCell>
+          )
+        }
+            <TableCell>
+              {type == "myaccounts" && (
+                <>
+                  <Dialog>
+                    <DialogTrigger>
+                      <div className="rounded-sm hover:bg-slate-200 p-2 transition-all">
+                        <Trash width={15} height={15} className='cursor-pointer'/>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently delete your account
+                          and remove your data from our servers.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                          <Button type="button"
+                          onClick={() => handleDelete(account.id)}>
+                            Delete
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button type="button" variant="secondary">
+                            Close
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  
+                </>
+              )}
+            </TableCell>
     </TableRow>
   )
 }
