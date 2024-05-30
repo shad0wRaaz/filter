@@ -3,19 +3,21 @@ import { redisClient, connectRedis, disconnetRedis } from "../libs/redis/redisCl
 import { getUserSettings } from "../accounts/settings/index.js";
 import { decryptData } from "../libs/security/crypt.js";
 
-const CACHE_DURATION = 600; //in seconds
+const CACHE_DURATION = 3600; //in seconds
 
 
-export const getClientAccounts = async (username, limit) => {
-    let returnObject = "";
+export const getClientAccounts = async (email, limit) => {
+    let returnObject = {};
     try{
         // await connectRedis();
-        const cachedData = await redisClient.get(`clientaccount_${username}_${limit}`);
+        const cachedData = await redisClient.get(`clientaccount_${email}`);
+
         if(cachedData){ return JSON.parse(cachedData); }
 
         //get user's apikey and secret key
-        
-        const user = await getUserSettings(username);
+
+        const user = await getUserSettings(email);
+
         const userAPIKey = decryptData(user.apiKey);
         const userSecretKey = decryptData(user.secretKey);
 
@@ -81,31 +83,26 @@ export const getClientAccounts = async (username, limit) => {
 
                 returnObject = {...responseJSON, data: mergedArraywithDeposit}
 
-                await redisClient.set(`clientaccount_${username}_${limit}`, JSON.stringify(returnObject) , { EX: CACHE_DURATION, NX : true });
+                await redisClient.set(`clientaccount_${email}`, JSON.stringify(returnObject) , { EX: CACHE_DURATION, NX : true });
             }
         }
-        // await disconnetRedis();
     }catch(err){
         returnObject = err;
-        // await disconnetRedis();
     }
     return returnObject;
 }
 
 export const saveClientAccount = async(bodyRequest) => {
     try{
-        const username = bodyRequest.username;
+        const email = bodyRequest.email;
 
         let user = "";
-        const cachedData = await redisClient.get(`settings${username}`);
+        const cachedData = await redisClient.get(`settings${email}`);
         if(cachedData){ user = JSON.parse(cachedData); }
         else{
-            user = await getUserSettings(username);
+            user = await getUserSettings(email);
         }
-
-        //get user's apikey and secret key
         
-
         const bodyObject = {
             "account_name": bodyRequest.account_name,
             "mt_version": Number(bodyRequest.mt_version),
@@ -127,31 +124,31 @@ export const saveClientAccount = async(bodyRequest) => {
     }catch(err){
         return err
     }
-    
 }
-// export const saveAccount = async(body) => {
-//     try{
-//         // const bodyObject = {
-//         //     "account_name": bodyRequest.account,
-//         //     "mt_version": Number(bodyRequest.version),
-//         //     "account_number": Number(bodyRequest.number),
-//         //     "password": bodyRequest.password,
-//         //     "broker_server_id": Number(bodyRequest.server),
-//         // }
-//         console.log("asdf", body)
-//         const response = await fetch(`${API_URL}/accounts`, {
-//             method: 'POST',
-//             body: JSON.stringify(body),
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 'Authorization': clientAuthKey(userAPIKey, userSecretKey),
-//             }
-//         }).then(res => res.json())
-//             .catch(err => console.log(err));
-//         console.log(response)
-//         return await response.json();
-//     }catch(err){
-//         return err
-//     }
-    
-// }
+
+export const deleteClientAccount = async(email, accountId) => {
+    try{
+        //get user's apikey and secret key
+        const user = await getUserSettings(email);
+        const userAPIKey = decryptData(user.apiKey);
+        const userSecretKey = decryptData(user.secretKey);
+
+        const response = await fetch(`${API_URL}/accounts/${accountId}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': clientAuthKey(
+                    userAPIKey,
+                    userSecretKey
+                ),
+            }
+        }).then(res => res.json());
+        await redisClient.del(`clientaccount_${email}`);
+        console.log(response);
+        return response;
+
+    }catch(err){
+        console.log(err);
+        return new Error("Error in deleting account.");
+    }
+}

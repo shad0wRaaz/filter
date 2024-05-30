@@ -3,13 +3,12 @@ import { connectToDatabase } from '../libs/mongodb/mongoClient.js';
 
 const db = await connectToDatabase();
 
-export const getWatchlist = async(username) => {
+export const getWatchlist = async(email) => {
     let returnObject = "";
     try{
         const collection = db.collection("Watchlist");
 
-        const returnObject = await collection.find({ username }).toArray();
-
+        const returnObject = await collection.find({ email }).toArray();
         return returnObject;
     }catch(err){
         console.log("error", err)
@@ -18,16 +17,16 @@ export const getWatchlist = async(username) => {
     return returnObject;
 }
 
-export const saveWatchlist = async(username, watchlist) => {
+export const saveWatchlist = async(email, watchlist) => {
     try{
         // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
         
-        const existingWatchlist = await collection.find({ username, watchlist }).toArray();
+        const existingWatchlist = await collection.find({ email, watchlist }).toArray();
 
         if(existingWatchlist.length == 0){
             const item = await collection.insertOne({
-                username, watchlist, createdAt: new Date()
+                email, watchlist, createdAt: new Date()
             });
             if(item.acknowledged == true){
                 if(item?.insertedId){
@@ -37,7 +36,7 @@ export const saveWatchlist = async(username, watchlist) => {
                 }
             }
         }else{
-            await db.collection("Watchlist").deleteMany({ username, watchlist });
+            await db.collection("Watchlist").deleteMany({ email, watchlist });
             return ({ status: 200, message: 'Watchlist has been deleted.'});
         }
         
@@ -48,14 +47,14 @@ export const saveWatchlist = async(username, watchlist) => {
 
 export async function PATCH(req, res){
     try{
-        const { username, watchlist } = await req.json();
+        const { email, watchlist } = await req.json();
         // console.log(username, secretKey, apiKey)
 
         // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
         
         const item = await collection.updateOne(
-           { username }, 
+           { email }, 
            {
             $set: {
                 secretKey, 
@@ -80,7 +79,7 @@ export async function PATCH(req, res){
 
 export async function DELETE(req, res){
     try{
-        const { username, watchlist } = await req.json();
+        const { email, watchlist } = await req.json();
 
         // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");

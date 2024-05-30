@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import { getAccounts } from './accounts/index.js';
 import { getUserSettings, saveUserKeys } from './accounts/settings/index.js';
 import { getAnalysis } from './accounts/analysis/index.js';
-import { getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
+import { deleteClientAccount, getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
 import { getBrokerServers, getBrokers } from './brokers/index.js';
 import { getWatchlist, saveWatchlist } from './watchlist/index.js';
 import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
@@ -58,10 +58,28 @@ app.get('/accounts/get/:limit/:lastid', async (req, res) => {
     return res.send(await getAccounts(limit, lastId));
 });
 
-app.get('/accounts/client/get/:username/:limit', async(req, res) => {
-    const username = req.params.username;
+app.get('/accounts/client/get/:email/:limit', async(req, res) => {
+    const email = req.params.email;
     const limit = req.params.limit;
-    return res.send(await getClientAccounts(username, limit));
+    return res.send(await getClientAccounts(email, limit));
+});
+
+app.post('/accounts/client/copy', async(req, res) => {
+    const result = await saveCopier("admin");
+    return res.send(result);
+
+});
+
+app.post('/accounts/client/save', async(req, res) => {
+    const body = req.body;
+    const accSave = await saveClientAccount(body);
+    return res.send(accSave);
+});
+
+app.post('/accounts/client/delete', async(req, res) => {
+    const {email, accountId} = req.body;
+    const result = await deleteClientAccount(email, accountId);
+    return res.send(result);
 });
 
 app.get('/portfolio/:id', async(req, res) => {
@@ -83,23 +101,17 @@ app.get('/accounts/followers/:id', async(req, res) => {
     return res.send(followersData);
 })
 
-app.post('/accounts/client/copy', async(req, res) => {
-    const result = await saveCopier("admin");
-    return res.send(result);
-
-});
-
-app.post('/accounts/client/save', async(req, res) => {
-    const body = req.body;
-    const accSave = await saveClientAccount(body);
-    return res.send(accSave);
-});
-
 app.post('/accounts/settings/get', async(req, res) => {
     const body = req.body;
-    const username = body.username;
-    const settings = await getUserSettings(username);
+    const email = body.email;
+    const settings = await getUserSettings(email);
     return res.send(settings);
+});
+
+app.post('/accounts/settings/save', async(req, res) => {
+    const body = req.body;
+    const result = await saveUserKeys(body.email, body.apiKey, body.secretKey);
+    return res.send(result);
 });
 
 app.get('/accounts/analysis/:id/:type', async(req, res) => {
@@ -112,19 +124,13 @@ app.get('/accounts/analysis/:id/:type', async(req, res) => {
 
 app.get('/accounts/trades/:id', async(req, res) => {
     const trades = await getTrades(req.params.id);
-    console.log(trades)
+    // console.log(trades)
     return res.send(trades);
 })
 
-app.post('/accounts/settings/save', async(req, res) => {
-    const body = req.body;
-    const result = await saveUserKeys(body.username, body.apiKey, body.secretKey);
-    return res.send(result);
-});
 
-app.get('/brokers/:username/:version', async(req, res) => {
-    console.log(req.params.version)
-    const brokers = await getBrokers(req.params.username, req.params.version);
+app.get('/brokers/:email/:version', async(req, res) => {
+    const brokers = await getBrokers(req.params.email, req.params.version);
     return res.send(brokers);
 });
 
@@ -139,13 +145,11 @@ app.get('/watchlist/:username', async(req, res) => {
 });
 
 app.post('/watchlist', async(req,res) => {
-    const body = req.body;
-    console.log(body)
-    if(req.body.username && req.body.watchlist){
-        const result = await saveWatchlist(req.body.username, req.body.watchlist);
+    if(req.body.email && req.body.watchlist){
+        const result = await saveWatchlist(req.body.email, req.body.watchlist);
         return res.send(result);
     }
-    return req.send({ message: "Watchlist not added" });
+    return res.send({ message: "Watchlist not added" });
 });
 
 app.post('/user/login', async(req, res) => {

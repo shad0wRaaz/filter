@@ -5,21 +5,19 @@ import { API_URL, clientAuthKey } from "../utils/index.js";
 
 const CACHE_DURATION = 600; 
 
-export const getBrokers = async(username, version) => {
+export const getBrokers = async(email, version) => {
     let returnObject = "";
     try{
         // await connectRedis();
         const cachedData = await redisClient.get(`brokers_${version}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
-        let user = "";
-        const cachedUserSetting = await redisClient.get(`settings_${username}`);
-        if(cachedUserSetting) { 
-            user = JSON.parse(cachedUserSetting); 
-        }
-        else {
-            user = await getUserSettings(username);
-        }
+        //get user's apikey and secret key
+
+        const user = await getUserSettings(email);
+
+        const userAPIKey = decryptData(user.apiKey);
+        const userSecretKey = decryptData(user.secretKey);
 
         // await disconnetRedis();
         const fetchURL = `${API_URL}/brokers/?mt_version=${version}`;
@@ -27,8 +25,8 @@ export const getBrokers = async(username, version) => {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': clientAuthKey(
-                    decryptData(user.apiKey), 
-                    decryptData(user.secretKey)
+                    userAPIKey, 
+                    userSecretKey
                 ),
             }
         }).then(res => {
@@ -39,32 +37,31 @@ export const getBrokers = async(username, version) => {
         if(response.result == "success"){
 
             // await connectRedis();
-            await redisClient.set(`brokers_${version}`, JSON.stringify(response.data), { EX: CACHE_DURATION, NX: true });
+            await redisClient.set(`brokers_${version}`, JSON.stringify(response.data));
             // await disconnetRedis();
         }
         return response;
 
     }catch(err){
-
+        console.log(err);
+        return err;
     }
 
 }
 
-export const getBrokerServers = async(username, brokerId) => {
+export const getBrokerServers = async(email, brokerId) => {
     let returnObject = "";
     try{
         // await connectRedis();
         const cachedData = await redisClient.get(`brokerserver_${brokerId}`);
         if(cachedData){ return JSON.parse(cachedData); }
 
-        let user = "";
-        const cachedUserSetting = await redisClient.get(`settings_${username}`);
-        if(cachedUserSetting) { 
-            user = JSON.parse(cachedUserSetting); 
-        }
-        else {
-            user = await getUserSettings(username);
-        }
+        //get user's apikey and secret key
+
+        const user = await getUserSettings(email);
+
+        const userAPIKey = decryptData(user.apiKey);
+        const userSecretKey = decryptData(user.secretKey);
 
         // await disconnetRedis();
         const fetchURL = `${API_URL}/broker-servers?broker_id=${brokerId}`;
@@ -72,8 +69,8 @@ export const getBrokerServers = async(username, brokerId) => {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': clientAuthKey(
-                    decryptData(user.apiKey), 
-                    decryptData(user.secretKey)
+                    userAPIKey, 
+                    userSecretKey
                 ),
             }
         }).then(res => {
@@ -84,7 +81,7 @@ export const getBrokerServers = async(username, brokerId) => {
         if(response.result == "success"){
 
             // await connectRedis();
-            await redisClient.set(`brokerserver_${brokerId}`, JSON.stringify(response.data), { EX: CACHE_DURATION, NX: true });
+            await redisClient.set(`brokerserver_${brokerId}`, JSON.stringify(response.data));
             // await disconnetRedis();
             return response?.data;
         }
