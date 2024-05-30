@@ -191,7 +191,7 @@ const handleSort = (array, key, orderFlag) => {
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                <span onClick={() => setSort({key: "drawdown", order: !sort.order})} >Drawdown % </span>
+                <span onClick={() => setSort({key: "drawdown", order: !sort.order})} >Drawdown</span>
                 <ChevronUp 
                   className={cn(style.iconStyle, sort.key == "drawdown" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "drawdown", order: !sort.order})} 
@@ -236,7 +236,7 @@ const handleSort = (array, key, orderFlag) => {
                 <AccountTableItem key={account.id} account={account} type={type}/>
               )) : 
                 <TableRow>
-                  <TableCell colSpan="12">
+                  <TableCell colSpan="15">
                     <p className="text-center">
                       No records found
                     </p>
@@ -246,77 +246,79 @@ const handleSort = (array, key, orderFlag) => {
             </>
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan="12"  className="bg-white dark:bg-transparent rounded-md">
-                {type == "dashboard" && (
-                  <div className="flex justify-between items-center">
-                    {/* <Select onValueChange={e => changeItemsPerPage(e)}>
-                      <SelectTrigger className="w-[210px]">
-                        <SelectValue placeholder={`Showing ${itemsPerPage} records`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">Show 10 records</SelectItem>
-                        <SelectItem value="20">Show 20 records</SelectItem>
-                        <SelectItem value="30">Show 30 records</SelectItem>
-                        <SelectItem value="40">Show 40 records</SelectItem>
-                        <SelectItem value="50">Show 50 records</SelectItem>
-                        <SelectItem value="100">Show 100 records</SelectItem>
-                      </SelectContent>
-                    </Select> */}
-                    <Pagination className="py-0">
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious className={`cursor-pointer ${currentPage == 1 && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur - 1)}/>
-                        </PaginationItem>
-                        {currentPage > 0 &&
+        {filteredData.length > itemsPerPage && (
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan="15"  className="bg-white dark:bg-transparent rounded-md">
+                  {type == "dashboard" && (
+                    <div className="flex justify-between items-center">
+                      {/* <Select onValueChange={e => changeItemsPerPage(e)}>
+                        <SelectTrigger className="w-[210px]">
+                          <SelectValue placeholder={`Showing ${itemsPerPage} records`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="10">Show 10 records</SelectItem>
+                          <SelectItem value="20">Show 20 records</SelectItem>
+                          <SelectItem value="30">Show 30 records</SelectItem>
+                          <SelectItem value="40">Show 40 records</SelectItem>
+                          <SelectItem value="50">Show 50 records</SelectItem>
+                          <SelectItem value="100">Show 100 records</SelectItem>
+                        </SelectContent>
+                      </Select> */}
+                      <Pagination className="py-0">
+                        <PaginationContent>
                           <PaginationItem>
-                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
+                            <PaginationPrevious className={`cursor-pointer ${currentPage == 1 && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur - 1)}/>
                           </PaginationItem>
-                        }
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
-                          </PaginationItem>
-                        {currentPage > 0 && currentPage < 4 && totalPages > 2 &&
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
-                          </PaginationItem>
-                        }
-                        {currentPage >= 4 && 
-                          <PaginationItem>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        }
-                        {currentPage >= 4 && currentPage <= totalPages - 2 &&
-                          <PaginationItem>
-                            <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
-                          </PaginationItem>
-                        }
-                        {currentPage < totalPages - 2 && totalPages > 4 &&
-                          <PaginationItem>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        }
-                        {totalPages > 4 && 
-                          <>
+                          {currentPage > 0 &&
                             <PaginationItem>
-                              <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
+                              <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(1)} isActive={currentPage == 1 ? true : false}>1</PaginationLink>
                             </PaginationItem>
+                          }
                             <PaginationItem>
-                              <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+                              <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(2)} isActive={currentPage == 2 ? true : false}>2</PaginationLink>
                             </PaginationItem>
-                          </>
-                        }
-                        <PaginationItem>
-                          <PaginationNext className={`cursor-pointer ${currentPage == totalPages && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur + 1)} />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
-                  </div>
-                )}
-            </TableCell>
-          </TableRow>
-        </TableFooter>
+                          {currentPage > 0 && currentPage < 4 && totalPages > 2 &&
+                            <PaginationItem>
+                              <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(3)} isActive={currentPage == 3 ? true : false}>3</PaginationLink>
+                            </PaginationItem>
+                          }
+                          {currentPage >= 4 && 
+                            <PaginationItem>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          }
+                          {currentPage >= 4 && currentPage <= totalPages - 2 &&
+                            <PaginationItem>
+                              <PaginationLink className="cursor-pointer" isActive>{currentPage}</PaginationLink>
+                            </PaginationItem>
+                          }
+                          {currentPage < totalPages - 2 && totalPages > 4 &&
+                            <PaginationItem>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          }
+                          {totalPages > 4 && 
+                            <>
+                              <PaginationItem>
+                                <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages - 1 ? true : false} onClick={() => setCurrentPage(totalPages - 1)}>{totalPages - 1}</PaginationLink>
+                              </PaginationItem>
+                              <PaginationItem>
+                                <PaginationLink className="cursor-pointer" isActive={currentPage == totalPages ? true : false} onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+                              </PaginationItem>
+                            </>
+                          }
+                          <PaginationItem>
+                            <PaginationNext className={`cursor-pointer ${currentPage == totalPages && 'pointer-events-none cursor-not-allowed opacity-40'}`} onClick={() => setCurrentPage(cur => cur + 1)} />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
+                    </div>
+                  )}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        )}
       </Table>
     </div>
   )
