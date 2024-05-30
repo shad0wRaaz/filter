@@ -27,24 +27,21 @@ const Dashboard = ({modal}) => {
     queryFn: async() => {
         return await fetch(`${MY_API_URL}/accounts/settings/get`,{
           method: "POST",
-          body: JSON.stringify({username: user.username }),
+          body: JSON.stringify({username: session.data.data.email }),
           headers: {
              "Content-Type": "application/json"
           }
-        }).then(res => {
-          if(res.ok){
-            return res.json()
-          }
-          throw res;
         })
-        .then(res => {
-          setUser({...user, secretKey: res.secretKey, apiKey: res.apiKey});
-          return res;
+        .then(async res => {
+          const result = await res.json();
+          setUser({email: session.data.data.email, secretKey: result.secretKey, apiKey: result.apiKey});
+          return result;
         })
-        .catch(err => { console.log(err)})
+        .catch(err => { console.error(err); return err})
     },
     enabled: session.status == "authenticated"
 });
+
 
 
   const { data:accounts, isLoading, status: accountStatus } = useQuery({
@@ -66,11 +63,17 @@ const Dashboard = ({modal}) => {
   const{data:watchlistdata, status: watchliststatus} = useQuery({
     queryKey: ['watchlist'],
     queryFn: async() => {
-      if(!user.username || user.username ==  ''){ return null; }
-      return await fetch(`${MY_API_URL}/watchlist/${user.username}`)
-                    .then(res => res.json())
+      return await fetch(`${MY_API_URL}/watchlist/${session.data.data.email}`)
                     .then(res => {
-                      setWatchlist([...res]);
+                      if(res.ok){
+                        return res.json()
+                      }
+                      return null;
+                    })
+                    .then(res => {
+                      if(res){
+                        setWatchlist([...res]);
+                      }
                       return res;
                     })
     },

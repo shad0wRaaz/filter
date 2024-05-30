@@ -10,26 +10,32 @@ import { CreditCard } from 'lucide-react'
 import { useUser } from '@/contexts/UserContext';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MY_API_URL } from '@/lib/utils';
-import { useToast } from '@/components/ui/use-toast';
 import { decryptData, encryptData } from '@/lib/encryption';
 import { useSession } from 'next-auth/react';
 import UnauthorizedAccess from '@/components/UnauthorizedAccess';
+import { Toaster, toast } from 'sonner';
 
 const Settings = () => {
     const { user, setUser } = useUser();
     const session = useSession();
     const [seeAPIKey, setSeeAPIKey] = useState(false);
     const [seeSecretKey, setSeeSecretKey] = useState(false);
-    const { toast } = useToast();
 
     //get settings data
     const { data, status } = useQuery({
         queryKey: ["settings"],
         queryFn: async() => {
-            return await fetch(`${MY_API_URL}/settings?u=${user.username}`)
+            return await fetch(`${MY_API_URL}/accounts/settings/get`,{
+                method: "POST",
+                body: JSON.stringify({email: session.data.data.email }),
+                headers: {
+                   "Content-Type": "application/json"
+                }
+              })
                 .then(res => res.json())
                 .then(res => {
-                    setUser({ ...user, secretKey: decryptData(res.secretKey), apiKey: decryptData(res.apiKey)})
+                    setUser({ email: session.data.data.email, secretKey: decryptData(res.secretKey), apiKey: decryptData(res.apiKey)});
+                    return res;
                 }
                 );
         },
@@ -37,40 +43,42 @@ const Settings = () => {
     });
 
     const mutation = useMutation({
-        mutationFn: async(newuser) => {
+        mutationFn: async() => {
 
             let mutationResult = "";
             const bodyObject = {
-                username: user.username,
+                email: session.data.data.email,
                 apiKey: encryptData(user.apiKey),
                 secretKey: encryptData(user.secretKey),
             }
-            
-            if(newuser){
-                mutationResult = await fetch(`${MY_API_URL}/settings`, {
-                    method: 'POST',
-                    body: JSON.stringify(bodyObject)
-                }).then(res => res.json());
-            }else{
-                mutationResult = await fetch(`${MY_API_URL}/settings`, {
-                    method: 'PATCH',
-                    body: JSON.stringify(bodyObject)
-                }).then(res => res.json());
-            }
-            console.log(mutationResult)
 
-            if(mutationResult.message == "Settings has been updated." || mutationResult.message == "Settings has been saved."){
-                toast({
-                    title: "Saved",
-                    description: mutationResult.message
-                });
+            mutationResult = await fetch(`${MY_API_URL}/accounts/settings/save`, {
+                method: "POST",
+                body: JSON.stringify(bodyObject),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json());
+
+            if(!mutationResult.acknowledged){
+                toast.error("Failed to update settings.");
+            }
+            else if(mutationResult.acknowledged && mutationResult.modifiedCount == 0){
+                toast.info("No changes were made.");
+            }else if(mutationResult.acknowledged && mutationResult.modifiedCount ==1){
+                toast.success("Settings have been saved.");
             }
             return mutationResult;
         }
     });
     
     const handleSave = () => {
-        mutation.mutate(false);
+
+        if(user.apiKey == "" || user.secretKey == "" || !user.apiKey || !user.secretKey){
+            toast.error("Please fill up both API and Secret keys.");
+            return
+        }
+        mutation.mutate();
         
     }
 
@@ -81,6 +89,7 @@ const Settings = () => {
                 <header>
                     <Navbar/>
                 </header>
+                <Toaster/>
                 <main className="container pt-10 max-w-[60rem]">
                     <div className="flex flex-wrap">
                         <div className="p-4 flex gap-2 flex-col">
@@ -89,10 +98,10 @@ const Settings = () => {
 
                         </div>
                         <div className="border-l p-4 pl-6">
-                            <Card>
+                            <Card className="min-w-[500px]">
                                 <CardHeader>
                                     <CardTitle>TradeSync Connection</CardTitle>
-                                    <CardDescription>Use your TradeSync API Key and Secret to connect to TradeSync account.</CardDescription>
+                                    <CardDescription>Use your TradeSync API Key and Secret.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                 <div className="grid w-full items-center gap-4">
@@ -101,7 +110,7 @@ const Settings = () => {
                                         <div className="flex items-center gap-2">
                                             <Input id="apikey" 
                                                 placeholder="Enter your API key here" 
-                                                value={ user.apiKey } 
+                                                value={ user.apiKey || "" } 
                                                 onChange={(e) => setUser({ ...user, apiKey: e.target.value})}
                                                 type={seeAPIKey ? "text" : "password"}/>
                                             <div className="border rounded-sm p-3 cursor-pointer hover:bg-secondary" onClick={() => setSeeAPIKey(prev => !prev)}>
@@ -115,7 +124,7 @@ const Settings = () => {
                                             <Input 
                                                 id="secretkey" 
                                                 placeholder="Enter your API key here"
-                                                value={ user.secretKey } 
+                                                value={ user.secretKey || "" } 
                                                 onChange={(e) => setUser({ ...user, secretKey: e.target.value})}
                                                 type={seeSecretKey ? "type" : "password"}/>
                                             <div className="border rounded-sm p-3 cursor-pointer hover:bg-secondary" onClick={() => setSeeSecretKey(prev => !prev)}>

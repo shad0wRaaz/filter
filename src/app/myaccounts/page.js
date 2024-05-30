@@ -23,15 +23,15 @@ const MyAccount = ({modal}) => {
     const {watchlist, setWatchlist} = useWatchlist();
     const [limit, setLimit] = useState(10);
     const { data, isLoading, status } = useQuery({
-        queryKey: ["clientSettings"],
+        queryKey: ["clientAccounts"],
         queryFn: async() => {
-            return await fetch(`${MY_API_URL}/accounts/client/get/${user.username}/${limit}`).then(res => {
+            return await fetch(`${MY_API_URL}/accounts/client/get/${session.data.data.email}/${limit}`).then(res => {
               if(res.ok){
                 return res.json()
               }
               throw res;
             })
-            .catch(err => { console.log(err)})
+            .catch(err => { console.log(err); return err})
         },
         enabled: session.status == "authenticated"
     });
@@ -40,7 +40,7 @@ const MyAccount = ({modal}) => {
       queryKey: ['watchlist'],
       queryFn: async() => {
         if(!user.username || user.username ==  ''){ return null; }
-        return await fetch(`${MY_API_URL}/watchlist/${user.username}`)
+        return await fetch(`${MY_API_URL}/watchlist/${session.data.data.email}`)
                       .then(async res => {
                         if(res.ok){
                           const result = await res.json();

@@ -6,17 +6,13 @@ import { Button } from '@/components/ui/button';
 import { EyeNoneIcon, EyeOpenIcon } from '@radix-ui/react-icons';
 import { useQuery } from '@tanstack/react-query';
 import { MY_API_URL } from '@/lib/utils';
-import { useUser } from '@/contexts/UserContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toaster, toast } from 'sonner'
-import { BrokerCombo } from './BrokerCombo';
+import { useSession } from 'next-auth/react';
 
 
 const AddAccountComponent = () => {
-    const {user} = useUser();
-    // const [accountName, setAccountName] = useState('');
-    // const [accountID, setAccountID] = useState('');
-    // const [password, setPassword] = useState('');
+    const session = useSession();
     const [selectedBroker, setSelectedBroker] = useState(null);
     const [selectedServer, setSelectedServer] = useState(null);
     const [serverList, setServerList] = useState(null);
@@ -25,22 +21,14 @@ const AddAccountComponent = () => {
     const [cacheBrokersFour, setCacheBrokersFour] = useState();
     const [cacheBrokersFive, setCacheBrokersFive] = useState();
 
-
-    // useEffect(() => {
-    //     setCacheBrokersFour(localStorage.getItem(`brokers_4`));
-    //     setCacheBrokersFive(localStorage.getItem(`brokers_5`));
-
-    //     return () => {}
-    // }, []);
-
     const { data: brokers, isLoading: brokerLoading, status: brokerStatus } = useQuery({
         queryKey: ['brokers', mtversion],
         queryFn: async () => {
           return await fetch(
-            `${MY_API_URL}/brokers/${user.username}/${mtversion}`)
+            `${MY_API_URL}/brokers/${session.data.data.email}/${mtversion}`)
             .then(res => res.json());
         },
-        enabled: !cacheBrokersFour || !cacheBrokersFive
+        enabled: !cacheBrokersFour || !cacheBrokersFive || session.status == "authenticated"
       });
 
       useEffect(() => {
@@ -64,7 +52,7 @@ const AddAccountComponent = () => {
             "account_number": e.target.accountId.value,
             "password": e.target.password.value,
             "broker_server_id": serverList?.filter(server => server.name == selectedServer)[0]?.id,
-            "username": user.username
+            "email": session.data.data.email
         }
 
         const response = await fetch(`${MY_API_URL}/accounts/client/save`, {
@@ -75,7 +63,7 @@ const AddAccountComponent = () => {
             }
         });
         const result = await response.json();
-        console.log(result) 
+
         if(result.result == "success"){
             toast.success("Account Added", { description: `${e.target.accountname.value} has been added.`})
             clearData(e);
@@ -94,7 +82,7 @@ const AddAccountComponent = () => {
         const brokerString = String(brokerNamewithArray).split(",");
 
         const brokerServers = await fetch(
-            `${MY_API_URL}/brokers/servers/${user.username}/${brokerString[1]}`
+            `${MY_API_URL}/brokers/servers/${session.data.data.email}/${brokerString[1]}`
         ).then(async res => {
             if(res.ok){
                 return await res.json();
