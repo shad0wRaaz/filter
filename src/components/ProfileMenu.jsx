@@ -1,7 +1,5 @@
 import {Cloud,CreditCard,LifeBuoy,LogOut,Settings,User} from "lucide-react"
-  
-  import { Button } from "@/components/ui/button"
-  import { DropdownMenu,DropdownMenuContent,DropdownMenuGroup,DropdownMenuItem,DropdownMenuLabel,DropdownMenuSeparator,DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu,DropdownMenuContent,DropdownMenuGroup,DropdownMenuItem,DropdownMenuLabel,DropdownMenuSeparator,DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { signOut } from "next-auth/react"
@@ -50,7 +48,7 @@ import { signOut } from "next-auth/react"
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => signOut({ callbackUrl: '/login'})}>
+            onClick={() => signOut({ callbackUrl: `${process.env.NODE_ENV == "production" ? process.env.NEXT_PUBLIC_NEXT_AUTH_URL : process.env.NEXT_PUBLIC_NEXT_AUTH_URL_TEST}/login`})}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

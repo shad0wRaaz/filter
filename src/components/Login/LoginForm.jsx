@@ -22,7 +22,6 @@ const LoginForm = () => {
           redirect: false,
         });
     
-        // console.log(resdata);
         if (
           resdata.status === 400 ||
           resdata.status === 401 ||
@@ -37,7 +36,6 @@ const LoginForm = () => {
             });
         } else {
           router.push('/dashboard');
-        //   console.log(resdata);
         }
       };
   return (
