@@ -15,6 +15,7 @@ import { getAllCopiers } from './accounts/copiers/index.js';
 import { getTrades } from './accounts/trades/index.js';
 import { connectRedis } from './libs/redis/redisClient.js';
 import { getUser } from './users/index.js';
+import { getSessions } from './sessions/index.js';
 
 const PORT = 3001;
 
@@ -161,6 +162,10 @@ app.post('/user/login', async(req, res) => {
     return res.send({ success: false, status: 400, message: 'Invalid login credentails' })
 });
 
+app.get('/sessions', async(req, res) => {
+    const sessions = await getSessions();
+    return res.send(sessions);
+})
 app.listen(PORT, () => {
     console.log(`Server is running in PORT ${PORT}`);
 })

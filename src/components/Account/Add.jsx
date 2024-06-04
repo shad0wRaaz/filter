@@ -10,6 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Toaster, toast } from 'sonner'
 import { useSession } from 'next-auth/react';
 
+const style = {
+    input: 'dark:bg-slate-600 dark:border-slate-500',
+    button: 'dark:text-white'
+}
 
 const AddAccountComponent = () => {
     const session = useSession();
@@ -100,11 +104,11 @@ const AddAccountComponent = () => {
                 <div className="flex flex-col gap-5">
                     <div className="flex gap-1 flex-col">
                         <Label>Account Name</Label>
-                        <Input id="accountname" type="text"/>
+                        <Input id="accountname" type="text" className={style.input}/>
                     </div>
                     <div className="flex gap-1 flex-col">
                         <Label>Trading Account Id</Label>
-                        <Input id="accountId" type="text"/>
+                        <Input id="accountId" type="text" className={style.input}/>
                     </div>
                     <div className="flex gap-1 flex-col">
                         <div className="flex justify-between">
@@ -115,18 +119,18 @@ const AddAccountComponent = () => {
                                 {showPassword ? <EyeOpenIcon/> :<EyeNoneIcon/>}
                             </div>
                         </div>
-                        <Input id="password" type={showPassword ? 'text' : 'password'}/>
+                        <Input id="password" type={showPassword ? 'text' : 'password'} className={style.input}/>
                     </div>
                     <div className="flex gap-2 flex-col">
                         <Label>Metatrader Version</Label>
                         <div className="rounded-md flex gap-3">
                             <div 
-                                className={`px-3 py-1 cursor-pointer rounded-sm border transition ${mtversion == 4 ? "border-blue-500 bg-blue-100" : "border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-400"}`}
+                                className={`px-3 py-1 cursor-pointer rounded-sm border transition ${mtversion == 4 ? "border-blue-500 bg-blue-100 dark:border-slate-400 dark:bg-slate-500" : "border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-400 dark:border-slate-500 dark:hover:text-slate-300"}`}
                                 onClick={() => setMtversion(4)}>
                                     MT 4
                             </div>
                             <div 
-                                className={`px-3 py-1 cursor-pointer rounded-sm border transition ${mtversion == 5 ? "border-blue-500 bg-blue-100" : "border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-400"}`}
+                                className={`px-3 py-1 cursor-pointer rounded-sm border transition ${mtversion == 5 ? "border-blue-500 bg-blue-100 dark:border-slate-400 dark:bg-slate-500" : "border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-400 dark:border-slate-500 dark:hover:text-slate-300"}`}
                                 onClick={() => setMtversion(5)}>
                                     MT 5
                             </div>
@@ -135,10 +139,10 @@ const AddAccountComponent = () => {
                     <div className="flex gap-1 flex-col">
                         <Label>Broker</Label>
                         <Select onValueChange={(e) => updateBrokerServerList(e)}>
-                            <SelectTrigger className="">
+                            <SelectTrigger  className={style.input}>
                                 <SelectValue placeholder="Select Broker" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className={style.input}>
                                 {brokers?.length > 0 && brokerStatus == "success" && brokers?.map(broker => (
                                     <SelectItem 
                                         key={broker.id} 
@@ -154,11 +158,11 @@ const AddAccountComponent = () => {
                     </div>
                     <div className="flex gap-1 flex-col">
                         <Label>Broker Server</Label>
-                        <Select onValueChange={(e) => setSelectedServer(e)}>
-                            <SelectTrigger className="">
+                        <Select onValueChange={(e) => setSelectedServer(e)} className={style.input}>
+                            <SelectTrigger  className={style.input}>
                                 <SelectValue placeholder="Select Server" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className={style.input}>
                                 {serverList?.length > 0 && serverList?.map(server => (
                                     <SelectItem 
                                         key={server.id} 
@@ -170,7 +174,7 @@ const AddAccountComponent = () => {
                         </Select>
                     </div>
                     <div>
-                        <Button type="submit">Add</Button>
+                        <Button type="submit" className={style.button}>Add</Button>
                     </div>
                 </div>
             </form>

@@ -124,26 +124,6 @@ const AccountTableItem = ({ account, type }) => {
           
         </TableCell>
         <TableCell>
-        <div className="flex gap-2 items-center justify-start">
-          {/* {account.trade_mode == "demo" &&
-            <Badge variant="secondary" className="rounded-[5px] border border-slate-200 dark:bg-slate-600 dark:border-slate-700 shadow-sm">
-              Demo
-            </Badge>}
-          {account.trade_mode == "real" &&
-            <Badge variant="secondary" className="rounded-[5px] border border-green-300 bg-green-200 dark:bg-green-600 dark:border-green-700 shadow-sm">
-              Real
-            </Badge>} */}
-          <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
-            MT{account.mt_version}
-          </Badge>
-          {account.copierStatus && 
-            <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
-              {String(account.copierStatus).charAt(0)}
-            </Badge>
-          }
-        </div>
-        </TableCell>
-        <TableCell>
           <div className="flex items-center justify-start gap-3">
             <span className="inline">{account.currency}</span> {cryptoArray.find(el => el == account.currency) && <span className="inline"><BitCoinIcon color="#aaa"/></span>}
           </div>
@@ -155,9 +135,29 @@ const AccountTableItem = ({ account, type }) => {
         <TableCell>{account.risk_reward_ratio_avg}</TableCell>
         <TableCell>{account.risk_reward_ratio_worst}</TableCell>
         <TableCell>{Number(account.drawdown).toFixed(2)}</TableCell>
-        <TableCell>{account.started_at && new Date(account.started_at).toLocaleDateString()}</TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.total_profit)}</TableCell>
-        {/* <TableCell>0</TableCell> */}
+        <TableCell>{account.started_at && new Date(account.started_at).toLocaleDateString()}</TableCell>
+        <TableCell>
+          <div className="flex gap-2 items-center justify-start">
+            {/* {account.trade_mode == "demo" &&
+              <Badge variant="secondary" className="rounded-[5px] border border-slate-200 dark:bg-slate-600 dark:border-slate-700 shadow-sm">
+                Demo
+              </Badge>}
+            {account.trade_mode == "real" &&
+              <Badge variant="secondary" className="rounded-[5px] border border-green-300 bg-green-200 dark:bg-green-600 dark:border-green-700 shadow-sm">
+                Real
+              </Badge>} */}
+            <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
+              MT{account.mt_version}
+            </Badge>
+            {account.copierStatus && 
+              <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
+                {String(account.copierStatus).charAt(0)}
+              </Badge>
+            }
+          </div>
+        </TableCell>
+        <TableCell>{account.followers}</TableCell>
         {type == "watchlist" ? (
           <>
             <TableCell>

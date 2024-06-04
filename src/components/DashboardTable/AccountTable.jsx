@@ -81,8 +81,8 @@ useEffect(() =>{
 
 const handleSort = (array, key, orderFlag) => {
   const order = orderFlag ? "asc" : "desc";
-
   return array.sort((a, b) => {
+
     if (typeof a[key] === 'number' && typeof b[key] === 'number') {
       return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
     } else {
@@ -104,10 +104,9 @@ const handleSort = (array, key, orderFlag) => {
       <Toaster/>
       <Table>
         <TableHeader>
-          <TableRow className="bg-slate-200 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-900">
+          <TableRow className="bg-slate-200 hover:bg-slate-200 dark:bg-slate-800">
             <TableHead className="rounded-tl-md">Name</TableHead>
             <TableHead>Broker</TableHead>
-            <TableHead>Account Types</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "currency", order: !sort.order})} >Currency </span>
@@ -200,6 +199,15 @@ const handleSort = (array, key, orderFlag) => {
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "total_profit", order: !sort.order})}>Total Profit</span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "total_profit" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "total_profit", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "started_at", order: !sort.order})} >Start Date </span>
                 <ChevronUp 
                   className={cn(style.iconStyle, sort.key == "started_at" && !sort.order && " rotate-180")} 
@@ -207,14 +215,15 @@ const handleSort = (array, key, orderFlag) => {
                 />
               </div>
             </TableHead>
+            <TableHead>Account Types</TableHead>
             <TableHead>
               <div className={style.headerStyle}>
-                <span onClick={() => setSort({key: "total_profit", order: !sort.order})}>Total Profit</span>
-                <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "total_profit" && !sort.order && " rotate-180")} 
-                  onClick={() => setSort({key: "total_profit", order: !sort.order})} 
-                />
-              </div>
+                  <span onClick={() => setSort({key: "followers", order: !sort.order})} >Followers </span>
+                  <ChevronUp 
+                    className={cn(style.iconStyle, sort.key == "followers" && !sort.order && " rotate-180")} 
+                    onClick={() => setSort({key: "followers", order: !sort.order})} 
+                  />
+                </div>
             </TableHead>
             <TableHead></TableHead>
             <TableHead className="rounded-tr-md"></TableHead>

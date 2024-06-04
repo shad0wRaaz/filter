@@ -35,8 +35,8 @@ const MinimumBalanceControl = ({style}) => {
                     value={minBalance} 
                     onChange={(e) => setMinBalance(e.target.value)}
                 />
-                <Button onClick={() => handleChange()}>
-                    <Check width={15}/>
+                <Button className={style.button} onClick={() => handleChange()}>
+                    <Check width={15} className={style.button}/>
                 </Button>
             </div>
         </PopoverContent>

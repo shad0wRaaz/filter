@@ -12,7 +12,7 @@ const PortfolioInterceptor = ({params}) => {
     <Dialog
       open
       onOpenChange={isOpen => {if(!isOpen) { handleDismiss(); }}}>
-      <DialogContent className="min-w-[96%] max-h-[96%] overflow-scroll">
+      <DialogContent className="min-w-[96%] max-h-[96%] overflow-scroll bg-slate-100 dark:bg-slate-900">
             <PortfolioDialog accountId={params.accountId}/>
       </DialogContent>
     </Dialog>

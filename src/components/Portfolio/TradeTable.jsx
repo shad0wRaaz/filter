@@ -10,22 +10,22 @@ const TradeTable = ({data: trades}) => {
   return (
     <div className="overflow-hidden">
         <Table>
-            <TableHeader>
+            <TableHeader className="dark:bg-slate-700">
                 <TableRow>
-                <TableHead>Ticket</TableHead>
-                <TableHead>Symbol</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Volume</TableHead>
-                <TableHead>Open Time</TableHead>
-                <TableHead>Entry Price</TableHead>
-                <TableHead>Stop Loss</TableHead>
-                <TableHead>Take Profit</TableHead>
-                <TableHead>Close Time</TableHead>
-                <TableHead>Commission</TableHead>
-                <TableHead>Swap</TableHead>
-                <TableHead>Profit</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Comment</TableHead>
+                    <TableHead className="rounded-l-sm">Ticket</TableHead>
+                    <TableHead>Symbol</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Volume</TableHead>
+                    <TableHead>Open Time</TableHead>
+                    <TableHead>Entry Price</TableHead>
+                    <TableHead>Stop Loss</TableHead>
+                    <TableHead>Take Profit</TableHead>
+                    <TableHead>Close Time</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Swap</TableHead>
+                    <TableHead>Profit</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="rounded-r-sm">Comment</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -45,7 +45,7 @@ const TradeTable = ({data: trades}) => {
                             <TableCell>{trade.swap}</TableCell>
                             <TableCell>{trade.profit}</TableCell>
                             <TableCell>
-                                <div className="text-xs rounded-sm border p-1 text-center" style={{ textTransform: "uppercase" }}>
+                                <div className="text-xs dark:border-slate-600 rounded-sm border p-1 px-2 text-center" style={{ textTransform: "uppercase" }}>
                                     {trade.state}
                                 </div>
                             </TableCell>

@@ -41,18 +41,18 @@ const BrokerControl = ({style, data})  => {
         <Input 
             placeholder="Search Broker..." 
             value={searchBrokerQuery}
-            className="rounded-sm" 
+            className={style.input} 
             onChange={e => setSearchBrokerQuery(e.target.value)}/>
         <div className="space-y-1">
             <div 
-                className={cn("cursor-pointer flex justify-between items-center hover:bg-slate-100 p-2 w-[250px] rounded-sm", filter.broker == "All" ? cn(style.selectedStyle, " border") : "")} 
+                className={cn("cursor-pointer flex justify-between items-center hover:bg-slate-100 dark:hover:bg-slate-600 p-2 w-[250px] rounded-sm", filter.broker == "All" ? cn(style.selectedStyle, " border") : "")} 
                 onClick={() => handleClick("All")}>
                 All
                 {filter.broker == "All" && <CircleCheck/>}
             </div>
             {brokers?.filter(broker => searchBrokerQuery != "" ? String(broker).toLowerCase().search(String(searchBrokerQuery).toLowerCase()) >= 0 : broker)?.map(broker => 
                                 <div 
-                                    className={cn("cursor-pointer items-center flex justify-between hover:bg-slate-100 p-2 w-[250px] rounded-sm", broker == filter.broker ? cn(style.selectedStyle, " border") : "")} 
+                                    className={cn("cursor-pointer items-center flex justify-between hover:bg-slate-100 dark:hover:bg-slate-600 p-2 w-[250px] rounded-sm", broker == filter.broker ? cn(style.selectedStyle, " border") : "")} 
                                     key={broker}
                                     onClick={() => handleClick(broker)}>
                                     {broker}

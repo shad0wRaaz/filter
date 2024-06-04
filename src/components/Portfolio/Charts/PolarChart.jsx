@@ -40,11 +40,11 @@ export default function DoughnutChart({ chartData, year, month }) {
         },
       ],
     };
+    setData(data);
     return() => {
       //just cleanups
     }
 
-    setData(data);
 
   }, [year, month, chartData]);
  
@@ -61,7 +61,8 @@ export default function DoughnutChart({ chartData, year, month }) {
       },
     },
   };
-  return data ? <Doughnut data={data} options={options} /> : "";
+
+  return (data ? <Doughnut data={data} options={options} /> : "");
 }
 
 const filterDataByDate = (data, year, month) => {

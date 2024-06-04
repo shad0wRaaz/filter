@@ -18,6 +18,10 @@ import InfoStats from "../Portfolio/InfoStats";
 import UnauthorizedAccess from "../UnauthorizedAccess";
 import { useSession } from "next-auth/react";
 
+const style = {
+    card : "dark:bg-slate-800 dark:border-slate-700"
+}
+
 const PortfolioDialog = ({accountId}) => {
     const session = useSession();
 
@@ -77,7 +81,7 @@ const PortfolioDialog = ({accountId}) => {
                 
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-6">
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             Balance
@@ -87,7 +91,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{currencyFormat(account?.balance, account?.currency)}</span>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             Growth
@@ -97,7 +101,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{Number(account?.growth).toFixed(2)}%</span>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             Win Ratio
@@ -107,7 +111,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{account?.total_trades != 0 && account?.total_trades_won != 0 ? Number(account?.total_trades_won / account?.total_trades * 100).toFixed(2) : 0}</span>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             RRR <span className="text-xs">(Average Loss)</span>
@@ -117,7 +121,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{account?.average_loss != 0 ? Number(account?.average_win / Math.abs(account?.average_loss)).toFixed(2) : 0}</span>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             RRR <span className="text-xs">(Worst loss)</span>
@@ -127,7 +131,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{account?.worst_trade != 0 ? Number(account?.average_win / Math.abs(account?.worst_trade)).toFixed(2) : 0}</span>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             Drawdown
@@ -138,26 +142,26 @@ const PortfolioDialog = ({accountId}) => {
                                     </CardContent>
                                 </Card>
                                 {account.copierStatus == "Lead" && (
-                                    <Card>
+                                    <Card className={style.card}>
                                         <CardHeader className="pb-1">
                                             <CardTitle className="text-md font-normal">
                                                 Followers
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <DropdownMenu>
+                                            <DropdownMenu className="max-h-[400px] overflow-hidden">
                                                 <DropdownMenuTrigger className="w-full">
                                                     <div className="flex justify-between items-center">
                                                         <div className="font-bold text-lg">{followers ? followers.length : 0}</div>
-                                                        <div className="bg-slate-100 p-1 rounded-md border text-slate-500">
-                                                            <EyeIcon className="h-5 w-5"/>
+                                                        <div className="bg-slate-100 dark:bg-slate-600 p-1 rounded-md border text-slate-500 dark:text-slate-200">
+                                                            <EyeIcon className="h-5 w-5 dark:text-white"/>
                                                         </div>
                                                     </div>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent>
+                                                <DropdownMenuContent className="dark:bg-slate-700">
                                                     <DropdownMenuLabel>List of Followers</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
-                                                    {followers?.map(f => 
+                                                    {followers.slice(1,15)?.map(f => 
                                                         <DropdownMenuItem key={f.id}>
                                                             <div className="flex gap-2">
                                                                 <UserIcon className="h-5 w-5"/>
@@ -165,13 +169,14 @@ const PortfolioDialog = ({accountId}) => {
                                                             </div>
                                                         </DropdownMenuItem>
                                                     )}
+                                                    <p className="text-xs pl-2 mt-2 mb-2">...{followers.length - 15} more</p>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </CardContent>
                                     </Card>
                                 )}
                                 {account.copierStatus == "Follower" && lead?.length > 0 && (
-                                    <Card>
+                                    <Card className={style.card}>
                                         <CardHeader className="pb-1">
                                             <CardTitle className="text-md font-normal">
                                                 Following
@@ -190,28 +195,28 @@ const PortfolioDialog = ({accountId}) => {
                         </div>
                         <div className="text-lg font-bold mb-6 mt-2">
                             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
-                                <Card className="col-span-1 lg:col-span-2">
+                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
                                     <CardHeader>Performance</CardHeader>
                                     <RunningChart accountId={accountId}/>
                                 </Card>
-                                <Card className="col-span-1 lg:col-span-2">
+                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
                                     <InfoStats account={account}/>
                                 </Card>
                             </div>
                         </div>
                         <div className="text-lg font-bold mb-6 mt-2">
                             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
-                                <Card className="col-span-1 lg:col-span-2">
+                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
                                     <Carousel>
                                         <CarouselContent className="py-4">
                                             <CarouselItem>
-                                                <Card className="shadow-none border-0">
+                                                <Card className="shadow-none border-0 dark:bg-slate-800">
                                                     <CardHeader>Monthly Growth</CardHeader>
                                                     <MonthlyChart accountId={accountId}/>
                                                 </Card>
                                             </CarouselItem>
                                             <CarouselItem>
-                                                <Card className="shadow-none border-0">
+                                                <Card className="shadow-none border-0 dark:bg-slate-800">
                                                     <CardHeader>
                                                         Monthly Chart
                                                     </CardHeader>
@@ -227,7 +232,7 @@ const PortfolioDialog = ({accountId}) => {
                                         </div>
                                     </Carousel>
                                 </Card>
-                                <Card className="col-span-1 lg:col-span-2">
+                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
                                     <CardHeader>
                                         Daily Chart
                                     </CardHeader>
@@ -236,7 +241,7 @@ const PortfolioDialog = ({accountId}) => {
                                     </CardContent>
                                 </Card>
                             </div>
-                            <Card className="mt-6">
+                            <Card className={cn(style.card, " mt-6")}>
                                 <CardContent className="p-6">
                                     <Trades key={account.id} id={account.id}/>
                                 </CardContent>

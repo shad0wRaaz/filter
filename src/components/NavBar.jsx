@@ -3,8 +3,10 @@ import Link from "next/link"
 import { ModeToggle } from "./ThemeToggler";
 import { DropdownMenuDemo } from "./ProfileMenu";
 import { AvatarIcon, DashboardIcon } from "@radix-ui/react-icons";
+import { Badge } from "./ui/badge";
 
-const Navbar = () => {
+const Navbar = ({ onlineUsers }) => {
+
     return (
       <nav className="flex items-center justify-between flex-wrap border p-5 shadow-sm rounded-md mt-2 bg-blue-500 mx-6">
         <div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -19,7 +21,7 @@ const Navbar = () => {
           </button>
         </div>
         <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-          <div className="text-sm lg:flex-grow">
+          <div className="text-sm">
             <Link href="/dashboard" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
               <div className="flex gap-1 items-center">
                 <DashboardIcon/>  Dashboard
@@ -30,6 +32,11 @@ const Navbar = () => {
                 <AvatarIcon/> My Accounts
               </div>
             </Link>
+          </div>
+          <div className="flex-grow flex justify-center">
+            <Badge className="text-blue-100 rounded-sm dark:bg-blue-600">
+              <span className="h-2 w-2 rounded-full bg-lime-500 mr-1">&nbsp;</span>{onlineUsers ? onlineUsers.filter(u => u.lastActivity != "").length : 0} Online users
+            </Badge>
           </div>
           <div className="flex gap-4">
             <ModeToggle/>

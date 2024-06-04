@@ -9,7 +9,6 @@ import { useUser } from '@/contexts/UserContext'
 import { useWatchlist } from '@/contexts/WatchlistContext'
 import { MY_API_URL } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
-
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import FilterControls from '@/components/Filters/FilterControls'
@@ -87,6 +86,15 @@ const Dashboard = ({modal}) => {
                     .then(res => res.json())
     },
     enabled: session.status == "authenticated"
+  });
+
+  const {data:onlineUsers} = useQuery({
+    queryKey: ['onlineUsers'],
+    queryFn: async() => {
+      return await fetch(`${MY_API_URL}/sessions`)
+                    .then(res => res.json())
+    },
+    enabled: session.status == "authenticated"
   })
 
   return (
@@ -94,7 +102,7 @@ const Dashboard = ({modal}) => {
     {session.status != "authenticated" ? <UnauthorizedAccess/> : (
       <>
         <header>
-            <Navbar/>
+            <Navbar onlineUsers={onlineUsers}/>
         </header>
         <main className="p-6">
           {modal}

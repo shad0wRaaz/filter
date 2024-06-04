@@ -21,10 +21,9 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-
   return (
     <html lang="en">
-      <body className={cn(inter.className, "bg-gray-100 dark:bg-gray-800")}>
+      <body className={cn(inter.className, "bg-gray-100 dark:bg-gray-900")}>
         <AuthProvider>
           <ThemeProvider 
             attribute="class" 

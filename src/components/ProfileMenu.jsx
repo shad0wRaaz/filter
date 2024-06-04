@@ -3,7 +3,7 @@ import { DropdownMenu,DropdownMenuContent,DropdownMenuGroup,DropdownMenuItem,Dro
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { signOut } from "next-auth/react"
-  console.log(process.env.NEXT_PUBLIC_NEXT_AUTH_URL)
+
   export function DropdownMenuDemo() {
     return (
       <DropdownMenu>

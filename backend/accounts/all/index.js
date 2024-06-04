@@ -69,6 +69,7 @@ export const getAllAccounts = async (lastId) => {
         accounts = accounts.filter(acc => acc.balance > 1000);
 
         console.log("Total accounts", accounts.length);
+        console.log("Procesing Analyses");
         let accountsWithAnalysis = "";
         const cacheAnalaysisOnlyData = await redisClient.get("accounts_all_with_analysis");
         if(cacheAnalaysisOnlyData){
@@ -83,16 +84,22 @@ export const getAllAccounts = async (lastId) => {
             await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis));
         }
 
-        
+        console.log("Processing copiers");
         if(accountsWithAnalysis != ""){
             const copiers = await getAllCopiers();
+            console.log(copiers)
+
             const accountsWithLF = accountsWithAnalysis.map(acc => {
                 if(copiers.some(copyObj => copyObj.lead_id == acc.id)){
-                    return ({...acc, copierStatus: "Lead"});
+                    return (
+                        {...acc, 
+                            copierStatus: "Lead", 
+                            followers: copiers.filter(a => a.lead_id == acc.id).length,
+                        });
                 }else if(copiers.some(copyObj => copyObj.follower_id == acc.id)){
-                    return ({...acc, copierStatus: "Follower"});
+                    return ({...acc, copierStatus: "Follower", followers: 0});
                 }else{
-                    return ({...acc, copierStatus: "Standalone"});
+                    return ({...acc, copierStatus: "Standalone", followers: 0});
                 }
             });
     
@@ -168,7 +175,7 @@ export const getFollowers = async(accountId) => {
         const parsedCacheData = JSON.parse(cachedData);
 
         const followers = parsedCacheData.filter(acc => acc.lead_id == accountId);
-        console.log("followers", followers)
+        // console.log("followers", followers)
         // await disconnetRedis();
         return followers;
     }catch(err){
