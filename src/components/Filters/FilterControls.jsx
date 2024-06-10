@@ -46,7 +46,7 @@ const FilterControls = ({ watchlistOnly, setWatchlistOnly, data}) => {
 
                 <RiskRewardRatioAverageLoss style={style}/>
                 
-                <RiskRewardRatioWorstLoss style={style} />
+                {/* <RiskRewardRatioWorstLoss style={style} /> */}
 
                 <TrackHistoryControl style={style} />
 

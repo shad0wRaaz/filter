@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { signIn, signOut } from "next-auth/react";
 
 const baseURL = MY_API_URL + "/user/login";
-const MAX_SESSION_IDLE_TIME = 5 * 60 * 1000; // 10 minutes in milliseconds
+const MAX_SESSION_IDLE_TIME = 15 * 60 * 1000; // 10 minutes in milliseconds
 
 export const options = {
   session: {

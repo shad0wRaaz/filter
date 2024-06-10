@@ -41,7 +41,6 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
             Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
             Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage) &&
-            Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
             Number(account.balance) >= Number(filter.minBalance) &&
             Number(account.drawdown >= Number(filter.minDrawdown)) && Number(account.drawdown <= Number(filter.maxDrawdown)) &&
             dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 &&
@@ -50,7 +49,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
           );
       }
     }
-    
+    // Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
 
       setFilteredData(filteredData)
       const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
@@ -136,6 +135,15 @@ const handleSort = (array, key, orderFlag) => {
             </TableHead>
             <TableHead>
               <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "drawdown", order: !sort.order})} >Drawdown</span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "drawdown" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "drawdown", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "growth", order: !sort.order})} >Growth</span> 
                 <ChevronUp 
                   className={cn(style.iconStyle, sort.key == "growth" && !sort.order && " rotate-180")} 
@@ -170,7 +178,7 @@ const handleSort = (array, key, orderFlag) => {
                 </Tooltip>
               </TooltipProvider>
             </TableHead>
-            <TableHead>
+            {/* <TableHead>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -187,16 +195,7 @@ const handleSort = (array, key, orderFlag) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </TableHead>
-            <TableHead>
-              <div className={style.headerStyle}>
-                <span onClick={() => setSort({key: "drawdown", order: !sort.order})} >Drawdown</span>
-                <ChevronUp 
-                  className={cn(style.iconStyle, sort.key == "drawdown" && !sort.order && " rotate-180")} 
-                  onClick={() => setSort({key: "drawdown", order: !sort.order})} 
-                />
-              </div>
-            </TableHead>
+            </TableHead> */}
             <TableHead>
               <div className={style.headerStyle}>
                 <span onClick={() => setSort({key: "total_profit", order: !sort.order})}>Total Profit</span>
