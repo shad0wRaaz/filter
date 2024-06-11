@@ -46,7 +46,7 @@ const SearchandWatchlistControl = ({selectedWatchlist, setSelectedWatchlist, sty
         <SelectContent>
           <SelectItem value="all">All</SelectItem>
           {watchlistNames && watchlistNames.length > 0 && watchlistNames.map(w => (
-            <SelectItem value={w.listname}>{w.listname}</SelectItem>
+            <SelectItem key={w._id} value={w.listname}>{w.listname}</SelectItem>
 
           ))}
           {/* <SelectItem value="dark">Dark</SelectItem>
