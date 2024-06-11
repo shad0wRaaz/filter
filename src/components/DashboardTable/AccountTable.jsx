@@ -16,7 +16,7 @@ const style = {
   iconStyle: "w-4 h-4 transition-all cursor-pointer duration-500"
 }
 
-const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist }) => {
+const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchlist }) => {
 
   const { filter } = useFilter();
   const [filteredData, setFilteredData] = useState([]);
@@ -32,8 +32,8 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
     let filteredData = data;
     if(type == "dashboard"){
       //if watchlist is enabled filter it out
-      if(showWatchlist && filteredData?.length > 0){
-        filteredData = filteredData?.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id));
+      if(selectedWatchlist != "all" && filteredData?.length > 0){
+        filteredData = filteredData?.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id && watchaccount.listname == selectedWatchlist));
       }else{
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
             (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
@@ -56,7 +56,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, showWatchlist 
       setTotalPages(totalPages);
 
     return() => {}
-}, [data, filter, showWatchlist, itemsPerPage, type, watchlist]);
+}, [data, filter, selectedWatchlist, itemsPerPage, type, watchlist]);
 
 useEffect(() => {
   if(!filteredData) return;
@@ -69,14 +69,14 @@ useEffect(() => {
 
   return() => {}
 
-}, [filteredData, currentPage, itemsPerPage, sort, showWatchlist, filter]);
+}, [filteredData, currentPage, itemsPerPage, sort, selectedWatchlist, filter]);
 
 useEffect(() =>{
   if(!watchlist) return;
   setCurrentPage(1);
 
   return() => {}
-}, [showWatchlist, watchlist])
+}, [selectedWatchlist, watchlist])
 
 const handleSort = (array, key, orderFlag) => {
   const order = orderFlag ? "asc" : "desc";

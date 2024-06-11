@@ -9,7 +9,7 @@ const MAX_SESSION_IDLE_TIME = 15 * 60 * 1000; // 10 minutes in milliseconds
 export const options = {
   session: {
     strategy: "jwt",
-    maxAge: 60,
+    maxAge: 60 * 60,
   },
   providers: [
     CredentialsProvider({

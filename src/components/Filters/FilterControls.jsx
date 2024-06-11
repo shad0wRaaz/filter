@@ -1,5 +1,4 @@
 "use client";
-import { useFilter } from '@/contexts/FilterContext'
 import CopierControl from "./CopierControl";
 import MinimumBalanceControl from "./MinimumBalanceControl";
 import GrowthControl from "./GrowthControl";
@@ -27,8 +26,7 @@ const style = {
     button: "dark:text-white"
   }
 
-const FilterControls = ({ watchlistOnly, setWatchlistOnly, data}) => {
-    const { filter } = useFilter();
+const FilterControls = ({ selectedWatchlist, setSelectedWatchlist, data}) => {
     return (
         <div className="flex flex-wrap justify-start flex-col gap-3">
             <div className="flex items-center flex-wrap justify-start gap-3">
@@ -51,7 +49,7 @@ const FilterControls = ({ watchlistOnly, setWatchlistOnly, data}) => {
                 <TrackHistoryControl style={style} />
 
             </div>
-            <SearchandWatchlistControl style={style} watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly}/>
+            <SearchandWatchlistControl style={style} selectedWatchlist={selectedWatchlist} setSelectedWatchlist={setSelectedWatchlist}/>
         </div>
     )
 }

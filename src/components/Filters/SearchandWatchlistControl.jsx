@@ -6,9 +6,12 @@ import { useFilter } from '@/contexts/FilterContext'
 import { cn } from '@/lib/utils'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { CrossIcon } from '../icons/CustomIcons'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useWatchlist } from '@/contexts/WatchlistContext'
 
-const SearchandWatchlistControl = ({watchlistOnly, setWatchlistOnly, style}) => {
+const SearchandWatchlistControl = ({selectedWatchlist, setSelectedWatchlist, style}) => {
     const {filter, setFilter} = useFilter();
+    const {watchlistNames} = useWatchlist();
     // const [searchString, setSearchString] = useState(filter ? filter.searchQuery : "");
 
     const clearSearchQuery = () => {
@@ -36,14 +39,28 @@ const SearchandWatchlistControl = ({watchlistOnly, setWatchlistOnly, style}) => 
           </div>
         )}
       </div>
-        <div className="flex items-center space-x-2 justify-end mt-5 md:mt-0">
+      <Select onValueChange={e => setSelectedWatchlist(e)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="View Watchlist" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          {watchlistNames && watchlistNames.length > 0 && watchlistNames.map(w => (
+            <SelectItem value={w.listname}>{w.listname}</SelectItem>
+
+          ))}
+          {/* <SelectItem value="dark">Dark</SelectItem>
+          <SelectItem value="system">System</SelectItem> */}
+        </SelectContent>
+      </Select>
+        {/* <div className="flex items-center space-x-2 justify-end mt-5 md:mt-0">
             <Label htmlFor="view-watchlist-only">View Watchlist</Label>
             <Switch 
                 id="view-watchlist-only" 
                 defaultChecked={watchlistOnly} 
                 onCheckedChange={(e) => setWatchlistOnly(e)}
             />
-        </div>
+        </div> */}
     </div>
   )
 }

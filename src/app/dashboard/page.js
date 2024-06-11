@@ -18,8 +18,8 @@ const Dashboard = ({modal}) => {
   const session = useSession();
   const { user, setUser } = useUser();
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
-  const { watchlist, setWatchlist } = useWatchlist();
-  const [watchlistOnly, setWatchlistOnly] = useState(false);
+  const { watchlist, setWatchlist, setWatchlistNames } = useWatchlist();
+  const [selectedWatchlist, setSelectedWatchlist] = useState("all");
   // console.log(encryptData("uCgmGkd2cLs7"));
   // console.log(encryptData("5ut5UzcVKgHm"));
   //get settings data
@@ -61,6 +61,25 @@ const Dashboard = ({modal}) => {
     enabled: session.status == "authenticated"
   });
 
+  const {data:watchlistitems} = useQuery({
+    queryKey: ['userwatchlists'],
+    queryFn: async() => {
+      return await fetch(`${MY_API_URL}/watchlistname/${session.data.data.email}`)
+                    .then(res => {
+                      if(res.ok){
+                        return res.json();
+                      }
+                      return null;
+                    })
+                    .then(res => {
+                      if(res){
+                        setWatchlistNames([...res]);
+                      }
+                      return res;
+                    })
+    }
+  });
+
   const{data:watchlistdata, status: watchliststatus} = useQuery({
     queryKey: ['watchlist'],
     queryFn: async() => {
@@ -97,7 +116,8 @@ const Dashboard = ({modal}) => {
                     .then(res => res.json())
     },
     enabled: session.status == "authenticated"
-  })
+  });
+
 
   return (
     <>
@@ -108,8 +128,7 @@ const Dashboard = ({modal}) => {
         </header>
         <main className="p-6">
           {modal}
-          <FilterControls watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} data={accounts}/>
-          {/* <FilterSheet watchlistOnly={watchlistOnly} setWatchlistOnly={setWatchlistOnly} /> */}
+          <FilterControls selectedWatchlist={selectedWatchlist} setSelectedWatchlist={setSelectedWatchlist} data={accounts}/>
           <Card className="mt-6 dark:bg-gray-700">
             <AccountTable 
               data={accounts} 
@@ -117,7 +136,7 @@ const Dashboard = ({modal}) => {
               status={accountStatus} 
               type="dashboard" 
               watchlist={watchlist} 
-              showWatchlist={watchlistOnly}
+              selectedWatchlist={selectedWatchlist}
             />
           </Card>
         </main>

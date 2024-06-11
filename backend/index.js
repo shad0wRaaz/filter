@@ -8,7 +8,7 @@ import { getUserSettings, saveUserKeys } from './accounts/settings/index.js';
 import { getAnalysis } from './accounts/analysis/index.js';
 import { deleteClientAccount, getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
 import { getBrokerServers, getBrokers } from './brokers/index.js';
-import { getWatchlist, saveWatchlist } from './watchlist/index.js';
+import { getWatchlist, getWatchlistNames, saveWatchlist, saveWatchlistName } from './watchlist/index.js';
 import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
@@ -140,14 +140,30 @@ app.get('/brokers/servers/:username/:brokerId', async(req, res) => {
     return res.send(brokerServers);
 });
 
+
+app.get('/watchlistname/:username', async(req, res) => {
+    const watchlistItem = await getWatchlistNames(req.params.username);
+    return res.send(watchlistItem);
+});
+
+app.post('/watchlistname', async(req, res) => {
+    const {email, watchlistname} = req.body;
+
+    if(email && watchlistname){
+        const result = await saveWatchlistName(email, watchlistname);
+        return res.send(result);
+    }
+    return res.send({ status: 400, message: 'Email or Watchlist name not provided'})
+});
+
 app.get('/watchlist/:username', async(req, res) => {
     const watchlist = await getWatchlist(req.params.username);
     return res.send(watchlist);
 });
 
 app.post('/watchlist', async(req,res) => {
-    if(req.body.email && req.body.watchlist){
-        const result = await saveWatchlist(req.body.email, req.body.watchlist);
+    if(req.body.email && req.body.watchlist && req.body.listname){
+        const result = await saveWatchlist(req.body.email, req.body.watchlist, req.body.listname);
         return res.send(result);
     }
     return res.send({ message: "Watchlist not added" });

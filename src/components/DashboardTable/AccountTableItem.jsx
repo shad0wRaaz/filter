@@ -11,12 +11,14 @@ import { useCopyTrade } from '@/contexts/CopyTradeContext'
 import { BitCoinIcon, CheckIcon, CrossIcon } from '../icons/CustomIcons'
 import { toast } from 'sonner'
 import CopierDialog from '../CopierSettings/CopierDialog'
-import { Star, Trash } from 'lucide-react'
+import { Plus, Star, Trash } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useQueryClient } from '@tanstack/react-query'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from '../ui/button'
 import { useSession } from 'next-auth/react'
+import WatchlistMenu from '../Watchlist/Menu'
+
 
 const cryptoArray = ["USC", "BTC", "ETH", "XRP", "USDC", "USDT"];
 
@@ -24,7 +26,7 @@ const AccountTableItem = ({ account, type }) => {
 
     const { user } = useUser();
     const session = useSession();
-    const { watchlist } = useWatchlist();
+    const { watchlist, watchlistItem } = useWatchlist();
     const isWatchlist = watchlist.length > 0 ?  watchlist?.find(user => user.watchlist == account.id) : null;
     const { master, slaves, setSlaves } = useCopyTrade();
     const qc = useQueryClient();
@@ -71,28 +73,28 @@ const AccountTableItem = ({ account, type }) => {
       })
     }
 
-    const updateWatchlist = async() => {
-      if(!account){
-          toast("Watchlist not updated.");
-          return
-      }
-      const result = await fetch(`${MY_API_URL}/watchlist`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email: user.email, watchlist: account.id }),
-        headers: {
-          'Content-Type' : 'application/json',
-        }
-      }).then(res => res.json());
+    // const updateWatchlist = async() => {
+    //   if(!account){
+    //       toast("Watchlist not updated.");
+    //       return
+    //   }
+    //   const result = await fetch(`${MY_API_URL}/watchlist`,
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify({ email: user.email, watchlist: account.id }),
+    //     headers: {
+    //       'Content-Type' : 'application/json',
+    //     }
+    //   }).then(res => res.json());
       
       
-      if(result.message == "Watchlist has been saved."){
-        toast("Watchlist Added", { description: "The account has been added to your Watchlist."})
-      }else if(result.message == "Watchlist has been deleted."){
-        toast("Watchlist Deleted", { description: "The account has been taken out from your Watchlist."})
-      }
-      qc.invalidateQueries(['watchlist']);
-    }
+    //   if(result.message == "Watchlist has been saved."){
+    //     toast("Watchlist Added", { description: "The account has been added to your Watchlist."})
+    //   }else if(result.message == "Watchlist has been deleted."){
+    //     toast("Watchlist Deleted", { description: "The account has been taken out from your Watchlist."})
+    //   }
+    //   qc.invalidateQueries(['watchlist']);
+    // }
 
   return (
     <TableRow 
@@ -139,14 +141,6 @@ const AccountTableItem = ({ account, type }) => {
         <TableCell>{account.started_at && new Date(account.started_at).toLocaleDateString()}</TableCell>
         <TableCell>
           <div className="flex gap-2 items-center justify-start">
-            {/* {account.trade_mode == "demo" &&
-              <Badge variant="secondary" className="rounded-[5px] border border-slate-200 dark:bg-slate-600 dark:border-slate-700 shadow-sm">
-                Demo
-              </Badge>}
-            {account.trade_mode == "real" &&
-              <Badge variant="secondary" className="rounded-[5px] border border-green-300 bg-green-200 dark:bg-green-600 dark:border-green-700 shadow-sm">
-                Real
-              </Badge>} */}
             <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">
               MT{account.mt_version}
             </Badge>
@@ -206,7 +200,10 @@ const AccountTableItem = ({ account, type }) => {
           </>
           ) : (
             <TableCell>
-            {type == "dashboard" && (
+              {type == "dashboard" && (
+                <WatchlistMenu accountId={account.id}/>
+              )}
+            {/* {type == "dashboard" && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -227,7 +224,7 @@ const AccountTableItem = ({ account, type }) => {
                 </Tooltip>
               </TooltipProvider>
 
-              )}
+              )} */}
             </TableCell>
           )
         }

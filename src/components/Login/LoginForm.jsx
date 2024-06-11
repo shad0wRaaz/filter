@@ -96,7 +96,6 @@ const LoginForm = () => {
                 src="/how-to-open-a-forex-broker-account.jpg"
                 alt="Image"
                 fill={true}
-                layout="cover"
                 className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
             </div>

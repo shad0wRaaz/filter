@@ -3,6 +3,48 @@ import { connectToDatabase } from '../libs/mongodb/mongoClient.js';
 
 const db = await connectToDatabase();
 
+export const getWatchlistNames = async(email) => {
+    let returnObject = "";
+    try{
+        const collection = db.collection("WatchlistNames");
+
+        const returnObject = await collection.find({ email }).toArray();
+        return returnObject;
+    }catch(err){
+        console.log("error", err)
+        returnObject = err;
+    }
+    return returnObject;
+}
+
+export const saveWatchlistName = async(email, listname) => {
+    try{
+        // const db = await connectToDatabase();
+        const collection = db.collection("WatchlistNames");
+        
+        const existingWatchlist = await collection.find({ email, listname }).toArray();
+
+        if(existingWatchlist.length == 0){
+            const item = await collection.insertOne({
+                email, listname, createdAt: new Date()
+            });
+            if(item.acknowledged == true){
+                if(item?.insertedId){
+                    return ({ status: 200, message: 'Watchlist Item has been saved.'});
+                }else{
+                    return ({ status: 400 , message: 'Watchlist Item was not saved.'});
+                }
+            }
+        }else{
+            // await db.collection("Watchlist").deleteMany({ email, watchlistItem });
+            return ({ status: 400, message: 'Watchlist already present.'});
+        }
+        
+    }catch(err){
+        return ({ status: 500, message: err});
+    }
+}
+
 export const getWatchlist = async(email) => {
     let returnObject = "";
     try{
@@ -17,27 +59,27 @@ export const getWatchlist = async(email) => {
     return returnObject;
 }
 
-export const saveWatchlist = async(email, watchlist) => {
+export const saveWatchlist = async(email, watchlist, listname) => {
     try{
         // const db = await connectToDatabase();
         const collection = db.collection("Watchlist");
         
-        const existingWatchlist = await collection.find({ email, watchlist }).toArray();
+        const existingWatchlist = await collection.find({ email, watchlist, listname }).toArray();
 
         if(existingWatchlist.length == 0){
             const item = await collection.insertOne({
-                email, watchlist, createdAt: new Date()
+                email, watchlist, listname, createdAt: new Date()
             });
             if(item.acknowledged == true){
                 if(item?.insertedId){
-                    return ({ status: 200, message: 'Watchlist has been saved.'});
+                    return ({ status: 200, message: 'saved', description: `Account added to ${listname}`});
                 }else{
-                    return ({ status: 200 , message: 'Watchlist was not saved.'});
+                    return ({ status: 400 , message: 'failed', description: 'Account not added.'});
                 }
             }
         }else{
-            await db.collection("Watchlist").deleteMany({ email, watchlist });
-            return ({ status: 200, message: 'Watchlist has been deleted.'});
+            await db.collection("Watchlist").deleteMany({ email, watchlist, listname });
+            return ({ status: 200, message: 'deleted', description: `Account removed from ${listname}`});
         }
         
     }catch(err){
