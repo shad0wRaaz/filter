@@ -52,13 +52,22 @@ const MyAccount = ({modal}) => {
       enabled: session.status == "authenticated"
     });
 
+    const {data:onlineUsers} = useQuery({
+      queryKey: ['onlineUsers'],
+      queryFn: async() => {
+        return await fetch(`${MY_API_URL}/sessions`)
+                      .then(res => res.json())
+      },
+      enabled: session.status == "authenticated"
+    });
+
 
   return (
     <>
     {session.status != "authenticated" ? <UnauthorizedAccess/> : (
       <>
         <header>
-            <Navbar/>
+            <Navbar onlineUsers={onlineUsers}/>
         </header>
           {/* {modal} */}
         <main className="p-6">
