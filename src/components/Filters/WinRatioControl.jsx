@@ -31,7 +31,7 @@ const WinRatioControl = ({style}) => {
         <PopoverContent className={style.popoverContent}>
             <div className="space-y-3">
                 <div className="flex justify-between">
-                    <b>Win Ratio Range</b>
+                    <b>Win Ratio</b>
                     <span>{minWinRatio} to {maxWinRatio}</span>
                 </div>
                 <div className="flex gap-3 min-w-[300px]">

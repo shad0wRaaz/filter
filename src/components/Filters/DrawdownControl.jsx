@@ -31,7 +31,7 @@ const DrawdownControl = ({style}) => {
         <PopoverContent className={style.popoverContent}>
             <div className="space-y-3">
                 <div className="flex justify-between">
-                    <b>Drawdown Range</b>
+                    <b>Drawdown</b>
                     <span>{minDrawdown} to {maxDrawdown}</span>
                 </div>
                 <div className="flex gap-3 min-w-[300px]">
