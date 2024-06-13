@@ -1,7 +1,6 @@
 "use client"
 import AccountTable from '@/components/DashboardTable/AccountTable'
 import UnauthorizedAccess from '@/components/UnauthorizedAccess'
-import FilterSheet from '@/components/FilterSheet'
 import Navbar from '@/components/NavBar'
 import { Card } from '@/components/ui/card'
 import { useDashboardTable } from '@/contexts/DashboardTableContext'
@@ -12,7 +11,6 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import FilterControls from '@/components/Filters/FilterControls'
-import { encryptData } from '@/lib/encryption'
 
 const Dashboard = ({modal}) => {
   const session = useSession();
