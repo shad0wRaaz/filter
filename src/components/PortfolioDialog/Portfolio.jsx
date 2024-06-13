@@ -17,6 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import InfoStats from "../Portfolio/InfoStats";
 import UnauthorizedAccess from "../UnauthorizedAccess";
 import { useSession } from "next-auth/react";
+import { StarFilledIcon } from "@radix-ui/react-icons";
 
 const style = {
     card : "dark:bg-slate-800 dark:border-slate-700"
@@ -68,7 +69,13 @@ const PortfolioDialog = ({accountId}) => {
                                 <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">MetaTrader {account?.mt_version}</Badge>
                                 <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">{account?.copierStatus}</Badge>
                             </div>
-                            {isWatchlist && <div className="w-auto"><Badge className="rounded-[5px] bg-yellow-500 w-auto">In Watchlist</Badge></div>}
+                            {isWatchlist && 
+                                <div className="w-auto">
+                                    <Badge className="rounded-[5px] bg-yellow-500 w-auto flex gap-1">
+                                        <StarFilledIcon/>
+                                        Watchlist : {watchlist.find(w => w.watchlist == accountId).listname }
+                                    </Badge>
+                                </div>}
                             {/* <DropdownMenu>
                                 <DropdownMenuTrigger>
                                     <Button variant="outline" className="focus:outline-0 focus:border-0 focus:ring-0">Copier</Button></DropdownMenuTrigger>
