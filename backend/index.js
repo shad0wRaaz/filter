@@ -8,7 +8,7 @@ import { getUserSettings, saveUserKeys } from './accounts/settings/index.js';
 import { getAnalysis } from './accounts/analysis/index.js';
 import { deleteClientAccount, getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
 import { getBrokerServers, getBrokers } from './brokers/index.js';
-import { getWatchlist, getWatchlistNames, saveWatchlist, saveWatchlistName } from './watchlist/index.js';
+import { deleteWatchlistName, getWatchlist, getWatchlistNames, saveWatchlist, saveWatchlistName } from './watchlist/index.js';
 import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
@@ -167,6 +167,14 @@ app.post('/watchlist', async(req,res) => {
         return res.send(result);
     }
     return res.send({ message: "Watchlist not added" });
+});
+app.delete('/watchlist', async(req, res) => {
+    const { email, listname } = req.body;
+    if(listname && email){
+        const result = await deleteWatchlistName(email, listname);
+        return res.send(result);
+    }
+    return res.send({message: "Listname not provided."})
 });
 
 app.post('/user/login', async(req, res) => {

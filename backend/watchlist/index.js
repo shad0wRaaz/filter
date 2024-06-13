@@ -45,6 +45,20 @@ export const saveWatchlistName = async(email, listname) => {
     }
 }
 
+export const deleteWatchlistName = async(email, listname) => {
+    try{
+        const collection =  db.collection("WatchlistNames");
+        const deleteResult = await collection.deleteOne({ email, listname });
+        
+        const watchlistCollection = db.collection("Watchlist");
+        const deleteWatchlistResult = await watchlistCollection.deleteMany({ email, listname });
+
+        return ({ status: 200, message: deleteResult.deletedCount === 1 ? 'deleted': 'failed'});
+    }catch(err){
+        return ({ status: 500, message: err})
+    }
+}
+
 export const getWatchlist = async(email) => {
     let returnObject = "";
     try{
