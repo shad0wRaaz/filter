@@ -20,7 +20,7 @@ const MinimumBalanceControl = ({style}) => {
         <PopoverTrigger>
             <Badge className={ style.filterBadge }>
                 <div className={style.filterText}>
-                    <p className={style.filterLabel}>Min. Balance </p>
+                    <p className={style.filterLabel}>Balance </p>
                     <p className={style.filterValue}> {Intl.NumberFormat('en-US').format(filter.minBalance)}</p>
                 </div>
                 {/* <PlusCircle className={ style.badgeIcon } /> */}
@@ -28,13 +28,17 @@ const MinimumBalanceControl = ({style}) => {
             </Badge>
         </PopoverTrigger>
         <PopoverContent className={style.popoverContent}>
-            <b>Minimum Balance</b>
+            <b>Balance</b>
             <div className="flex gap-3">
-                <Input 
-                    type="number" 
-                    value={minBalance} 
-                    onChange={(e) => setMinBalance(e.target.value)}
-                />
+                <div className="relative">
+                <Badge className="absolute top-2.5 left-2 opacity-80 rounded-sm text-[10px] p-1 py-0"  variant="secondary">MIN</Badge>
+                    <Input 
+                        className="pl-[45px]"
+                        type="number" 
+                        value={minBalance} 
+                        onChange={(e) => setMinBalance(e.target.value)}
+                    />
+                </div>
                 <Button className={style.button} onClick={() => handleChange()}>
                     <Check width={15} className={style.button}/>
                 </Button>
