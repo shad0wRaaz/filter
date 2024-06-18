@@ -6,7 +6,7 @@ const TradeTable = ({data: trades}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(trades ? Math.ceil(trades?.length / itemsPerPage) : 0);
-    console.log(trades?.length, totalPages)
+
 
   return (
     <div className="overflow-hidden">
