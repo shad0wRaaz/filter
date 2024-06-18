@@ -87,7 +87,6 @@ export const getAllAccounts = async (lastId) => {
         console.log("Processing copiers");
         if(accountsWithAnalysis != ""){
             const copiers = await getAllCopiers();
-            console.log(copiers)
 
             const accountsWithLF = accountsWithAnalysis.map(acc => {
                 if(copiers.some(copyObj => copyObj.lead_id == acc.id)){

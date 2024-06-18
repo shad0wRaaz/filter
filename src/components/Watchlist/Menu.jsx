@@ -107,7 +107,7 @@ const WatchlistMenu = ({ accountId }) => {
 
         setOpen(false);
     }
-    console.log(watchlist)
+
   return (
     <Dialog open={open} onOpenChange={setOpen} className="!bg-black/20">
         <DialogContent className="sm:max-w-md">
