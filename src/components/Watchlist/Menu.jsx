@@ -148,7 +148,7 @@ const WatchlistMenu = ({ accountId }) => {
             <PopoverContent className="text-sm max-w-[220px]">
                 <div className="pb-1 font-bold">Save to Watchlist
                     {watchlistNames && watchlistNames.length !=0 && (
-                        <p className="text-[11px] text-slate-400">Tick/Untick to add/remove from the Watchlist</p>
+                        <p className="text-[12px] text-balance font-normal text-slate-400">Tick/Untick to add/remove from the Watchlist</p>
                     )}
                 </div>
                 <hr/>

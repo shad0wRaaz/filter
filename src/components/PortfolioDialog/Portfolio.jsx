@@ -168,7 +168,7 @@ const PortfolioDialog = ({accountId}) => {
                                                 <DropdownMenuContent className="dark:bg-slate-700">
                                                     <DropdownMenuLabel>List of Followers</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
-                                                    {followers.slice(1,15)?.map(f => 
+                                                    {followers.slice(0,15)?.map(f => 
                                                         <DropdownMenuItem key={f.id}>
                                                             <div className="flex gap-2">
                                                                 <UserIcon className="h-5 w-5"/>
@@ -176,7 +176,9 @@ const PortfolioDialog = ({accountId}) => {
                                                             </div>
                                                         </DropdownMenuItem>
                                                     )}
-                                                    <p className="text-xs pl-2 mt-2 mb-2">...{followers.length - 15} more</p>
+                                                    {followers.length > 15 && 
+                                                        <p className="text-xs pl-2 mt-2 mb-2">... {followers.length - 15} more</p>
+                                                    }
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </CardContent>
