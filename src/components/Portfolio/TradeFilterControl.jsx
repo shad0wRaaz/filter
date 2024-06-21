@@ -5,13 +5,12 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { DateRange } from "react-day-picker"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Cross2Icon } from '@radix-ui/react-icons'
 
 const TradeFilterControl = ({ tradeState, setTradeState, tradeType, setTradeType, uniqueTypes, date, setDate }) => {
   return (
-    <div className="my-4 flex justify-end gap-3">
+    <div className="flex justify-end gap-3 my-4 px-4">
         <div className={cn("grid gap-2")}>
             Date Range
             <Popover>
@@ -62,7 +61,7 @@ const TradeFilterControl = ({ tradeState, setTradeState, tradeType, setTradeType
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="All">All</SelectItem>
                         {uniqueTypes?.map(type => 
                             <SelectItem key={type} value={type}><span className="capitalize">{type}</span></SelectItem>
                         )}
@@ -80,7 +79,7 @@ const TradeFilterControl = ({ tradeState, setTradeState, tradeType, setTradeType
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="All">All</SelectItem>
                         <SelectItem value="open">Open</SelectItem>
                         <SelectItem value="closed">Closed</SelectItem>
                     </SelectGroup>
