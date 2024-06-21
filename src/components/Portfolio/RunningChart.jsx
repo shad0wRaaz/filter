@@ -29,7 +29,8 @@ const RunningChart = ({ accountId }) => {
           }
 
           const data = {
-            labels: Array.from({ length: result?.data?.length }, (_, i) => `${i.toString().padStart(2, '0')}`),
+            // labels: Array.from({ length: result?.data?.length }, (_, i) => `${i.toString().padStart(2, '0')}`),
+            labels: result.data.map(res => res.date).reverse(),
             datasets: [
                 {
                     label: dataLabel,
