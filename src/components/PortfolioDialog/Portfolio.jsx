@@ -128,7 +128,7 @@ const PortfolioDialog = ({accountId}) => {
                                         <span className="font-bold text-lg">{account?.average_loss != 0 ? Number(account?.average_win / Math.abs(account?.average_loss)).toFixed(2) : 0}</span>
                                     </CardContent>
                                 </Card>
-                                <Card className={style.card}>
+                                {/* <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
                                             RRR <span className="text-xs">(Worst loss)</span>
@@ -137,7 +137,7 @@ const PortfolioDialog = ({accountId}) => {
                                     <CardContent>
                                         <span className="font-bold text-lg">{account?.worst_trade != 0 ? Number(account?.average_win / Math.abs(account?.worst_trade)).toFixed(2) : 0}</span>
                                     </CardContent>
-                                </Card>
+                                </Card> */}
                                 <Card className={style.card}>
                                     <CardHeader className="pb-1">
                                         <CardTitle className="text-md font-normal">
