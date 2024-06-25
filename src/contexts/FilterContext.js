@@ -10,6 +10,8 @@ export const FilterProvider = ({ children }) => {
         searchQuery: "", 
         accountNature: "All", 
         trackRecord: 6,
+        minLeverage: 10,
+        maxLeverage: 1000,
         minGrowth:  1,
         maxGrowth: 5000,
         minWinRatio: 0,
