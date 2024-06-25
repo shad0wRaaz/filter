@@ -9,6 +9,7 @@ import RiskRewardRatioWorstLoss from "./RiskRewardRatioWorst";
 import TrackHistoryControl from "./TrackHistoryControl";
 import SearchandWatchlistControl from './SearchandWatchlistControl';
 import BrokerControl from './BrokerControl';
+import LeverageControl from "./LeverageControl";
 
 const style = {
     filterBox: "p-2 flex gap-3 flex-col w-full border rounded-md p-3 shadow-sm",
@@ -33,6 +34,8 @@ const FilterControls = ({ selectedWatchlist, setSelectedWatchlist, data}) => {
                 <CopierControl style={style}/>
 
                 <BrokerControl style={style} data={data}/>
+                
+                <LeverageControl style={style} data={data}/>
                 
                 <MinimumBalanceControl style={style}/>
                 
