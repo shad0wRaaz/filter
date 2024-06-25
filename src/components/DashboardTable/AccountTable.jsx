@@ -39,6 +39,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
             (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
             ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) && 
             Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) &&
+            Number(account.leverage) >= Number(filter.minLeverage) && Number(account.leverage) <= Number(filter.maxLeverage) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
             Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage) &&
             Number(account.balance) >= Number(filter.minBalance) &&
@@ -112,6 +113,15 @@ const handleSort = (array, key, orderFlag) => {
                 <ChevronUp 
                   className={cn(style.iconStyle, sort.key == "currency" && !sort.order && " rotate-180")} 
                   onClick={() => setSort({key: "currency", order: !sort.order})} 
+                />
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className={style.headerStyle}>
+                <span onClick={() => setSort({key: "leverage", order: !sort.order})} >Leverage </span>
+                <ChevronUp 
+                  className={cn(style.iconStyle, sort.key == "leverage" && !sort.order && " rotate-180")} 
+                  onClick={() => setSort({key: "leverage", order: !sort.order})} 
                 />
               </div>
             </TableHead>

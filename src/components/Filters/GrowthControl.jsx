@@ -34,11 +34,11 @@ const GrowthControl = ({style}) => {
                 <div className="flex gap-3 min-w-[300px]">
                     <div className="relative">
                         <Badge className="absolute top-2.5 left-2 opacity-80 rounded-[6px] text-[10px] p-1 py-0"  variant="secondary">MIN</Badge>
-                        <Input className="w-32 pl-[45px]" type="number" value={minGrowth} onChange={e => setMinGrowth(e.target.value)} />
+                        <Input className="w-32 pl-[45px]" type="number" value={minGrowth} onChange={e => setMinGrowth(Number(e.target.value))} />
                     </div>
                     <div className="relative">
                         <Badge className="absolute top-2.5 left-2 opacity-80 rounded-[6px] text-[10px] p-1 py-0"  variant="secondary">MAX</Badge>
-                        <Input className="w-32 pl-[45px]" type="number" value={maxGrowth} onChange={e => setMaxGrowth(e.target.value)}/>
+                        <Input className="w-32 pl-[45px]" type="number" value={maxGrowth} onChange={e => setMaxGrowth(Number(e.target.value))}/>
                     </div>
                     {/* <Slider
                         defaultValue={[filter.minGrowth, filter.maxGrowth]}

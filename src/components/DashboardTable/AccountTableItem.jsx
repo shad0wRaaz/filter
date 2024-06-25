@@ -130,6 +130,7 @@ const AccountTableItem = ({ account, type }) => {
             <span className="inline">{account.currency}</span> {cryptoArray.find(el => el == account.currency) && <span className="inline"><BitCoinIcon color="#aaa"/></span>}
           </div>
         </TableCell>
+        <TableCell>{account.leverage}</TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.balance)}</TableCell>
         <TableCell>{Intl.NumberFormat('en-US').format(account.equity)}</TableCell>
         <TableCell>{Number(account.drawdown).toFixed(2)}</TableCell>

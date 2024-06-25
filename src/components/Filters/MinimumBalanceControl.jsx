@@ -36,7 +36,7 @@ const MinimumBalanceControl = ({style}) => {
                         className="pl-[45px]"
                         type="number" 
                         value={minBalance} 
-                        onChange={(e) => setMinBalance(e.target.value)}
+                        onChange={(e) => setMinBalance(Number(e.target.value))}
                     />
                 </div>
                 <Button className={style.button} onClick={() => handleChange()}>

@@ -46,8 +46,6 @@ const Dashboard = ({modal}) => {
   const { data:accounts, isLoading, status: accountStatus } = useQuery({
     queryKey: ['accounts'],
     queryFn: async() => {
-      // if(user.secretKey == '' || user.apiKey ==  ''){ return null; }
-      // return await fetch(`${MY_API_URL}/accounts/get/${limit}/${lastId}`)
       return await fetch(`${MY_API_URL}/accounts/all/0`)
       .then(res => res.json())
       .then(res => {
