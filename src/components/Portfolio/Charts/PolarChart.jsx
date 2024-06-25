@@ -14,6 +14,7 @@ export default function DoughnutChart({ chartData, year, month }) {
 
     const labels = filteredData.map(item => item.symbol);
     const counts = filteredData.map(item => item.count);
+
     const data = {
       labels,
       datasets: [
@@ -53,10 +54,32 @@ export default function DoughnutChart({ chartData, year, month }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'left',
+        position: 'right',
         labels: {
           padding: 20,
           boxWidth: 20,
+          generateLabels: function(chart){
+            const data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              const sum = data.datasets[0].data.reduce((a, b) => a + b, 0);
+              return data.labels.map((label, i) => {
+                const value = data.datasets[0].data[i];
+                const percentage = ((value / sum) * 100).toFixed(2) + "%";
+                return {
+                  text: `${label}: ${percentage}`,
+                  fillStyle: data.datasets[0].backgroundColor[i],
+                  hidden: isNaN(data.datasets[0].data[i]) || data.datasets[0].data[i] === null,
+                  lineCap: chart.legend.options.labels.lineCap,
+                  lineDash: chart.legend.options.labels.lineDash,
+                  lineDashOffset: chart.legend.options.labels.lineDashOffset,
+                  lineJoin: chart.legend.options.labels.lineJoin,
+                  strokeStyle: chart.legend.options.labels.strokeStyle,
+                  pointStyle: chart.legend.options.labels.pointStyle,
+                  rotation: chart.legend.options.labels.rotation,
+              };
+              });
+            }
+          }
         },
       },
     },
