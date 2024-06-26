@@ -36,7 +36,7 @@ const RunningChart = ({ accountId }) => {
                     label: dataLabel,
                     data: dataValue.reverse(),
                     fill: true, // This enables filling under the line.
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Semi-transparent color for the fill.
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)', // Semi-transparent color for the fill.
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.2,
                     border: 0.5,

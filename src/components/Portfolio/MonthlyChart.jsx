@@ -33,6 +33,8 @@ const MonthlyChart = ({ accountId }) => {
             return date.toLocaleString('default', { month: 'long' });
           });
 
+          // backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          // borderColor: 'rgba(54, 162, 235, 1)',
 
           const data = {
             labels: formattedLabels,
@@ -40,8 +42,14 @@ const MonthlyChart = ({ accountId }) => {
               {
                 label: `Growth in ${year}`,
                 data: filteredData?.map(d => d.growth),
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: function(context) {
+                  const value = context.raw;
+                  return value >= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
+                },
+                borderColor: function(context) {
+                  const value = context.raw;
+                  return value >= 0 ? 'rgb(75, 192, 192)' : 'rgb(255, 99, 132)';
+                },
                 borderWidth: 1,
                 borderRadius: 5,
               }

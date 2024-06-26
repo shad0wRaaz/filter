@@ -12,7 +12,6 @@ import MonthlyChart from "../Portfolio/MonthlyChart";
 import { EyeIcon, UserIcon } from "lucide-react";
 import AssetDistribution from "../Portfolio/AssetDistribution";
 import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import InfoStats from "../Portfolio/InfoStats";
 import UnauthorizedAccess from "../UnauthorizedAccess";
@@ -66,8 +65,8 @@ const PortfolioDialog = ({accountId}) => {
                 
                         <div className={`flex items-center justify-between`}>
                             <div className="flex items-center justify-start gap-2">
-                                <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">MetaTrader {account?.mt_version}</Badge>
-                                <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 dark:bg-slate-600 dark:border-slate-700">{account?.copierStatus}</Badge>
+                                <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 bg-white dark:bg-slate-600 dark:border-slate-700">MetaTrader {account?.mt_version}</Badge>
+                                <Badge variant="secondary" className="rounded-[5px] border shadow-sm border-slate-200 bg-white dark:bg-slate-600 dark:border-slate-700">{account?.copierStatus}</Badge>
                             </div>
                             {isWatchlist && 
                                 <div className="w-auto">
@@ -214,34 +213,22 @@ const PortfolioDialog = ({accountId}) => {
                             </div>
                         </div>
                         <div className="text-lg font-bold mb-6 mt-2">
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-4">
-                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
-                                    <Carousel>
-                                        <CarouselContent className="py-4">
-                                            <CarouselItem>
-                                                <Card className="shadow-none border-0 dark:bg-slate-800">
-                                                    <CardHeader>Monthly Growth</CardHeader>
-                                                    <MonthlyChart accountId={accountId}/>
-                                                </Card>
-                                            </CarouselItem>
-                                            <CarouselItem>
-                                                <Card className="shadow-none border-0 dark:bg-slate-800">
-                                                    <CardHeader>
-                                                        Monthly Chart
-                                                    </CardHeader>
-                                                    <CardContent>
-                                                        <AssetDistribution accountId={accountId} />
-                                                    </CardContent>
-                                                </Card>
-                                            </CarouselItem>
-                                        </CarouselContent>
-                                        <div className="flex justify-center absolute w-full">
-                                            <CarouselPrevious className="left-[10px] relative"/>
-                                            <CarouselNext className="-right-[15px] relative"/>
-                                        </div>
-                                    </Carousel>
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
+                                <Card className={cn(style.card, " col-span-1")}>
+                                    <CardHeader>
+                                        Monthly Growth
+                                    </CardHeader>
+                                    <MonthlyChart accountId={accountId}/>
                                 </Card>
-                                <Card className={cn(style.card, " col-span-1 lg:col-span-2")}>
+                                <Card className={cn(style.card, " col-span-1 ")}>
+                                    <CardHeader>
+                                        Monthly Chart
+                                    </CardHeader>
+                                    <CardContent>
+                                        <AssetDistribution accountId={accountId} />
+                                    </CardContent>
+                                </Card>
+                                <Card className={cn(style.card, " col-span-1 ")}>
                                     <CardHeader>
                                         Daily Chart
                                     </CardHeader>
