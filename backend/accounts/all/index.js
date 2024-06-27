@@ -183,7 +183,7 @@ export const getFollowers = async(accountId) => {
 
 }
 
-const processAllAccounts = async(accounts, batchSize = 50, delay = 2000) => {
+const processAllAccounts = async(accounts, batchSize = 50, delay = 3000) => {
     const results = [];
     for (let i = 0; i < accounts.length; i += batchSize) {
         const batch = accounts.slice(i, i + batchSize);
