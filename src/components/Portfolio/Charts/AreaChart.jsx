@@ -15,8 +15,13 @@ export default function AreaChart({chartData, type}) {
       },
     },
     scales: {
+      x: {
+        grid: {
+          display: false, // Hide vertical grid lines
+        },
+      },
       y: {
-        beginAtZero: true
+        beginAtZero: true,
       }
     }
   };
