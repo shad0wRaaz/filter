@@ -9,14 +9,48 @@ import { Badge } from "../ui/badge"
 import { Input } from "../ui/input"
 import { useFilter } from "@/contexts/FilterContext"
 import CircleCheck from "../ui/CircleCheck"
+// 1073641
+// 1073623
+// 1073621
+// 1073612
+// 1073595
+// 1073594
+// 1073592
+// 1073570
+// 1073556
+// 1073555
+// 1073553
+// 1073552
+// 1073549
+// 1073546
+// 1073539
+// 1073538
+// 1073536
+// 1073500
+// 1073499
+
+// 1014698
+// 1014267
+// 1014210
+// 1013887
+// 1013855
+// 1013819
+
+
+
+
+
+
+
+
 
 
 const BrokerControl = ({style, data})  => {
   const {filter, setFilter} = useFilter();
   const [open, setOpen] = useState(false);
   const [searchBrokerQuery, setSearchBrokerQuery] = useState("");
-
-  if(!data) return;
+console.log(data)
+  if(!data || Object.keys(data)?.length === 0) return;
   const brokerArray = data?.map(account => account.broker);
   const brokerSet = new Set(brokerArray);
   const brokers = (Array.from(brokerSet).sort());
