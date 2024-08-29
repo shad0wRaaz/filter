@@ -32,7 +32,7 @@ export const getAllCopiers = async() => {
             console.log("Fetching Copiers from: ", partialCopiers.meta.last_id);
         }
         // await connectRedis();
-        await redisClient.set("accounts_all_copiers", JSON.stringify(copiers), { EX: CACHE_DURATION, NX: true });
+        await redisClient.set("accounts_all_copiers", JSON.stringify(copiers), { EX: CACHE_DURATION, NX: false });
         // await disconnetRedis();
         return copiers;
     }catch(err){

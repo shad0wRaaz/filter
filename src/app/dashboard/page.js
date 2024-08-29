@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import FilterControls from '@/components/Filters/FilterControls'
+import { encryptData } from '@/lib/encryption'
 
 const Dashboard = ({modal}) => {
   const session = useSession();
@@ -18,7 +19,7 @@ const Dashboard = ({modal}) => {
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist, setWatchlistNames } = useWatchlist();
   const [selectedWatchlist, setSelectedWatchlist] = useState("all");
-  // console.log(encryptData("uCgmGkd2cLs7"));
+  // console.log(encryptData("jUHtaP9ARYSh"));
   // console.log(encryptData("5ut5UzcVKgHm"));
   //get settings data
   const { data:settings, status:settingsStatus } = useQuery({

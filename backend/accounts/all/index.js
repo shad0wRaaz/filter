@@ -58,33 +58,36 @@ export const getAllAccounts = async (lastId) => {
                     lastId = null;
                 }
             }
-            await redisClient.set(`accounts_raw`, JSON.stringify(accounts));
+            await redisClient.set(`accounts_raw`, JSON.stringify(accounts), { EX: 86400 });
 
         }else{
             accounts = JSON.parse(cachedData);
         }
         accounts = accounts.filter(acc => acc.status == "connection_ok");
+        console.log("Total Accounts with Demo and Live: ", accounts.length);
         accounts = accounts.filter(acc => acc.trade_mode == "real");
-        accounts = accounts.filter(acc => acc.total_profit > 0);
+        console.log("Total Live Accounts: ", accounts.length);
+        // accounts = accounts.filter(acc => acc.total_profit > 0);
         accounts = accounts.filter(acc => acc.balance > 1000);
 
-        console.log("Total accounts", accounts.length);
-        console.log("Procesing Analyses");
+        console.log(`Procesing Analyses for ${accounts.length} accounts`);
         let accountsWithAnalysis = "";
         const cacheAnalaysisOnlyData = await redisClient.get("accounts_all_with_analysis");
-        if(cacheAnalaysisOnlyData){
+        if(cacheAnalaysisOnlyData && cacheAnalaysisOnlyData?.length == 0){
             accountsWithAnalysis = JSON.parse(cacheAnalaysisOnlyData);
         }else{
             //find analysis of all accounts
             accountsWithAnalysis = await processAllAccounts(accounts);
-            console.log("before growth filter: ", accountsWithAnalysis.length);
+
+            console.log("Before growth filter: ", accountsWithAnalysis.length);
             accountsWithAnalysis = accountsWithAnalysis.filter(data => data.growth <= 5000);
             console.log("Total analysed accounts", accountsWithAnalysis.length);
             
-            await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis));
+            await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis), { EX: 86400 });
         }
 
         console.log("Processing copiers");
+
         if(accountsWithAnalysis != ""){
             const copiers = await getAllCopiers();
 
@@ -102,7 +105,7 @@ export const getAllAccounts = async (lastId) => {
                 }
             });
     
-            await redisClient.set("accounts_with_analysis_copier", JSON.stringify(accountsWithLF), { EX: 60000, NX: true});
+            await redisClient.set("accounts_with_analysis_copier", JSON.stringify(accountsWithLF), { EX: 86400 });
             // disconnetRedis();
             returnObject = accountsWithLF;
         }
@@ -153,6 +156,7 @@ export const getLead = async(accountId) => {
 
         const parsedCacheData = JSON.parse(cachedData);
         let copier = "";
+        console.log('Parsing Accounts to get Lead');
         copier = parsedCacheData.filter(acc => acc.follower_id == accountId);
         // await disconnetRedis();
         return copier;
@@ -183,11 +187,11 @@ export const getFollowers = async(accountId) => {
 
 }
 
-const processAllAccounts = async(accounts, batchSize = 50, delay = 3000) => {
+const processAllAccounts = async(accounts, batchSize = 100, delay = 3000) => {
     const results = [];
     for (let i = 0; i < accounts.length; i += batchSize) {
         const batch = accounts.slice(i, i + batchSize);
-        console.log(`Processing batch ${Math.floor(i / batchSize) + 1}`);
+        console.log(`Processing batch ${Math.floor(i / batchSize) + 1} :: Account Stack size: ${results.length}`);
         
         const batchResults = await fetchAnalysisForBatch(batch);
         results.push(...batchResults);
@@ -198,6 +202,7 @@ const processAllAccounts = async(accounts, batchSize = 50, delay = 3000) => {
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
+    console.log("Total Processed Accounts", results.length);
     return results;
 }
 
@@ -223,8 +228,6 @@ const fetchAnalysisForBatch = async(accountsBatch) => {
                         drawdown: (Number(acc.balance) - Number(acc.equity)) / Number(acc.balance) * 100,
                     }
                     return ({...acc, ...analysisData});
-                }else{
-                    return res;
                 }
             })
             .catch(error => {
@@ -233,5 +236,6 @@ const fetchAnalysisForBatch = async(accountsBatch) => {
             })
         )
     );
-    return results;
+    const resultsUndefinedRemoved = results && results.filter(result => result);
+    return resultsUndefinedRemoved;
 }

@@ -49,7 +49,7 @@ const BrokerControl = ({style, data})  => {
   const {filter, setFilter} = useFilter();
   const [open, setOpen] = useState(false);
   const [searchBrokerQuery, setSearchBrokerQuery] = useState("");
-console.log(data)
+
   if(!data || Object.keys(data)?.length === 0) return;
   const brokerArray = data?.map(account => account.broker);
   const brokerSet = new Set(brokerArray);

@@ -13,7 +13,7 @@ import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/al
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
 import { getTrades } from './accounts/trades/index.js';
-import { connectRedis } from './libs/redis/redisClient.js';
+import { connectRedis, redisClient } from './libs/redis/redisClient.js';
 import { getUser } from './users/index.js';
 import { getSessions } from './sessions/index.js';
 
@@ -42,6 +42,12 @@ cron.schedule('* 1 * * *', async() => {
     //refresh copier list for lead and followers data
     await getAllCopiers()
 });
+app.get('/accounts/raw', async(req, res) => {
+    const rawaccounts = await redisClient.get('accounts_raw');
+    const parsed = await JSON.parse(rawaccounts);
+    console.log(parsed.length)
+    return res.send(parsed);
+})
 
 app.get('/accounts/all/:lastId', async(req,res) => {
     const result = await getAllAccounts(req.params.lastId);
