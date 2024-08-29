@@ -20,7 +20,13 @@ const TrackHistoryControl = ({style}) => {
                 {/* <PlusCircle className={ style.badgeIcon } /> */}
                 <div className={style.filterText}>
                   <p className={style.filterLabel}>Track Record</p>
-                  <p className={style.filterValue}>Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</p>
+                  <p className={style.filterValue}>
+                    {filter.trackRecord == 1 ? "Show All" :
+                      <>
+                        Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}
+                      </>
+                    }
+                    </p>
                 </div>
                 {/* <span>Track Record: Above {filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} {filter.trackRecord == "12" || filter.trackRecord == "24" ? filter.trackRecord == "12" ? "year" : "years" : "months"}</span> */}
             </Badge>
@@ -29,9 +35,10 @@ const TrackHistoryControl = ({style}) => {
             <b>Track History</b>
             <Select onValueChange={(e) => handleChange(e)}>
                 <SelectTrigger className="w-full">
-                <SelectValue placeholder={`Above ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${filter.trackRecord == 12 || filter.trackRecord == 24 ? filter.trackRecord == 12 ? "year" : "years" : "months"}`} />
+                <SelectValue placeholder={filter.trackRecord == 1 ? "Show All" : `Above ${filter.trackRecord == 12 || filter.trackRecord == 24 ? Number(filter.trackRecord) / 12 : filter.trackRecord} ${filter.trackRecord == 12 || filter.trackRecord == 24 ? filter.trackRecord == 12 ? "year" : "years" : "months"}`} />
                 </SelectTrigger>
                 <SelectContent>
+                <SelectItem value="1">Show All</SelectItem>
                 <SelectItem value="3">Above 3 months</SelectItem>
                 <SelectItem value="6">Above 6 months</SelectItem>
                 <SelectItem value="9">Above 9 months</SelectItem>

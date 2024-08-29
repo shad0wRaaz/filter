@@ -28,30 +28,31 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
 
   useMemo(() => {
     if(!data) return
-    console.log(data)
+    console.log(data.length)
     let filteredData = data;
     if(type == "dashboard"){
       //if watchlist is enabled filter it out
       if(selectedWatchlist != "all" && filteredData?.length > 0){
         filteredData = filteredData?.filter(acc => watchlist.some(watchaccount => watchaccount.watchlist == acc.id && watchaccount.listname == selectedWatchlist));
       }else{
+
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
             (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
-            ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) && 
-            Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) &&
+            ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) &&
             Number(account.leverage) >= Number(filter.minLeverage) && Number(account.leverage) <= Number(filter.maxLeverage) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
-            Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage) &&
+            (Number(account.risk_reward_ratio_avg) >= Number(filter.minRiskRewardAverage) &&  Number(account.risk_reward_ratio_avg) <= Number(filter.maxRiskRewardAverage)) &&
             Number(account.balance) >= Number(filter.minBalance) &&
             Number(account.drawdown >= Number(filter.minDrawdown)) && Number(account.drawdown <= Number(filter.maxDrawdown)) &&
-            dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 &&
-            (account.broker == filter.broker || filter.broker == "All") &&
-            account.started_at != null
+            (Number(filter.trackRecord != 1) ? dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 : true) &&
+            (account.broker == filter.broker || filter.broker == "All") 
+            // Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) 
+            // account.started_at != null
           );
       }
     }
     // Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
-console.log(filteredData)
+console.log("filter", filteredData)
       setFilteredData(filteredData)
       const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
       setTotalPages(totalPages);
