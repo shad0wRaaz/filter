@@ -68,7 +68,7 @@ export const getAllAccounts = async (lastId) => {
         accounts = accounts.filter(acc => acc.trade_mode == "real");
         console.log("Total Live Accounts: ", accounts.length);
         // accounts = accounts.filter(acc => acc.total_profit > 0);
-        accounts = accounts.filter(acc => acc.balance > 1000);
+        // accounts = accounts.filter(acc => acc.balance > 1000);
 
         console.log(`Procesing Analyses for ${accounts.length} accounts`);
         let accountsWithAnalysis = "";

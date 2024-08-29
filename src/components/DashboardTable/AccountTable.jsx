@@ -45,10 +45,12 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
             Number(account.balance) >= Number(filter.minBalance) &&
             Number(account.drawdown >= Number(filter.minDrawdown)) && Number(account.drawdown <= Number(filter.maxDrawdown)) &&
             (Number(filter.trackRecord != 1) ? dateDifference(account.started_at) >= Number(filter.trackRecord) * 30 : true) &&
-            (account.broker == filter.broker || filter.broker == "All") 
-            // Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) 
-            // account.started_at != null
+            (account.broker == filter.broker || filter.broker == "All") &&
+            Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) 
+            // account.started_at != null 
           );
+          const notStarted = filteredData?.filter(acc => acc.started_at == null);
+          console.log(notStarted)
       }
     }
     // Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
