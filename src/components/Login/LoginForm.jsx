@@ -12,6 +12,7 @@ import Link from "next/link";
 
 const LoginForm = () => {
     const router = useRouter();
+    console.log(encryptData("WW5capKYFbrL"));
 
     const submitHandler = async (e) => {
         e.preventDefault();

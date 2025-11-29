@@ -9,7 +9,7 @@ import { getAnalysis } from './accounts/analysis/index.js';
 import { deleteClientAccount, getClientAccounts, saveClientAccount } from './clientaccounts/index.js';
 import { getBrokerServers, getBrokers } from './brokers/index.js';
 import { deleteWatchlistName, getWatchlist, getWatchlistNames, saveWatchlist, saveWatchlistName } from './watchlist/index.js';
-import { getAccount, getAllAccounts, getFollowers, getLead } from './accounts/all/index.js';
+import { getAccount, getAllAccounts, getDayTraders, getEverything, getFollowers, getLead } from './accounts/all/index.js';
 import { saveCopier } from './clientaccounts/copier/index.js';
 import { getAllCopiers } from './accounts/copiers/index.js';
 import { getTrades } from './accounts/trades/index.js';
@@ -70,6 +70,7 @@ app.get('/accounts/client/get/:email/:limit', async(req, res) => {
     const limit = req.params.limit;
     return res.send(await getClientAccounts(email, limit));
 });
+
 
 app.post('/accounts/client/copy', async(req, res) => {
     const result = await saveCopier("admin");
@@ -134,6 +135,16 @@ app.get('/accounts/trades/:id', async(req, res) => {
     // console.log(trades)
     return res.send(trades);
 })
+
+app.get('/accounts/getacountandtrades', async(req, res) => {
+    const everything = await getEverything();
+    return res.send(everything);
+});
+
+app.get('/accounts/getdaytraders', async(req, res) => {
+    const everything = await getDayTraders();
+    return res.send(everything);
+});
 
 
 app.get('/brokers/:email/:version', async(req, res) => {

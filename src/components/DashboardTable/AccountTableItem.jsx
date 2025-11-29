@@ -107,7 +107,7 @@ const AccountTableItem = ({ account, type }) => {
             {/* <Portfolio account={account} isWatchlist={isWatchlist} type="link"/> */}
             <Link href={`/portfolio/${account.id}`}>
               <div className="font-medium flex items-center gap-1">
-                {account.account_number}
+                {account.account_number ?? account.id }
                 {/* {account.client_name ? account.client_name : account.account_number} [{account.id}] */}
               </div>
             </Link>

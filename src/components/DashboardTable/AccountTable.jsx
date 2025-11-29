@@ -28,7 +28,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
 
   useMemo(() => {
     if(!data) return
-    console.log(data.length)
+    // console.log(data.length)
     let filteredData = data;
     if(type == "dashboard"){
       //if watchlist is enabled filter it out
@@ -50,11 +50,11 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
             // account.started_at != null 
           );
           const notStarted = filteredData?.filter(acc => acc.started_at == null);
-          console.log(notStarted)
+          // console.log(notStarted)
       }
     }
     // Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&
-console.log("filter", filteredData)
+// console.log("filter", filteredData)
       setFilteredData(filteredData)
       const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
       setTotalPages(totalPages);

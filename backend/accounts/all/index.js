@@ -11,30 +11,6 @@ export const getAllAccounts = async (lastId) => {
         const cachedDataWithAnalysisCopier = await redisClient.get("accounts_with_analysis_copier");
 
         if(cachedDataWithAnalysisCopier) { return JSON.parse(cachedDataWithAnalysisCopier); }
-        
-        // const cacheAnalysis = await redisClient.get("accounts_all_with_analysis");
-        // console.log(cacheAnalysis)
-        // if(cacheAnalysis && cacheAnalysis != ""){
-        //     const parsedCache = JSON.parse(cacheAnalysis);
-    
-        //     console.log("no data with copier flag");
-        //     const copiers = await getAllCopiers();
-        //     const accountsWithLF = parsedCache.map(acc => {
-        //         if(copiers.some(copyObj => copyObj.lead_id == acc.id)){
-        //             return ({...acc, copierStatus: "Lead"});
-        //         }else if(copiers.some(copyObj => copyObj.follower_id == acc.id)){
-        //             return ({...acc, copierStatus: "Follower"});
-        //         }else{
-        //             return ({...acc, copierStatus: "Standalone"});
-        //         }
-        //     });
-    
-        //     await redisClient.set("accounts_with_analysis_copier", JSON.stringify(accountsWithLF), { EX: 6000, NX: true});
-        //     disconnetRedis();
-        //     return accountsWithLF;
-        // }
-
-        // if(cacheAnalysis) { return parsedCache; }
 
         let accounts = [];
         const cachedData = await redisClient.get("accounts_raw");
@@ -186,15 +162,40 @@ export const getFollowers = async(accountId) => {
     }
 
 }
+export const getEverything = async() => {
+    const allAccounts = await getAllAccounts();
+    const accountsAndTrades = processAllAccounts(allAccounts.slice(0, 100), 100, 3000, "trades");
+    return accountsAndTrades;
+}
+export const getDayTraders = async() => {
+    const allAccounts = await getAllAccounts();
 
-const processAllAccounts = async(accounts, batchSize = 100, delay = 3000) => {
+    const cachedDayTraders = await redisClient.get("day_traders");
+console.log(cachedDayTraders)
+    if(cachedDayTraders) { return JSON.parse(cachedDayTraders); }
+
+    const accountsAndTrades = processAllAccounts(allAccounts.slice(0, 1000), 100, 3000, "daytraders");
+
+    await redisClient.set("day_traders", JSON.stringify(accountsAndTrades), { EX: 86400 });
+    return accountsAndTrades;
+}
+
+const processAllAccounts = async(accounts, batchSize = 100, delay = 3000, type = "analysis") => {
     const results = [];
     for (let i = 0; i < accounts.length; i += batchSize) {
         const batch = accounts.slice(i, i + batchSize);
         console.log(`Processing batch ${Math.floor(i / batchSize) + 1} :: Account Stack size: ${results.length}`);
-        
-        const batchResults = await fetchAnalysisForBatch(batch);
-        results.push(...batchResults);
+
+        if(type == "analysis"){
+            const batchResults = await fetchAnalysisForBatch(batch);
+            results.push(...batchResults);
+        }else if(type == "trades"){
+            const batchResults = await fetchTradesForBatch(batch);
+            results.push(...batchResults)
+        }else{
+            const batchResults = await fetchDayTrader(batch);
+            results.push(...batchResults)
+        }
 
         // If not the last batch, wait before continuing
         if (i + batchSize < accounts.length) {
@@ -206,6 +207,71 @@ const processAllAccounts = async(accounts, batchSize = 100, delay = 3000) => {
     return results;
 }
 
+//this function has been changed from getting all accounts and all of its trades to just getting all trades. 
+//initially this function was used for fetching the data and returning it for scv export.
+//now it has been used to find daytrader. if needed to go back, uncomment codes after const result = await res.json() inside then() till making the object.
+
+const fetchTradesForBatch = async(accountsBatch) => {
+    const results = await Promise.all(
+        accountsBatch.map(acc => 
+            fetch(`${API_URL}/trades?account_id=${acc.id}&order=desc`, {
+                headers: {
+                    'Authorization': authKey,
+                }
+            }).then(async res => {
+                if(res.ok){
+                    const result = await res.json();
+                    // const tradesWithAccountData = result.data.map(trade => ({
+                    //     ...trade,    // Spread each trade data
+                    //     ...acc,
+                    //     // account_number: acc.account_number,
+                    //     // broker: acc.broker,
+                    //     // broker_server_id: acc.broker_server_id,
+                    //     // currency: acc.currency,
+                    //     // average_loss: acc.average_loss,
+                    //     // average_win: acc.average_win,
+                    //     // balance: acc.balance,   
+                    //     // daily_profit: acc.daily_profit,
+                    //     // drawdown: acc.drawdown,
+                    //     // drawdown: acc.drawdown,
+                    //     // followers: acc.follwers,
+                    //     // free_margin: acc.free_margin,
+                    //     // followers: acc.follwers,
+                    // }));
+            
+                    //for csv export, just do return result;
+                    return result.data;
+                }else{
+                    return [];
+                }
+            })
+        ));
+
+        return results.flat();
+}
+
+const fetchDayTrader = async (accountsBatch) => {
+    try {
+      const results = await Promise.all(
+        accountsBatch.map(async (acc) => {
+          const trades = await fetchAllTrades(acc.id);
+
+          // Check if any trade closes after 10 PM UTC
+          const hasLateTrade = trades.some(({ close_time }) => {
+            if (!close_time) return false;
+            return new Date(close_time).getUTCHours() > 22;
+          });
+          return hasLateTrade ? null : acc.id; // Return ID only if day trader
+        })
+      );
+
+      return results.filter(Boolean);
+    } catch (error) {
+      console.error('Error fetching day traders:', error);
+      return [];
+    }
+  };
+  
 
 const fetchAnalysisForBatch = async(accountsBatch) => {
     const results = await Promise.all(
@@ -239,3 +305,34 @@ const fetchAnalysisForBatch = async(accountsBatch) => {
     const resultsUndefinedRemoved = results && results.filter(result => result);
     return resultsUndefinedRemoved;
 }
+
+const fetchAllTrades = async (accountId) => {
+    let allTrades = [];
+    let lastId = null;
+  
+    try {
+      do {
+        const url = new URL(`${API_URL}/trades`);
+        url.searchParams.append('account_id', accountId);
+        url.searchParams.append('order', 'desc');
+        if (lastId) url.searchParams.append('last_id', lastId);
+  
+        const res = await fetch(url, {
+          headers: { 'Authorization': authKey },
+        });
+
+        if (!res.ok) throw new Error(`Failed to fetch trades for account ${accountId}`);
+  
+        const { data, meta } = await res.json();
+        
+        allTrades = allTrades.concat(data);
+        lastId = meta.last_id; // Move to the next batch
+  
+      } while (lastId); // Continue fetching until no more trades
+  
+    } catch (error) {
+      console.error(`Error fetching trades for account ${accountId}:`, error);
+    }
+  
+    return allTrades;
+  };

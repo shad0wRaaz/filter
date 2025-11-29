@@ -12,6 +12,7 @@ import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import FilterControls from '@/components/Filters/FilterControls'
 import { encryptData } from '@/lib/encryption'
+import { Button } from '@/components/ui/button'
 
 const Dashboard = ({modal}) => {
   const session = useSession();
@@ -19,7 +20,8 @@ const Dashboard = ({modal}) => {
   const { initialData, setInitialData, tableData, setTableData} = useDashboardTable();
   const { watchlist, setWatchlist, setWatchlistNames } = useWatchlist();
   const [selectedWatchlist, setSelectedWatchlist] = useState("all");
-  // console.log(encryptData("jUHtaP9ARYSh"));
+  const [alldata, setAllData] = useState();
+  // console.log(encryptData("FHHUMJUCTp7H"));
   // console.log(encryptData("5ut5UzcVKgHm"));
   //get settings data
   const { data:settings, status:settingsStatus } = useQuery({
@@ -57,7 +59,7 @@ const Dashboard = ({modal}) => {
     },
     enabled: session.status == "authenticated"
   });
-
+  
   const {data:watchlistitems} = useQuery({
     queryKey: ['userwatchlists'],
     queryFn: async() => {
@@ -114,8 +116,70 @@ const Dashboard = ({modal}) => {
     },
     enabled: session.status == "authenticated"
   });
+// Helper function to handle undefined or null values
+  function replacer(key, value) {
+    return value === null || value === undefined ? '' : value;
+  }
+  
+//this query is used for csv export
+  const { data:accountsandTrades = [], isFetching, status } = useQuery({
+    queryKey: ['accountsAndTradesData'],
+    queryFn: async () => {
+      return await fetch(`${MY_API_URL}/accounts/getacountandtrades`)
+      .then(async res => {
+        const result = await res.json();
+        console.log('getaccounttrdes',result)
+        setAllData(result);
+        return result
+      });
+    },
+    enabled: false
+  })
 
+  const { data:findDayTrader = [], isFetching:fetchingDayTrader, status:dayTraderSTatus } = useQuery({
+    queryKey: ['dayTraderData'],
+    queryFn: async () => {
+      return await fetch(`${MY_API_URL}/accounts/getdaytraders`)
+      .then(async res => {
+        const result = await res.json();
+        console.log('daytraders', result)
 
+        return result
+      });
+    },
+    enabled: true
+  })
+
+  const handleExport = async() => {
+
+    if(!alldata) return;
+    //take out followers
+    const accountsandTrades = alldata.filter(acc => acc.copierStatus != "Follower");
+
+    // Get the keys (column headers) from the first object
+    const headers = Object.keys(accountsandTrades[0]);
+
+    // Convert array of objects into a CSV string
+    const csvContent = [
+        headers.join(','), // Create header row
+        ...accountsandTrades.map(obj => headers.map(header => JSON.stringify(obj[header], replacer)).join(',')) // Map each object
+    ].join('\n');
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    // Create an anchor element and trigger a download
+    const link = document.createElement('a');
+    if (link.download !== undefined) { // Check if download attribute is supported
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', "export.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link); // Remove the link after download
+    }
+  }
   return (
     <>
     {session.status != "authenticated" ? <UnauthorizedAccess/> : (
@@ -126,6 +190,7 @@ const Dashboard = ({modal}) => {
         <main className="p-6">
           {modal}
           <FilterControls selectedWatchlist={selectedWatchlist} setSelectedWatchlist={setSelectedWatchlist} data={accounts}/>
+          <Button onClick={() => handleExport()}>Export CSV</Button>
           <Card className="mt-6 dark:bg-gray-700">
             <AccountTable 
               data={accounts} 
