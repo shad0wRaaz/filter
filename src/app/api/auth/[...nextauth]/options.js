@@ -126,12 +126,12 @@ export const options = {
     async session({ session, user, token }) {
       // user param present in the session(function) does not recive 
       //all the data from DB call -> fetchUserInfo(credentials.opt)
-console.log(token)
+
       if(!token.lastActivity){
         return null;
       }
       return token;
     },
   },
-  // secret: process.env.NEXT_PUBLIC_NEXT_AUTH_SECRET,
+  secret: process.env.NEXT_PUBLIC_NEXT_AUTH_SECRET,
 };
