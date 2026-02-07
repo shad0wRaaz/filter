@@ -37,7 +37,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
       }else{
 
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
-            (String(account.client_name).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
+            (String(account.id).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
             ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) &&
             Number(account.leverage) >= Number(filter.minLeverage) && Number(account.leverage) <= Number(filter.maxLeverage) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&

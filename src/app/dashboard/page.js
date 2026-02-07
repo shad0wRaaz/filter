@@ -21,7 +21,7 @@ const Dashboard = ({modal}) => {
   const { watchlist, setWatchlist, setWatchlistNames } = useWatchlist();
   const [selectedWatchlist, setSelectedWatchlist] = useState("all");
   const [alldata, setAllData] = useState();
-  // console.log(encryptData("FHHUMJUCTp7H"));
+  // console.log(encryptData("8AWoPdnPVlFIQ4zs"));
   // console.log(encryptData("5ut5UzcVKgHm"));
   //get settings data
   const { data:settings, status:settingsStatus } = useQuery({
@@ -128,7 +128,6 @@ const Dashboard = ({modal}) => {
       return await fetch(`${MY_API_URL}/accounts/getacountandtrades`)
       .then(async res => {
         const result = await res.json();
-        console.log('getaccounttrdes',result)
         setAllData(result);
         return result
       });
@@ -142,7 +141,6 @@ const Dashboard = ({modal}) => {
       return await fetch(`${MY_API_URL}/accounts/getdaytraders`)
       .then(async res => {
         const result = await res.json();
-        console.log('daytraders', result)
 
         return result
       });
