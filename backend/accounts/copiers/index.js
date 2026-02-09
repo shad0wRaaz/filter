@@ -9,10 +9,13 @@ export const getAllCopiers = async() => {
         // await connectRedis();
         //feed from cache if present
         const cachedCopiers = await redisClient.get("accounts_all_copiers");
-        if(cachedCopiers) { return JSON.parse(cachedCopiers); }
+        const parsedCopiers = JSON.parse(cachedCopiers);
+
+        if(parsedCopiers && parsedCopiers?.length > 0) { return parsedCopiers; }
+        // if(cachedCopiers) { return JSON.parse(cachedCopiers); }
         
         const cachedAccounts = JSON.parse(await redisClient.get("accounts_all_with_analysis"));
-        if(!cachedAccounts) return [];
+        if(!cachedAccounts || cachedAccounts?.length == 0) return [];
 
         let copiers = [];
         let last_id = 0;

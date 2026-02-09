@@ -5,17 +5,19 @@ import { getAllCopiers } from "../copiers/index.js";
 
 export const getAllAccounts = async (lastId) => {
     let returnObject = "";
-    
     try{
         // await connectRedis();
         const cachedDataWithAnalysisCopier = await redisClient.get("accounts_with_analysis_copier");
+        const parsedCachedDataWithAnalysisCopier = JSON.parse(cachedDataWithAnalysisCopier);
 
-        if(cachedDataWithAnalysisCopier) { return JSON.parse(cachedDataWithAnalysisCopier); }
+        if(parsedCachedDataWithAnalysisCopier && parsedCachedDataWithAnalysisCopier?.length > 0) 
+            { return parsedCachedDataWithAnalysisCopier; }
 
         let accounts = [];
         const cachedData = await redisClient.get("accounts_raw");
+        const parsedCachedData = JSON.parse(cachedData);
 
-        if(!cachedData){
+        if(!parsedCachedData || parsedCachedData?.length == 0){
             console.log("Fetching all Accounts");
             while(lastId != null){
                 const fetchURL = lastId == 0 ? `${API_URL}/accounts?` : `${API_URL}/accounts?&last_id=${lastId}`;
@@ -34,32 +36,38 @@ export const getAllAccounts = async (lastId) => {
                     lastId = null;
                 }
             }
+
+
             await redisClient.set(`accounts_raw`, JSON.stringify(accounts), { EX: 86400 });
 
         }else{
             accounts = JSON.parse(cachedData);
         }
-        accounts = accounts.filter(acc => acc.status == "connection_ok");
+        
+        // accounts = accounts.filter(acc => acc.status == "connection_ok");
         console.log("Total Accounts with Demo and Live: ", accounts.length);
+
         accounts = accounts.filter(acc => acc.trade_mode == "real");
+        
         console.log("Total Live Accounts: ", accounts.length);
-        // accounts = accounts.filter(acc => acc.total_profit > 0);
-        // accounts = accounts.filter(acc => acc.balance > 1000);
 
         console.log(`Procesing Analyses for ${accounts.length} accounts`);
         let accountsWithAnalysis = "";
         const cacheAnalaysisOnlyData = await redisClient.get("accounts_all_with_analysis");
-        if(cacheAnalaysisOnlyData && cacheAnalaysisOnlyData?.length == 0){
-            accountsWithAnalysis = JSON.parse(cacheAnalaysisOnlyData);
-        }else{
+        const parsedCacheAnalaysisOnlyData = JSON.parse(cacheAnalaysisOnlyData);
+        
+        if(!parsedCacheAnalaysisOnlyData || parsedCacheAnalaysisOnlyData?.length == 0){
             //find analysis of all accounts
             accountsWithAnalysis = await processAllAccounts(accounts);
 
             console.log("Before growth filter: ", accountsWithAnalysis.length);
-            accountsWithAnalysis = accountsWithAnalysis.filter(data => data.growth <= 5000);
+            // accountsWithAnalysis = accountsWithAnalysis.filter(data => data.growth <= 5000);
             console.log("Total analysed accounts", accountsWithAnalysis.length);
             
             await redisClient.set(`accounts_all_with_analysis`, JSON.stringify(accountsWithAnalysis), { EX: 86400 });
+        }else{
+            accountsWithAnalysis = parsedCacheAnalaysisOnlyData;
+
         }
 
         console.log("Processing copiers");
@@ -171,7 +179,7 @@ export const getDayTraders = async() => {
     const allAccounts = await getAllAccounts();
 
     const cachedDayTraders = await redisClient.get("day_traders");
-console.log(cachedDayTraders)
+
     if(cachedDayTraders) { return JSON.parse(cachedDayTraders); }
 
     const accountsAndTrades = processAllAccounts(allAccounts.slice(0, 1000), 100, 3000, "daytraders");
