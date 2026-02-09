@@ -25,10 +25,11 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [totalPages, setTotalPages] = useState(0);
   const [sort, setSort] = useState({key: 'balance', order: false});
+  
 
   useMemo(() => {
     if(!data) return
-    // console.log(data.length)
+
     let filteredData = data;
     if(type == "dashboard"){
       //if watchlist is enabled filter it out
@@ -37,7 +38,7 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
       }else{
 
         filteredData = filteredData?.length > 0 && filteredData?.filter(account => 
-            (String(account.id).toLowerCase().indexOf(filter.searchQuery) >= 0  || (String(account.account_number).indexOf(filter.searchQuery)) >= 0 ) &&
+            (String(account.id).toLowerCase().indexOf(String(filter.searchQuery)) >= 0) &&
             ((account.copierStatus == filter.accountNature || filter.accountNature == "All") || (filter.accountNature == "Lead and Standalone" && account.copierStatus != "Follower")) &&
             Number(account.leverage) >= Number(filter.minLeverage) && Number(account.leverage) <= Number(filter.maxLeverage) &&
             Number(account.win_ratio) >= filter.minWinRatio && Number(account.win_ratio <= filter.maxWinRatio) &&
@@ -49,8 +50,8 @@ const AccountTable = ({ data, isLoading, status, type, watchlist, selectedWatchl
             Number(account.growth) >= Number(filter.minGrowth) && Number(account.growth) <= Number(filter.maxGrowth) 
             // account.started_at != null 
           );
-          const notStarted = filteredData?.filter(acc => acc.started_at == null);
-          // console.log(notStarted)
+
+          // const notStarted = filteredData && filteredData?.filter(acc => acc.started_at == null);
       }
     }
     // Number(account.risk_reward_ratio_worst) >= Number(filter.minRiskRewardWorst) && Number(account.risk_reward_ratio_worst) <= Number(filter.maxRiskRewardWorst) &&

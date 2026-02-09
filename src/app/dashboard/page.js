@@ -59,7 +59,8 @@ const Dashboard = ({modal}) => {
     },
     enabled: session.status == "authenticated"
   });
-  
+
+
   const {data:watchlistitems} = useQuery({
     queryKey: ['userwatchlists'],
     queryFn: async() => {
